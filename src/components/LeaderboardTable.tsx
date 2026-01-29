@@ -175,7 +175,7 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
     <div className="overflow-x-auto">
       <table className="w-full">
         <thead>
-          {/* Header group row with "Allowed" bar */}
+          {/* Label row */}
           <tr>
             <th className="bg-[var(--background-secondary)] sticky left-0 z-10" />
             <th className="bg-[var(--background-secondary)] sticky left-8 z-10" />
@@ -183,9 +183,9 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
             <th colSpan={offensiveColumns.length} className="bg-[var(--background-secondary)]" />
             <th
               colSpan={defensiveColumns.length}
-              className="bg-[#374151] text-white text-xs font-semibold py-1 px-2 text-center"
+              className="bg-[var(--background-secondary)] text-[var(--foreground)] text-xs font-bold py-1 px-2 text-center border-l-2 border-[var(--foreground)]"
             >
-              Allowed
+              ALLOWED
             </th>
           </tr>
           {/* Column headers */}
@@ -193,28 +193,32 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
             <th className="text-left py-3 px-3 bg-[var(--background-secondary)] sticky left-0 z-10 text-[var(--foreground)]">
               #
             </th>
-            {columns.map(col => (
-              <th
-                key={col.key}
-                className={`
-                  py-3 px-3 bg-[var(--background-secondary)]
-                  ${col.key === 'team' ? 'text-left sticky left-8 z-10' : 'text-right'}
-                  ${col.key !== 'team' && col.key !== 'record' ? 'cursor-pointer hover:text-[var(--accent-primary)]' : ''}
-                `}
-                onClick={() => col.key !== 'team' && col.key !== 'record' && handleSort(col.key as SortField)}
-              >
-                <div className={`flex items-center gap-1 ${col.key === 'team' ? 'justify-start' : 'justify-end'}`}>
-                  <span className="text-xs text-[var(--foreground)]">
-                    {col.shortLabel}
-                  </span>
-                  {sortField === col.key && (
-                    <span className="text-[var(--accent-primary)]">
-                      {sortDirection === 'desc' ? '↓' : '↑'}
+            {columns.map((col) => {
+              const isFirstDefensive = col.key === 'oppEfg';
+              return (
+                <th
+                  key={col.key}
+                  className={`
+                    py-3 px-3 bg-[var(--background-secondary)]
+                    ${col.key === 'team' ? 'text-left sticky left-8 z-10' : 'text-right'}
+                    ${col.key !== 'team' && col.key !== 'record' ? 'cursor-pointer hover:text-[var(--accent-primary)]' : ''}
+                    ${isFirstDefensive ? 'border-l-2 border-[var(--foreground)]' : ''}
+                  `}
+                  onClick={() => col.key !== 'team' && col.key !== 'record' && handleSort(col.key as SortField)}
+                >
+                  <div className={`flex items-center gap-1 ${col.key === 'team' ? 'justify-start' : 'justify-end'}`}>
+                    <span className="text-xs text-[var(--foreground)]">
+                      {col.shortLabel}
                     </span>
-                  )}
-                </div>
-              </th>
-            ))}
+                    {sortField === col.key && (
+                      <span className="text-[var(--accent-primary)]">
+                        {sortDirection === 'desc' ? '↓' : '↑'}
+                      </span>
+                    )}
+                  </div>
+                </th>
+              );
+            })}
           </tr>
         </thead>
         <tbody>
@@ -268,13 +272,17 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
               {/* Stats */}
               {columns.slice(2).map(col => {
                 const value = team[col.key as keyof TeamStandings] as number;
+                const isFirstDefensive = col.key === 'oppEfg';
 
                 if (viewMode === 'points-impact' && col.factorKey) {
                   const pointsImpact = calculatePointsImpact(col, value);
                   const color = getPointsImpactColor(pointsImpact);
 
                   return (
-                    <td key={col.key} className="py-3 px-3 text-right">
+                    <td
+                      key={col.key}
+                      className={`py-3 px-3 text-right ${isFirstDefensive ? 'border-l-2 border-[var(--foreground)]' : ''}`}
+                    >
                       <span
                         className="stat-number text-sm font-semibold"
                         style={{ color }}
@@ -288,7 +296,10 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
 
                 const color = getStatColor(col, value);
                 return (
-                  <td key={col.key} className="py-3 px-3 text-right">
+                  <td
+                    key={col.key}
+                    className={`py-3 px-3 text-right ${isFirstDefensive ? 'border-l-2 border-[var(--foreground)]' : ''}`}
+                  >
                     <span
                       className="stat-number text-sm"
                       style={{ color }}

@@ -3,11 +3,26 @@
 import { useState } from 'react';
 import { GenderToggle, TeamSearch, GameCard } from '@/components';
 import { Gender, FOUR_FACTORS_META } from '@/lib/types';
-import { getRecentGames } from '@/lib/data';
+import { getRecentGames, getConferences, getTeams } from '@/lib/data';
 
 export default function HomePage() {
   const [gender, setGender] = useState<Gender>('mens');
-  const recentGames = getRecentGames(gender, 12);
+  const [selectedConference, setSelectedConference] = useState<string>('all');
+
+  const conferences = getConferences(gender);
+  const teams = getTeams(gender);
+  const teamConferenceMap = new Map(teams.map(t => [t.id, t.conferenceId]));
+
+  const allRecentGames = getRecentGames(gender, 100);
+  const recentGames = selectedConference === 'all'
+    ? allRecentGames.slice(0, 12)
+    : allRecentGames
+        .filter(game => {
+          const homeConf = teamConferenceMap.get(game.homeTeam.teamId);
+          const awayConf = teamConferenceMap.get(game.awayTeam.teamId);
+          return homeConf === selectedConference || awayConf === selectedConference;
+        })
+        .slice(0, 12);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -23,7 +38,10 @@ export default function HomePage() {
 
         {/* Gender Toggle */}
         <div className="flex justify-center mb-8">
-          <GenderToggle value={gender} onChange={setGender} />
+          <GenderToggle value={gender} onChange={(g) => {
+            setGender(g);
+            setSelectedConference('all');
+          }} />
         </div>
 
         {/* Search */}
@@ -74,9 +92,23 @@ export default function HomePage() {
       <section>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl">Recent Games</h2>
-          <span className="text-sm text-[var(--foreground-muted)]">
-            {gender === 'mens' ? "Men's" : "Women's"} Basketball
-          </span>
+          <div className="flex items-center gap-4">
+            <select
+              value={selectedConference}
+              onChange={(e) => setSelectedConference(e.target.value)}
+              className="px-3 py-1.5 rounded-lg text-sm bg-[var(--card-bg)] border border-[var(--border)] text-[var(--foreground)] focus:outline-none focus:border-[var(--accent-primary)]"
+            >
+              <option value="all">All Conferences</option>
+              {conferences.map((conf) => (
+                <option key={conf.id} value={conf.id}>
+                  {conf.name}
+                </option>
+              ))}
+            </select>
+            <span className="text-sm text-[var(--foreground-muted)]">
+              {gender === 'mens' ? "Men's" : "Women's"} Basketball
+            </span>
+          </div>
         </div>
 
         {recentGames.length > 0 ? (
@@ -88,7 +120,9 @@ export default function HomePage() {
         ) : (
           <div className="card p-12 text-center">
             <p className="text-[var(--foreground-muted)]">
-              No games found. Data may still be loading.
+              {selectedConference === 'all'
+                ? 'No games found. Data may still be loading.'
+                : 'No recent games found for this conference.'}
             </p>
           </div>
         )}

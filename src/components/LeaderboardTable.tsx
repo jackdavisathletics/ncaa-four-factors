@@ -2,11 +2,14 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { TeamStandings, Gender, SortField, SortDirection } from '@/lib/types';
+import { TeamStandings, Gender, SortField, SortDirection, FOUR_FACTORS_META } from '@/lib/types';
+
+type ViewMode = 'percentages' | 'points-impact';
 
 interface LeaderboardTableProps {
   standings: TeamStandings[];
   gender: Gender;
+  viewMode: ViewMode;
 }
 
 interface ColumnDef {
@@ -16,22 +19,23 @@ interface ColumnDef {
   category: 'info' | 'offensive' | 'defensive';
   higherIsBetter?: boolean;
   format?: (val: number) => string;
+  factorKey?: 'efg' | 'tov' | 'orb' | 'ftr';
 }
 
 const columns: ColumnDef[] = [
   { key: 'team', label: 'Team', shortLabel: 'Team', category: 'info' },
   { key: 'record', label: 'Record', shortLabel: 'W-L', category: 'info' },
-  { key: 'efg', label: 'eFG%', shortLabel: 'eFG%', category: 'offensive', higherIsBetter: true, format: v => v.toFixed(1) },
-  { key: 'tov', label: 'TOV%', shortLabel: 'TOV%', category: 'offensive', higherIsBetter: false, format: v => v.toFixed(1) },
-  { key: 'orb', label: 'ORB%', shortLabel: 'ORB%', category: 'offensive', higherIsBetter: true, format: v => v.toFixed(1) },
-  { key: 'ftr', label: 'FTR', shortLabel: 'FTR', category: 'offensive', higherIsBetter: true, format: v => v.toFixed(1) },
-  { key: 'oppEfg', label: 'Opp eFG%', shortLabel: 'oeFG%', category: 'defensive', higherIsBetter: false, format: v => v.toFixed(1) },
-  { key: 'oppTov', label: 'Opp TOV%', shortLabel: 'oTOV%', category: 'defensive', higherIsBetter: true, format: v => v.toFixed(1) },
-  { key: 'oppOrb', label: 'Opp ORB%', shortLabel: 'oORB%', category: 'defensive', higherIsBetter: false, format: v => v.toFixed(1) },
-  { key: 'oppFtr', label: 'Opp FTR', shortLabel: 'oFTR', category: 'defensive', higherIsBetter: false, format: v => v.toFixed(1) },
+  { key: 'efg', label: 'eFG%', shortLabel: 'eFG%', category: 'offensive', higherIsBetter: true, format: v => v.toFixed(1), factorKey: 'efg' },
+  { key: 'tov', label: 'TOV%', shortLabel: 'TOV%', category: 'offensive', higherIsBetter: false, format: v => v.toFixed(1), factorKey: 'tov' },
+  { key: 'orb', label: 'ORB%', shortLabel: 'ORB%', category: 'offensive', higherIsBetter: true, format: v => v.toFixed(1), factorKey: 'orb' },
+  { key: 'ftr', label: 'FTR', shortLabel: 'FTR', category: 'offensive', higherIsBetter: true, format: v => v.toFixed(1), factorKey: 'ftr' },
+  { key: 'oppEfg', label: 'Opp eFG%', shortLabel: 'eFG%', category: 'defensive', higherIsBetter: false, format: v => v.toFixed(1), factorKey: 'efg' },
+  { key: 'oppTov', label: 'Opp TOV%', shortLabel: 'TOV%', category: 'defensive', higherIsBetter: true, format: v => v.toFixed(1), factorKey: 'tov' },
+  { key: 'oppOrb', label: 'Opp ORB%', shortLabel: 'ORB%', category: 'defensive', higherIsBetter: false, format: v => v.toFixed(1), factorKey: 'orb' },
+  { key: 'oppFtr', label: 'Opp FTR', shortLabel: 'FTR', category: 'defensive', higherIsBetter: false, format: v => v.toFixed(1), factorKey: 'ftr' },
 ];
 
-export function LeaderboardTable({ standings, gender }: LeaderboardTableProps) {
+export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTableProps) {
   const [sortField, setSortField] = useState<SortField>('wins');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
@@ -70,15 +74,70 @@ export function LeaderboardTable({ standings, gender }: LeaderboardTableProps) {
     }
   };
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'offensive': return 'var(--accent-primary)';
-      case 'defensive': return 'var(--accent-secondary)';
-      default: return 'var(--foreground-muted)';
-    }
+  // Calculate league averages for points impact calculation
+  const leagueAverages = useMemo(() => {
+    if (standings.length === 0) return null;
+
+    const sum = standings.reduce((acc, team) => ({
+      efg: acc.efg + team.efg,
+      tov: acc.tov + team.tov,
+      orb: acc.orb + team.orb,
+      ftr: acc.ftr + team.ftr,
+      oppEfg: acc.oppEfg + team.oppEfg,
+      oppTov: acc.oppTov + team.oppTov,
+      oppOrb: acc.oppOrb + team.oppOrb,
+      oppFtr: acc.oppFtr + team.oppFtr,
+    }), { efg: 0, tov: 0, orb: 0, ftr: 0, oppEfg: 0, oppTov: 0, oppOrb: 0, oppFtr: 0 });
+
+    const count = standings.length;
+    return {
+      efg: sum.efg / count,
+      tov: sum.tov / count,
+      orb: sum.orb / count,
+      ftr: sum.ftr / count,
+      oppEfg: sum.oppEfg / count,
+      oppTov: sum.oppTov / count,
+      oppOrb: sum.oppOrb / count,
+      oppFtr: sum.oppFtr / count,
+    };
+  }, [standings]);
+
+  // Calculate points impact for a given value
+  const calculatePointsImpact = (col: ColumnDef, value: number): number => {
+    if (!leagueAverages || !col.factorKey) return 0;
+
+    const avgKey = col.key as keyof typeof leagueAverages;
+    const leagueAvg = leagueAverages[avgKey];
+    const differential = value - leagueAvg;
+
+    const factor = FOUR_FACTORS_META.find(f => f.key === col.factorKey);
+    if (!factor) return 0;
+
+    // For defensive stats, the impact is inverted
+    // e.g., lower oppEfg is good, so we negate the differential
+    const isDefensive = col.category === 'defensive';
+    const adjustedDiff = isDefensive ? -differential : differential;
+
+    // For TOV%, the pointsImpact is already negative
+    // For offensive TOV%: higher is bad, so diff * negative = negative points (correct)
+    // For defensive TOV% (oppTov): we already negated, so -diff * negative = positive when we force more TOV (correct)
+    return adjustedDiff * factor.pointsImpact;
   };
 
-  // Calculate min/max for each stat column for color scaling
+  // Format points impact for display
+  const formatPointsImpact = (points: number): string => {
+    const sign = points >= 0 ? '+' : '';
+    return `${sign}${points.toFixed(1)}`;
+  };
+
+  // Get color for points impact value
+  const getPointsImpactColor = (points: number): string => {
+    if (points > 0.1) return '#22c55e'; // green
+    if (points < -0.1) return '#ef4444'; // red
+    return 'var(--foreground-muted)';
+  };
+
+  // Calculate min/max for each stat column for color scaling (percentages view)
   const statRanges = useMemo(() => {
     const ranges: Record<string, { min: number; max: number }> = {};
 
@@ -108,12 +167,30 @@ export function LeaderboardTable({ standings, gender }: LeaderboardTableProps) {
     return undefined;
   };
 
+  // Get offensive and defensive column counts for header grouping
+  const offensiveColumns = columns.filter(c => c.category === 'offensive');
+  const defensiveColumns = columns.filter(c => c.category === 'defensive');
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full">
         <thead>
+          {/* Header group row with "Allowed" bar */}
           <tr>
-            <th className="text-left py-3 px-3 bg-[var(--background-secondary)] sticky left-0 z-10">
+            <th className="bg-[var(--background-secondary)] sticky left-0 z-10" />
+            <th className="bg-[var(--background-secondary)] sticky left-8 z-10" />
+            <th className="bg-[var(--background-secondary)]" />
+            <th colSpan={offensiveColumns.length} className="bg-[var(--background-secondary)]" />
+            <th
+              colSpan={defensiveColumns.length}
+              className="bg-[#374151] text-white text-xs font-semibold py-1 px-2 text-center"
+            >
+              Allowed
+            </th>
+          </tr>
+          {/* Column headers */}
+          <tr>
+            <th className="text-left py-3 px-3 bg-[var(--background-secondary)] sticky left-0 z-10 text-[var(--foreground)]">
               #
             </th>
             {columns.map(col => (
@@ -122,15 +199,12 @@ export function LeaderboardTable({ standings, gender }: LeaderboardTableProps) {
                 className={`
                   py-3 px-3 bg-[var(--background-secondary)]
                   ${col.key === 'team' ? 'text-left sticky left-8 z-10' : 'text-right'}
-                  ${col.key !== 'team' && col.key !== 'record' ? 'cursor-pointer hover:text-[var(--foreground)]' : ''}
+                  ${col.key !== 'team' && col.key !== 'record' ? 'cursor-pointer hover:text-[var(--accent-primary)]' : ''}
                 `}
                 onClick={() => col.key !== 'team' && col.key !== 'record' && handleSort(col.key as SortField)}
               >
-                <div className="flex items-center gap-1 justify-end">
-                  <span
-                    className="text-xs"
-                    style={{ color: getCategoryColor(col.category) }}
-                  >
+                <div className={`flex items-center gap-1 ${col.key === 'team' ? 'justify-start' : 'justify-end'}`}>
+                  <span className="text-xs text-[var(--foreground)]">
                     {col.shortLabel}
                   </span>
                   {sortField === col.key && (
@@ -194,8 +268,25 @@ export function LeaderboardTable({ standings, gender }: LeaderboardTableProps) {
               {/* Stats */}
               {columns.slice(2).map(col => {
                 const value = team[col.key as keyof TeamStandings] as number;
-                const color = getStatColor(col, value);
 
+                if (viewMode === 'points-impact' && col.factorKey) {
+                  const pointsImpact = calculatePointsImpact(col, value);
+                  const color = getPointsImpactColor(pointsImpact);
+
+                  return (
+                    <td key={col.key} className="py-3 px-3 text-right">
+                      <span
+                        className="stat-number text-sm font-semibold"
+                        style={{ color }}
+                        title={`${col.format ? col.format(value) : value}%`}
+                      >
+                        {formatPointsImpact(pointsImpact)}
+                      </span>
+                    </td>
+                  );
+                }
+
+                const color = getStatColor(col, value);
                 return (
                   <td key={col.key} className="py-3 px-3 text-right">
                     <span

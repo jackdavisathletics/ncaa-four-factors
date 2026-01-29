@@ -5,9 +5,12 @@ import { GenderToggle, LeaderboardTable } from '@/components';
 import { Gender } from '@/lib/types';
 import { getStandings, getConferences, getTeamConference } from '@/lib/data';
 
+export type ViewMode = 'percentages' | 'points-impact';
+
 export default function LeaderboardPage() {
   const [gender, setGender] = useState<Gender>('mens');
   const [selectedConference, setSelectedConference] = useState<string>('all');
+  const [viewMode, setViewMode] = useState<ViewMode>('percentages');
 
   const conferences = getConferences(gender);
   const allStandings = getStandings(gender);
@@ -37,6 +40,29 @@ export default function LeaderboardPage() {
           </p>
         </div>
         <div className="flex items-center gap-4">
+          {/* View Mode Toggle */}
+          <div className="flex rounded-lg overflow-hidden border border-[var(--border)]">
+            <button
+              onClick={() => setViewMode('percentages')}
+              className={`px-3 py-2 text-sm transition-colors ${
+                viewMode === 'percentages'
+                  ? 'bg-[var(--accent-primary)] text-white'
+                  : 'bg-[var(--surface)] text-[var(--foreground-muted)] hover:bg-[var(--surface-hover)]'
+              }`}
+            >
+              Percentages
+            </button>
+            <button
+              onClick={() => setViewMode('points-impact')}
+              className={`px-3 py-2 text-sm transition-colors ${
+                viewMode === 'points-impact'
+                  ? 'bg-[var(--accent-primary)] text-white'
+                  : 'bg-[var(--surface)] text-[var(--foreground-muted)] hover:bg-[var(--surface-hover)]'
+              }`}
+            >
+              Points Impact
+            </button>
+          </div>
           <select
             value={selectedConference}
             onChange={(e) => setSelectedConference(e.target.value)}
@@ -53,32 +79,10 @@ export default function LeaderboardPage() {
         </div>
       </div>
 
-      {/* Legend */}
-      <div className="card p-4 mb-6">
-        <div className="flex flex-wrap items-center gap-6 text-sm">
-          <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full" style={{ backgroundColor: 'var(--accent-primary)' }} />
-            <span className="text-[var(--foreground-muted)]">Offensive Factors (Team)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full" style={{ backgroundColor: 'var(--accent-secondary)' }} />
-            <span className="text-[var(--foreground-muted)]">Defensive Factors (Opponent)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full" style={{ backgroundColor: 'var(--accent-success)' }} />
-            <span className="text-[var(--foreground-muted)]">Top Tier</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full" style={{ backgroundColor: 'var(--accent-secondary)' }} />
-            <span className="text-[var(--foreground-muted)]">Bottom Tier</span>
-          </div>
-        </div>
-      </div>
-
       {/* Table */}
       <div className="card overflow-hidden">
         {standings.length > 0 ? (
-          <LeaderboardTable standings={standings} gender={gender} />
+          <LeaderboardTable standings={standings} gender={gender} viewMode={viewMode} />
         ) : (
           <div className="p-12 text-center">
             <p className="text-[var(--foreground-muted)]">

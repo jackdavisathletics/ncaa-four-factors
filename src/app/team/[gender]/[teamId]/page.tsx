@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Gender, FOUR_FACTORS_META } from '@/lib/types';
 import { getTeamById, getTeamStandings, getTeamGames } from '@/lib/data';
@@ -46,7 +45,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
             style={{ backgroundColor: team.color + '20' }}
           >
             {team.logo ? (
-              <Image
+              <img
                 src={team.logo}
                 alt={team.name}
                 width={64}

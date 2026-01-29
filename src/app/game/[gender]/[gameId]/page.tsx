@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Gender, FOUR_FACTORS_META, GameTeamStats } from '@/lib/types';
 import { getGameById } from '@/lib/data';
@@ -35,7 +34,7 @@ function TeamHeader({ team, won, gender }: { team: GameTeamStats; won: boolean; 
         style={{ backgroundColor: team.teamColor + '20' }}
       >
         {team.teamLogo ? (
-          <Image
+          <img
             src={team.teamLogo}
             alt={team.teamName}
             width={56}
@@ -155,7 +154,7 @@ export default async function GamePage({ params }: GamePageProps) {
               style={{ backgroundColor: game.awayTeam.teamColor + '20' }}
             >
               {game.awayTeam.teamLogo ? (
-                <Image
+                <img
                   src={game.awayTeam.teamLogo}
                   alt={game.awayTeam.teamName}
                   width={16}
@@ -173,7 +172,7 @@ export default async function GamePage({ params }: GamePageProps) {
               style={{ backgroundColor: game.homeTeam.teamColor + '20' }}
             >
               {game.homeTeam.teamLogo ? (
-                <Image
+                <img
                   src={game.homeTeam.teamLogo}
                   alt={game.homeTeam.teamName}
                   width={16}

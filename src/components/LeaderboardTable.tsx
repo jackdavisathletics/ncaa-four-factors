@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { TeamStandings, Gender, SortField, SortDirection } from '@/lib/types';
 
 interface LeaderboardTableProps {
@@ -165,7 +164,7 @@ export function LeaderboardTable({ standings, gender }: LeaderboardTableProps) {
                     style={{ backgroundColor: team.teamColor + '20' }}
                   >
                     {team.teamLogo ? (
-                      <Image
+                      <img
                         src={team.teamLogo}
                         alt={team.teamName}
                         width={20}

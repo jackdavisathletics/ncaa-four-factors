@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { Team, Gender } from '@/lib/types';
 import { searchTeams } from '@/lib/data';
 
@@ -137,7 +136,7 @@ export function TeamSearch({ gender, placeholder = 'Search teams...' }: TeamSear
                 style={{ backgroundColor: team.color + '20' }}
               >
                 {team.logo ? (
-                  <Image
+                  <img
                     src={team.logo}
                     alt={team.name}
                     width={24}

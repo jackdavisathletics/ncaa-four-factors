@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { Game, Gender } from '@/lib/types';
 
 interface GameCardProps {
@@ -47,7 +46,7 @@ export function GameCard({ game, gender, showFactors = false }: GameCardProps) {
           style={{ backgroundColor: game.awayTeam.teamColor + '20' }}
         >
           {game.awayTeam.teamLogo ? (
-            <Image
+            <img
               src={game.awayTeam.teamLogo}
               alt={game.awayTeam.teamName}
               width={28}
@@ -81,7 +80,7 @@ export function GameCard({ game, gender, showFactors = false }: GameCardProps) {
           style={{ backgroundColor: game.homeTeam.teamColor + '20' }}
         >
           {game.homeTeam.teamLogo ? (
-            <Image
+            <img
               src={game.homeTeam.teamLogo}
               alt={game.homeTeam.teamName}
               width={28}
@@ -123,7 +122,7 @@ export function GameCard({ game, gender, showFactors = false }: GameCardProps) {
               style={{ backgroundColor: game.awayTeam.teamColor + '20' }}
             >
               {game.awayTeam.teamLogo ? (
-                <Image
+                <img
                   src={game.awayTeam.teamLogo}
                   alt={game.awayTeam.teamAbbreviation}
                   width={18}
@@ -166,7 +165,7 @@ export function GameCard({ game, gender, showFactors = false }: GameCardProps) {
               style={{ backgroundColor: game.homeTeam.teamColor + '20' }}
             >
               {game.homeTeam.teamLogo ? (
-                <Image
+                <img
                   src={game.homeTeam.teamLogo}
                   alt={game.homeTeam.teamAbbreviation}
                   width={18}

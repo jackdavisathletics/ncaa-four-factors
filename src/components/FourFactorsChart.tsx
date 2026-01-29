@@ -81,12 +81,11 @@ export function FourFactorsChart({
               <span className="text-sm font-medium text-[var(--foreground-muted)] uppercase tracking-wide">
                 {factor.shortLabel}
               </span>
-              <span className="text-xs text-[var(--foreground-muted)]">
-                {displayMode === 'percentage'
-                  ? (factor.higherIsBetter ? '↑ higher is better' : '↓ lower is better')
-                  : 'est. points impact'
-                }
-              </span>
+{displayMode === 'points' && (
+                <span className="text-xs text-[var(--foreground-muted)]">
+                  est. points impact
+                </span>
+              )}
             </div>
           )}
 

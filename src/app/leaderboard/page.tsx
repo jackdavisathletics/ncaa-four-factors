@@ -1,13 +1,30 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { GenderToggle, LeaderboardTable } from '@/components';
 import { Gender } from '@/lib/types';
-import { getStandings } from '@/lib/data';
+import { getStandings, getConferences, getTeamConference } from '@/lib/data';
 
 export default function LeaderboardPage() {
   const [gender, setGender] = useState<Gender>('mens');
-  const standings = getStandings(gender);
+  const [selectedConference, setSelectedConference] = useState<string>('all');
+
+  const conferences = getConferences(gender);
+  const allStandings = getStandings(gender);
+
+  const standings = useMemo(() => {
+    if (selectedConference === 'all') {
+      return allStandings;
+    }
+    return allStandings.filter(team => {
+      const conference = getTeamConference(gender, team.teamId);
+      return conference?.id === selectedConference;
+    });
+  }, [allStandings, selectedConference, gender]);
+
+  const currentConferenceName = selectedConference === 'all'
+    ? 'All Conferences'
+    : conferences.find(c => c.id === selectedConference)?.name || 'All Conferences';
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -16,10 +33,24 @@ export default function LeaderboardPage() {
         <div>
           <h1 className="text-4xl mb-2">Leaderboard</h1>
           <p className="text-[var(--foreground-muted)]">
-            Conference USA {gender === 'mens' ? "Men's" : "Women's"} Basketball - Season Four Factors
+            {currentConferenceName} {gender === 'mens' ? "Men's" : "Women's"} Basketball - Season Four Factors
           </p>
         </div>
-        <GenderToggle value={gender} onChange={setGender} />
+        <div className="flex items-center gap-4">
+          <select
+            value={selectedConference}
+            onChange={(e) => setSelectedConference(e.target.value)}
+            className="px-3 py-2 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] cursor-pointer"
+          >
+            <option value="all">All Conferences</option>
+            {conferences.map(conf => (
+              <option key={conf.id} value={conf.id}>
+                {conf.name}
+              </option>
+            ))}
+          </select>
+          <GenderToggle value={gender} onChange={setGender} />
+        </div>
       </div>
 
       {/* Legend */}

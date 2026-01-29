@@ -66,3 +66,29 @@ export function searchTeams(gender: Gender, query: string): Team[] {
       t.abbreviation.toLowerCase().includes(lowerQuery)
   );
 }
+
+export interface Conference {
+  id: string;
+  name: string;
+}
+
+export function getConferences(gender: Gender): Conference[] {
+  const teams = dataCache[gender].teams;
+  const conferenceMap = new Map<string, string>();
+
+  teams.forEach(team => {
+    if (!conferenceMap.has(team.conferenceId)) {
+      conferenceMap.set(team.conferenceId, team.conference);
+    }
+  });
+
+  return Array.from(conferenceMap.entries())
+    .map(([id, name]) => ({ id, name }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+export function getTeamConference(gender: Gender, teamId: string): Conference | undefined {
+  const team = dataCache[gender].teams.find(t => t.id === teamId);
+  if (!team) return undefined;
+  return { id: team.conferenceId, name: team.conference };
+}

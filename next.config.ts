@@ -6,12 +6,7 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'a.espncdn.com',
-        pathname: '/i/teamlogos/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'a.espncdn.com',
-        pathname: '/combiner/**',
+        pathname: '/**',
       },
     ],
   },

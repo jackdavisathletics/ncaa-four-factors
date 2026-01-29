@@ -1,8 +1,10 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { Gender, FOUR_FACTORS_META } from '@/lib/types';
+import { Gender, FOUR_FACTORS_META, calculatePointsImpact, formatPointsImpact } from '@/lib/types';
 import { getTeamById, getTeamStandings, getTeamGames } from '@/lib/data';
 import { GameCard } from '@/components';
+
+const AVERAGE_PACE = 70;
 
 interface TeamPageProps {
   params: Promise<{
@@ -92,7 +94,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
 
       {/* Four Factors Summary */}
       {standings && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {/* Offensive Factors */}
           <div className="card p-6">
             <h2 className="text-xl mb-4" style={{ color: 'var(--accent-primary)' }}>
@@ -168,6 +170,91 @@ export default async function TeamPage({ params }: TeamPageProps) {
                   </div>
                 );
               })}
+            </div>
+          </div>
+
+          {/* Points Impact */}
+          <div className="card p-6">
+            <h2 className="text-xl mb-4" style={{ color: 'var(--accent-success)' }}>
+              Points Impact
+            </h2>
+            <div className="space-y-4">
+              {(() => {
+                const pointsImpactData = FOUR_FACTORS_META.map((factor, index) => {
+                  const offValue = standings[factor.key];
+                  const defKey = `opp${factor.key.charAt(0).toUpperCase()}${factor.key.slice(1)}` as keyof typeof standings;
+                  const defValue = standings[defKey] as number;
+
+                  // Calculate differential (positive means team is better)
+                  // For TOV%: lower is better, so we flip the sign
+                  const differential = factor.higherIsBetter
+                    ? offValue - defValue
+                    : defValue - offValue;
+
+                  // Calculate points impact using the factor's coefficient
+                  const pointsImpact = calculatePointsImpact(factor.key,
+                    factor.higherIsBetter ? offValue - defValue : offValue - defValue,
+                    AVERAGE_PACE);
+
+                  return {
+                    label: factor.shortLabel,
+                    differential,
+                    pointsImpact,
+                    color: factorColors[index],
+                  };
+                });
+
+                const totalImpact = pointsImpactData.reduce((sum, d) => sum + d.pointsImpact, 0);
+                const maxAbsImpact = Math.max(...pointsImpactData.map(d => Math.abs(d.pointsImpact)), 5);
+
+                return (
+                  <>
+                    {pointsImpactData.map((data) => (
+                      <div key={data.label}>
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-sm text-[var(--foreground-muted)]">
+                            {data.label}
+                          </span>
+                          <span
+                            className="stat-number text-lg font-bold"
+                            style={{ color: data.pointsImpact >= 0 ? 'var(--accent-success)' : 'var(--accent-secondary)' }}
+                          >
+                            {formatPointsImpact(data.pointsImpact)}
+                          </span>
+                        </div>
+                        <div className="h-2 bg-[var(--background-tertiary)] rounded-full overflow-hidden relative">
+                          {/* Center line */}
+                          <div className="absolute left-1/2 top-0 bottom-0 w-px bg-[var(--border)] z-10" />
+                          {/* Bar */}
+                          <div
+                            className="absolute top-0 bottom-0 rounded-full transition-all duration-500"
+                            style={{
+                              left: data.pointsImpact >= 0 ? '50%' : `${50 - (Math.abs(data.pointsImpact) / maxAbsImpact) * 50}%`,
+                              width: `${(Math.abs(data.pointsImpact) / maxAbsImpact) * 50}%`,
+                              backgroundColor: data.pointsImpact >= 0 ? 'var(--accent-success)' : 'var(--accent-secondary)',
+                            }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                    {/* Total */}
+                    <div className="pt-4 mt-2 border-t border-[var(--border)]">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium">Total Impact</span>
+                        <span
+                          className="stat-number text-xl font-bold"
+                          style={{ color: totalImpact >= 0 ? 'var(--accent-success)' : 'var(--accent-secondary)' }}
+                        >
+                          {formatPointsImpact(totalImpact)} pts
+                        </span>
+                      </div>
+                      <p className="text-xs text-[var(--foreground-muted)] mt-1">
+                        Avg. per game @ {AVERAGE_PACE} pace
+                      </p>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
           </div>
         </div>

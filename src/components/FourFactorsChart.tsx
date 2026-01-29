@@ -1,15 +1,23 @@
 'use client';
 
 import { useMemo } from 'react';
-import { FOUR_FACTORS_META, GameTeamStats } from '@/lib/types';
+import { FOUR_FACTORS_META, GameTeamStats, calculatePointsImpact, formatPointsImpact } from '@/lib/types';
+
+export type DisplayMode = 'percentage' | 'points';
 
 interface FourFactorsChartProps {
   homeTeam: GameTeamStats;
   awayTeam: GameTeamStats;
   showLabels?: boolean;
+  displayMode?: DisplayMode;
 }
 
-export function FourFactorsChart({ homeTeam, awayTeam, showLabels = true }: FourFactorsChartProps) {
+export function FourFactorsChart({
+  homeTeam,
+  awayTeam,
+  showLabels = true,
+  displayMode = 'percentage'
+}: FourFactorsChartProps) {
   const factors = useMemo(() => {
     return FOUR_FACTORS_META.map(meta => {
       const homeValue = homeTeam[meta.key];
@@ -22,12 +30,19 @@ export function FourFactorsChart({ homeTeam, awayTeam, showLabels = true }: Four
 
       // Calculate differential for bar width
       const diff = Math.abs(homeValue - awayValue);
-      const maxValue = Math.max(homeValue, awayValue);
-      const minValue = Math.min(homeValue, awayValue);
 
       // Normalize to 0-50 scale for each side
-      const homePercent = maxValue > 0 ? (homeValue / (homeValue + awayValue)) * 100 : 50;
+      const homePercent = (homeValue + awayValue) > 0
+        ? (homeValue / (homeValue + awayValue)) * 100
+        : 50;
       const awayPercent = 100 - homePercent;
+
+      // Calculate points impact
+      // For home team: positive diff means home is better (for higherIsBetter factors)
+      // For TOV%: higher is worse, so we need to flip the sign
+      const homeDiff = homeValue - awayValue;
+      const homePointsImpact = calculatePointsImpact(meta.key, homeDiff, true);
+      const awayPointsImpact = -homePointsImpact;
 
       return {
         ...meta,
@@ -38,6 +53,8 @@ export function FourFactorsChart({ homeTeam, awayTeam, showLabels = true }: Four
         homePercent,
         awayPercent,
         diff,
+        homePointsImpact,
+        awayPointsImpact,
       };
     });
   }, [homeTeam, awayTeam]);
@@ -49,6 +66,10 @@ export function FourFactorsChart({ homeTeam, awayTeam, showLabels = true }: Four
     'var(--factor-ftr)',
   ];
 
+  // Calculate total points impact
+  const totalHomePoints = factors.reduce((sum, f) => sum + f.homePointsImpact, 0);
+  const totalAwayPoints = factors.reduce((sum, f) => sum + f.awayPointsImpact, 0);
+
   return (
     <div className="space-y-4">
       {factors.map((factor, index) => (
@@ -59,7 +80,10 @@ export function FourFactorsChart({ homeTeam, awayTeam, showLabels = true }: Four
                 {factor.shortLabel}
               </span>
               <span className="text-xs text-[var(--foreground-muted)]">
-                {factor.higherIsBetter ? '↑ higher is better' : '↓ lower is better'}
+                {displayMode === 'percentage'
+                  ? (factor.higherIsBetter ? '↑ higher is better' : '↓ lower is better')
+                  : 'est. points impact'
+                }
               </span>
             </div>
           )}
@@ -81,7 +105,10 @@ export function FourFactorsChart({ homeTeam, awayTeam, showLabels = true }: Four
                   ${factor.homeBetter ? 'text-[var(--background)]' : 'text-[var(--foreground-muted)]'}
                 `}
               >
-                {factor.format(factor.homeValue)}
+                {displayMode === 'percentage'
+                  ? factor.format(factor.homeValue)
+                  : formatPointsImpact(factor.homePointsImpact)
+                }
               </span>
             </div>
 
@@ -104,7 +131,10 @@ export function FourFactorsChart({ homeTeam, awayTeam, showLabels = true }: Four
                   ${factor.awayBetter ? 'text-[var(--background)]' : 'text-[var(--foreground-muted)]'}
                 `}
               >
-                {factor.format(factor.awayValue)}
+                {displayMode === 'percentage'
+                  ? factor.format(factor.awayValue)
+                  : formatPointsImpact(factor.awayPointsImpact)
+                }
               </span>
             </div>
           </div>
@@ -119,12 +149,46 @@ export function FourFactorsChart({ homeTeam, awayTeam, showLabels = true }: Four
                   backgroundColor: factorColors[index] + '15',
                 }}
               >
-                {factor.homeBetter ? homeTeam.teamAbbreviation : awayTeam.teamAbbreviation} +{factor.diff.toFixed(1)}
+                {displayMode === 'percentage'
+                  ? `${factor.homeBetter ? homeTeam.teamAbbreviation : awayTeam.teamAbbreviation} +${factor.diff.toFixed(1)}`
+                  : `${factor.homeBetter ? homeTeam.teamAbbreviation : awayTeam.teamAbbreviation} ${formatPointsImpact(Math.abs(factor.homePointsImpact))} pts`
+                }
               </span>
             </div>
           )}
         </div>
       ))}
+
+      {/* Total points impact summary */}
+      {displayMode === 'points' && (
+        <div className="mt-6 pt-4 border-t border-[var(--border)]">
+          <div className="flex justify-between items-center">
+            <div className="text-center">
+              <p className="text-xs text-[var(--foreground-muted)] uppercase">
+                {homeTeam.teamAbbreviation} Total
+              </p>
+              <p
+                className={`stat-number text-xl font-bold ${totalHomePoints >= 0 ? 'text-[var(--accent-success)]' : 'text-[var(--accent-secondary)]'}`}
+              >
+                {formatPointsImpact(totalHomePoints)}
+              </p>
+            </div>
+            <div className="text-xs text-[var(--foreground-muted)] text-center px-4">
+              Est. points from<br />Four Factors edge
+            </div>
+            <div className="text-center">
+              <p className="text-xs text-[var(--foreground-muted)] uppercase">
+                {awayTeam.teamAbbreviation} Total
+              </p>
+              <p
+                className={`stat-number text-xl font-bold ${totalAwayPoints >= 0 ? 'text-[var(--accent-success)]' : 'text-[var(--accent-secondary)]'}`}
+              >
+                {formatPointsImpact(totalAwayPoints)}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

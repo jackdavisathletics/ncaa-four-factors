@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Gender, FOUR_FACTORS_META, GameTeamStats } from '@/lib/types';
 import { getGameById } from '@/lib/data';
-import { FourFactorsChart } from '@/components';
+import { FourFactorsSection } from '@/components';
 
 interface GamePageProps {
   params: Promise<{
@@ -146,47 +146,9 @@ export default async function GamePage({ params }: GamePageProps) {
       <div className="card p-8 mb-8">
         <h2 className="text-2xl text-center mb-6">Four Factors Analysis</h2>
 
-        {/* Team labels */}
-        <div className="flex justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <div
-              className="w-6 h-6 rounded flex items-center justify-center overflow-hidden"
-              style={{ backgroundColor: game.awayTeam.teamColor + '20' }}
-            >
-              {game.awayTeam.teamLogo ? (
-                <img
-                  src={game.awayTeam.teamLogo}
-                  alt={game.awayTeam.teamName}
-                  width={16}
-                  height={16}
-                  className="object-contain"
-                />
-              ) : null}
-            </div>
-            <span className="font-medium">{game.awayTeam.teamAbbreviation}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="font-medium">{game.homeTeam.teamAbbreviation}</span>
-            <div
-              className="w-6 h-6 rounded flex items-center justify-center overflow-hidden"
-              style={{ backgroundColor: game.homeTeam.teamColor + '20' }}
-            >
-              {game.homeTeam.teamLogo ? (
-                <img
-                  src={game.homeTeam.teamLogo}
-                  alt={game.homeTeam.teamName}
-                  width={16}
-                  height={16}
-                  className="object-contain"
-                />
-              ) : null}
-            </div>
-          </div>
-        </div>
+        <FourFactorsSection homeTeam={game.homeTeam} awayTeam={game.awayTeam} />
 
-        <FourFactorsChart homeTeam={game.homeTeam} awayTeam={game.awayTeam} />
-
-        {/* Winner explanation */}
+        {/* Key Takeaways */}
         <div className="mt-8 p-4 rounded-lg bg-[var(--background-tertiary)]">
           <h3 className="text-sm font-semibold uppercase tracking-wide text-[var(--foreground-muted)] mb-3">
             Key Takeaways

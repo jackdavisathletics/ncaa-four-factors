@@ -101,7 +101,13 @@ export interface FactorMeta {
   description: string;
   higherIsBetter: boolean;
   format: (value: number) => string;
+  // Points per 100 possessions impact per 1% change
+  // From: "Dean Oliver's Four Factors Revisited" (2023)
+  pointsImpact: number;
 }
+
+// Average possessions per team per game in college basketball (~67)
+export const AVG_POSSESSIONS_PER_GAME = 67;
 
 export const FOUR_FACTORS_META: FactorMeta[] = [
   {
@@ -111,6 +117,7 @@ export const FOUR_FACTORS_META: FactorMeta[] = [
     description: 'Adjusts field goal percentage to account for three-pointers being worth more',
     higherIsBetter: true,
     format: (v) => `${v.toFixed(1)}%`,
+    pointsImpact: 1.77, // +1.77 pts/100 poss per 1% increase
   },
   {
     key: 'tov',
@@ -119,6 +126,7 @@ export const FOUR_FACTORS_META: FactorMeta[] = [
     description: 'Percentage of possessions ending in a turnover',
     higherIsBetter: false,
     format: (v) => `${v.toFixed(1)}%`,
+    pointsImpact: -1.34, // -1.34 pts/100 poss per 1% increase (negative because higher TOV% is bad)
   },
   {
     key: 'orb',
@@ -127,6 +135,7 @@ export const FOUR_FACTORS_META: FactorMeta[] = [
     description: 'Percentage of available offensive rebounds grabbed',
     higherIsBetter: true,
     format: (v) => `${v.toFixed(1)}%`,
+    pointsImpact: 0.623, // +0.623 pts/100 poss per 1% increase
   },
   {
     key: 'ftr',
@@ -135,5 +144,42 @@ export const FOUR_FACTORS_META: FactorMeta[] = [
     description: 'Measures ability to get to the free throw line and convert',
     higherIsBetter: true,
     format: (v) => `${v.toFixed(1)}%`,
+    pointsImpact: 0.253, // +0.253 pts/100 poss per 1% increase
   },
 ];
+
+/**
+ * Calculate points impact from a factor differential
+ * @param factorKey - The factor key (efg, tov, orb, ftr)
+ * @param differential - The percentage point difference (team1 - team2)
+ * @param perGame - If true, converts to per-game estimate; if false, per 100 possessions
+ * @returns Points gained/lost from this factor
+ */
+export function calculatePointsImpact(
+  factorKey: keyof FourFactors,
+  differential: number,
+  perGame: boolean = true
+): number {
+  const factor = FOUR_FACTORS_META.find(f => f.key === factorKey);
+  if (!factor) return 0;
+
+  // For TOV%, the impact is already negative in the coefficient
+  // A positive differential means team1 has higher TOV% (bad for team1)
+  // So we multiply by the negative coefficient to get negative points
+  const pointsPer100 = differential * factor.pointsImpact;
+
+  if (perGame) {
+    return pointsPer100 * (AVG_POSSESSIONS_PER_GAME / 100);
+  }
+  return pointsPer100;
+}
+
+/**
+ * Format points impact for display
+ * @param points - Points value
+ * @returns Formatted string like "+2.3" or "-1.5"
+ */
+export function formatPointsImpact(points: number): string {
+  const sign = points >= 0 ? '+' : '';
+  return `${sign}${points.toFixed(1)}`;
+}

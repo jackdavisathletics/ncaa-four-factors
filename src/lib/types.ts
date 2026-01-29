@@ -109,6 +109,14 @@ export interface FactorMeta {
 // Average possessions per team per game in college basketball (~67)
 export const AVG_POSSESSIONS_PER_GAME = 67;
 
+/**
+ * Calculate possessions from box score stats
+ * Formula: Possessions ≈ FGA - OREB + TOV + 0.44 × FTA
+ */
+export function calculatePossessions(stats: BoxScoreStats): number {
+  return stats.fga - stats.oreb + stats.turnovers + 0.44 * stats.fta;
+}
+
 export const FOUR_FACTORS_META: FactorMeta[] = [
   {
     key: 'efg',
@@ -152,13 +160,13 @@ export const FOUR_FACTORS_META: FactorMeta[] = [
  * Calculate points impact from a factor differential
  * @param factorKey - The factor key (efg, tov, orb, ftr)
  * @param differential - The percentage point difference (team1 - team2)
- * @param perGame - If true, converts to per-game estimate; if false, per 100 possessions
+ * @param possessions - Actual possessions in the game (uses average if not provided)
  * @returns Points gained/lost from this factor
  */
 export function calculatePointsImpact(
   factorKey: keyof FourFactors,
   differential: number,
-  perGame: boolean = true
+  possessions: number = AVG_POSSESSIONS_PER_GAME
 ): number {
   const factor = FOUR_FACTORS_META.find(f => f.key === factorKey);
   if (!factor) return 0;
@@ -168,10 +176,7 @@ export function calculatePointsImpact(
   // So we multiply by the negative coefficient to get negative points
   const pointsPer100 = differential * factor.pointsImpact;
 
-  if (perGame) {
-    return pointsPer100 * (AVG_POSSESSIONS_PER_GAME / 100);
-  }
-  return pointsPer100;
+  return pointsPer100 * (possessions / 100);
 }
 
 /**

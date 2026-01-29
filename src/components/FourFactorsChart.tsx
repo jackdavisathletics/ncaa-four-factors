@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { FOUR_FACTORS_META, GameTeamStats, calculatePointsImpact, formatPointsImpact } from '@/lib/types';
+import { FOUR_FACTORS_META, GameTeamStats, calculatePointsImpact, formatPointsImpact, AVG_POSSESSIONS_PER_GAME } from '@/lib/types';
 
 export type DisplayMode = 'percentage' | 'points';
 
@@ -10,13 +10,15 @@ interface FourFactorsChartProps {
   awayTeam: GameTeamStats;
   showLabels?: boolean;
   displayMode?: DisplayMode;
+  possessions?: number; // Actual game possessions (uses average if not provided)
 }
 
 export function FourFactorsChart({
   homeTeam,
   awayTeam,
   showLabels = true,
-  displayMode = 'percentage'
+  displayMode = 'percentage',
+  possessions = AVG_POSSESSIONS_PER_GAME
 }: FourFactorsChartProps) {
   const factors = useMemo(() => {
     return FOUR_FACTORS_META.map(meta => {
@@ -37,11 +39,11 @@ export function FourFactorsChart({
         : 50;
       const awayPercent = 100 - homePercent;
 
-      // Calculate points impact
+      // Calculate points impact using actual game possessions
       // For home team: positive diff means home is better (for higherIsBetter factors)
       // For TOV%: higher is worse, so we need to flip the sign
       const homeDiff = homeValue - awayValue;
-      const homePointsImpact = calculatePointsImpact(meta.key, homeDiff, true);
+      const homePointsImpact = calculatePointsImpact(meta.key, homeDiff, possessions);
       const awayPointsImpact = -homePointsImpact;
 
       return {
@@ -57,7 +59,7 @@ export function FourFactorsChart({
         awayPointsImpact,
       };
     });
-  }, [homeTeam, awayTeam]);
+  }, [homeTeam, awayTeam, possessions]);
 
   const factorColors = [
     'var(--factor-efg)',
@@ -165,12 +167,12 @@ export function FourFactorsChart({
           <div className="flex justify-between items-center">
             <div className="text-center">
               <p className="text-xs text-[var(--foreground-muted)] uppercase">
-                {homeTeam.teamAbbreviation} Total
+                {awayTeam.teamAbbreviation} Total
               </p>
               <p
-                className={`stat-number text-xl font-bold ${totalHomePoints >= 0 ? 'text-[var(--accent-success)]' : 'text-[var(--accent-secondary)]'}`}
+                className={`stat-number text-xl font-bold ${totalAwayPoints >= 0 ? 'text-[var(--accent-success)]' : 'text-[var(--accent-secondary)]'}`}
               >
-                {formatPointsImpact(totalHomePoints)}
+                {formatPointsImpact(totalAwayPoints)}
               </p>
             </div>
             <div className="text-xs text-[var(--foreground-muted)] text-center px-4">
@@ -178,12 +180,12 @@ export function FourFactorsChart({
             </div>
             <div className="text-center">
               <p className="text-xs text-[var(--foreground-muted)] uppercase">
-                {awayTeam.teamAbbreviation} Total
+                {homeTeam.teamAbbreviation} Total
               </p>
               <p
-                className={`stat-number text-xl font-bold ${totalAwayPoints >= 0 ? 'text-[var(--accent-success)]' : 'text-[var(--accent-secondary)]'}`}
+                className={`stat-number text-xl font-bold ${totalHomePoints >= 0 ? 'text-[var(--accent-success)]' : 'text-[var(--accent-secondary)]'}`}
               >
-                {formatPointsImpact(totalAwayPoints)}
+                {formatPointsImpact(totalHomePoints)}
               </p>
             </div>
           </div>

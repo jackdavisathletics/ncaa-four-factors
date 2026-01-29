@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { GameTeamStats } from '@/lib/types';
+import { useState, useMemo } from 'react';
+import { GameTeamStats, calculatePossessions } from '@/lib/types';
 import { FourFactorsChart, DisplayMode } from './FourFactorsChart';
 
 interface FourFactorsSectionProps {
@@ -11,6 +11,13 @@ interface FourFactorsSectionProps {
 
 export function FourFactorsSection({ homeTeam, awayTeam }: FourFactorsSectionProps) {
   const [displayMode, setDisplayMode] = useState<DisplayMode>('percentage');
+
+  // Calculate actual game possessions (average of both teams' estimates)
+  const possessions = useMemo(() => {
+    const homePoss = calculatePossessions(homeTeam);
+    const awayPoss = calculatePossessions(awayTeam);
+    return Math.round((homePoss + awayPoss) / 2);
+  }, [homeTeam, awayTeam]);
 
   return (
     <div>
@@ -86,13 +93,14 @@ export function FourFactorsSection({ homeTeam, awayTeam }: FourFactorsSectionPro
         homeTeam={homeTeam}
         awayTeam={awayTeam}
         displayMode={displayMode}
+        possessions={possessions}
       />
 
       {/* Info tooltip for points mode */}
       {displayMode === 'points' && (
         <p className="mt-4 text-xs text-[var(--foreground-muted)] text-center">
-          Points impact estimated using coefficients from &quot;Dean Oliver&apos;s Four Factors Revisited&quot; (2023).
-          Based on ~67 possessions per game.
+          Points impact calculated using {possessions} possessions (actual game pace).
+          Coefficients from &quot;Dean Oliver&apos;s Four Factors Revisited&quot; (2023).
         </p>
       )}
     </div>

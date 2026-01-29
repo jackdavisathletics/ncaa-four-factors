@@ -21,14 +21,11 @@ export function Navigation() {
             href="/"
             className="flex items-center gap-3 group"
           >
-            <div className="relative">
-              <img
-                src="/four-factors-logo.png"
-                alt="Four Factors Logo"
-                className="w-10 h-10 rounded-lg object-contain"
-              />
-              <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-30 blur-lg transition-opacity bg-[var(--accent-primary)]" />
-            </div>
+            <img
+              src="/four-factors-logo.png"
+              alt="Four Factors Logo"
+              className="w-12 h-12 object-contain"
+            />
             <div className="hidden sm:block">
               <h1 className="text-lg tracking-wider">Four Factors</h1>
               <p className="text-xs text-[var(--foreground-muted)] -mt-1">NCAA Basketball Analytics</p>

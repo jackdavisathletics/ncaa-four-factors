@@ -1,16 +1,34 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { FOUR_FACTORS_META, GameTeamStats, calculatePointsImpact, FourFactors } from '@/lib/types';
+import { GameTeamStats, calculateContributionDifferentials, calculateAllContributions, PointContributions } from '@/lib/types';
 
 interface WaterfallChartProps {
   homeTeam: GameTeamStats;
   awayTeam: GameTeamStats;
-  possessions: number;
 }
 
+// Factor keys for Dean Oliver's formulas
+type ContributionKey = 'shooting' | 'turnovers' | 'rebounding' | 'freeThrows';
+
+interface FactorDisplay {
+  key: ContributionKey;
+  label: string;
+  shortLabel: string;
+  // Keys for the percentage values to show on hover
+  homeStatKey: 'efg' | 'tov' | 'orb' | 'ftr';
+  awayStatKey: 'efg' | 'tov' | 'orb' | 'ftr';
+}
+
+const FACTOR_DISPLAY: FactorDisplay[] = [
+  { key: 'shooting', label: 'Shooting', shortLabel: 'eFG%', homeStatKey: 'efg', awayStatKey: 'efg' },
+  { key: 'turnovers', label: 'Turnovers', shortLabel: 'TOV%', homeStatKey: 'tov', awayStatKey: 'tov' },
+  { key: 'rebounding', label: 'Rebounding', shortLabel: 'ORB%', homeStatKey: 'orb', awayStatKey: 'orb' },
+  { key: 'freeThrows', label: 'Free Throws', shortLabel: 'FTR', homeStatKey: 'ftr', awayStatKey: 'ftr' },
+];
+
 interface WaterfallBar {
-  key: keyof FourFactors;
+  key: ContributionKey;
   label: string;
   value: number; // Points impact from winning team's perspective
   runningTotal: number;
@@ -22,28 +40,33 @@ interface WaterfallBar {
   awayValue: number; // actual percentage for away team
 }
 
-export function WaterfallChart({ homeTeam, awayTeam, possessions }: WaterfallChartProps) {
-  const [hoveredBar, setHoveredBar] = useState<keyof FourFactors | null>(null);
+export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
+  const [hoveredBar, setHoveredBar] = useState<ContributionKey | null>(null);
 
   const data = useMemo(() => {
-    // Determine winning team (by Four Factors total, not actual score)
-    const homeTotal = FOUR_FACTORS_META.reduce((sum, meta) => {
-      const homeDiff = homeTeam[meta.key] - awayTeam[meta.key];
-      return sum + calculatePointsImpact(meta.key, homeDiff, possessions);
-    }, 0);
+    // Calculate point contributions using Dean Oliver's formulas
+    const differentials = calculateContributionDifferentials(homeTeam, awayTeam);
 
-    const homeIsWinner = homeTotal >= 0;
+    // Determine winning team (by Four Factors total, not actual score)
+    const homeIsWinner = differentials.total >= 0;
     const winningTeam = homeIsWinner ? homeTeam : awayTeam;
     const losingTeam = homeIsWinner ? awayTeam : homeTeam;
 
-    // Calculate each factor's contribution from winning team's perspective
+    // Calculate contributions from winning team's perspective
+    const winnerContribs = calculateAllContributions(
+      winningTeam,
+      losingTeam.dreb
+    );
+    const loserContribs = calculateAllContributions(
+      losingTeam,
+      winningTeam.dreb
+    );
+
+    // Build bars for each factor
     let runningTotal = 0;
-    const bars: WaterfallBar[] = FOUR_FACTORS_META.map(meta => {
-      // Calculate from winning team's perspective
-      const winnerValue = winningTeam[meta.key];
-      const loserValue = losingTeam[meta.key];
-      const diff = winnerValue - loserValue;
-      const pointsImpact = calculatePointsImpact(meta.key, diff, possessions);
+    const bars: WaterfallBar[] = FACTOR_DISPLAY.map(factor => {
+      // Differential from winning team's perspective
+      const pointsImpact = winnerContribs[factor.key] - loserContribs[factor.key];
 
       const previousTotal = runningTotal;
       runningTotal += pointsImpact;
@@ -53,16 +76,16 @@ export function WaterfallChart({ homeTeam, awayTeam, possessions }: WaterfallCha
       const advantageTeam = winningTeamAdvantage ? winningTeam : losingTeam;
 
       return {
-        key: meta.key,
-        label: meta.shortLabel,
+        key: factor.key,
+        label: factor.shortLabel,
         value: pointsImpact,
         runningTotal,
         previousTotal,
         winningTeamAdvantage,
         advantageTeamColor: advantageTeam.teamColor,
         advantageTeamAbbr: advantageTeam.teamAbbreviation,
-        homeValue: homeTeam[meta.key],
-        awayValue: awayTeam[meta.key],
+        homeValue: homeTeam[factor.homeStatKey],
+        awayValue: awayTeam[factor.awayStatKey],
       };
     });
 
@@ -72,7 +95,7 @@ export function WaterfallChart({ homeTeam, awayTeam, possessions }: WaterfallCha
       winningTeam,
       losingTeam,
     };
-  }, [homeTeam, awayTeam, possessions]);
+  }, [homeTeam, awayTeam]);
 
   // Calculate scale: find the max absolute value we need to display
   // This includes intermediate running totals and individual bar values

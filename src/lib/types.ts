@@ -109,6 +109,12 @@ export interface FactorMeta {
 // Average possessions per team per game in college basketball (~67)
 export const AVG_POSSESSIONS_PER_GAME = 67;
 
+// League constants for Dean Oliver's point contribution formulas
+// LgEffic: Points per possession (college basketball ~1.02)
+export const LEAGUE_EFFICIENCY = 1.02;
+// LgOR%: League average offensive rebound percentage (~28%)
+export const LEAGUE_OREB_PCT = 0.28;
+
 /**
  * Calculate possessions from box score stats
  * Formula: Possessions ≈ FGA - OREB + TOV + 0.44 × FTA
@@ -187,4 +193,123 @@ export function calculatePointsImpact(
 export function formatPointsImpact(points: number): string {
   const sign = points >= 0 ? '+' : '';
   return `${sign}${points.toFixed(1)}`;
+}
+
+// ============================================================================
+// Dean Oliver's Original Point Contribution Formulas
+// These calculate how each factor contributed to a team's point total
+// Sum of all four factors ≈ actual scoring margin
+// ============================================================================
+
+export interface PointContributions {
+  shooting: number;  // Points from shooting efficiency
+  turnovers: number; // Points lost/gained from turnovers
+  rebounding: number; // Points from offensive rebounding
+  freeThrows: number; // Points from free throw generation
+  total: number;     // Sum of all contributions
+}
+
+/**
+ * Calculate points from field goals
+ * FG Pts = 2*(FGM - FG3M) + 3*FG3M = 2*FGM + FG3M
+ */
+function calculateFgPoints(stats: BoxScoreStats): number {
+  return 2 * stats.fgm + stats.fg3m;
+}
+
+/**
+ * Calculate Dean Oliver's Shooting contribution
+ * Formula: FG Pts - FGM*LgEffic - (1-LgOR%)*FGX*LgEffic
+ *
+ * Breakdown:
+ * - FG Pts: Actual points scored from field goals
+ * - FGM*LgEffic: Expected value if every make was worth average possession
+ * - (1-LgOR%)*FGX*LgEffic: Value lost from misses that weren't rebounded
+ */
+export function calculateShootingContribution(stats: BoxScoreStats): number {
+  const fgPts = calculateFgPoints(stats);
+  const fgx = stats.fga - stats.fgm; // Missed field goals
+
+  return fgPts - stats.fgm * LEAGUE_EFFICIENCY - (1 - LEAGUE_OREB_PCT) * fgx * LEAGUE_EFFICIENCY;
+}
+
+/**
+ * Calculate Dean Oliver's Turnover contribution
+ * Formula: -LgEffic * TOV
+ *
+ * Each turnover costs you one possession worth of expected points
+ */
+export function calculateTurnoverContribution(stats: BoxScoreStats): number {
+  return -LEAGUE_EFFICIENCY * stats.turnovers;
+}
+
+/**
+ * Calculate Dean Oliver's Offensive Rebounding contribution
+ * Formula: [(1-LgOR%)*OREB - LgOR%*OppDREB] * LgEffic
+ *
+ * Breakdown:
+ * - (1-LgOR%)*OREB: Your offensive rebounds above league expectation
+ * - LgOR%*OppDREB: Opponent's defensive rebounds above their expectation
+ */
+export function calculateReboundingContribution(
+  stats: BoxScoreStats,
+  oppDreb: number
+): number {
+  return ((1 - LEAGUE_OREB_PCT) * stats.oreb - LEAGUE_OREB_PCT * oppDreb) * LEAGUE_EFFICIENCY;
+}
+
+/**
+ * Calculate Dean Oliver's Free Throw contribution
+ * Formula: FTM - 0.4*FTA*LgEffic + 0.06*(FTA-FTM)*LgEffic
+ *
+ * Breakdown:
+ * - FTM: Actual points from free throws
+ * - 0.4*FTA*LgEffic: Opportunity cost (each FT attempt uses ~0.4 possessions)
+ * - 0.06*(FTA-FTM)*LgEffic: Small credit for potential OREB on missed FTs
+ */
+export function calculateFreeThrowContribution(stats: BoxScoreStats): number {
+  const ftMissed = stats.fta - stats.ftm;
+  return stats.ftm - 0.4 * stats.fta * LEAGUE_EFFICIENCY + 0.06 * ftMissed * LEAGUE_EFFICIENCY;
+}
+
+/**
+ * Calculate all four point contributions for a team
+ * These represent how each factor contributed to the team's scoring
+ */
+export function calculateAllContributions(
+  stats: BoxScoreStats,
+  oppDreb: number
+): PointContributions {
+  const shooting = calculateShootingContribution(stats);
+  const turnovers = calculateTurnoverContribution(stats);
+  const rebounding = calculateReboundingContribution(stats, oppDreb);
+  const freeThrows = calculateFreeThrowContribution(stats);
+
+  return {
+    shooting,
+    turnovers,
+    rebounding,
+    freeThrows,
+    total: shooting + turnovers + rebounding + freeThrows,
+  };
+}
+
+/**
+ * Calculate the point differential for each factor between two teams
+ * Positive values mean team1 had the advantage
+ */
+export function calculateContributionDifferentials(
+  team1Stats: BoxScoreStats,
+  team2Stats: BoxScoreStats
+): PointContributions {
+  const team1 = calculateAllContributions(team1Stats, team2Stats.dreb);
+  const team2 = calculateAllContributions(team2Stats, team1Stats.dreb);
+
+  return {
+    shooting: team1.shooting - team2.shooting,
+    turnovers: team1.turnovers - team2.turnovers,
+    rebounding: team1.rebounding - team2.rebounding,
+    freeThrows: team1.freeThrows - team2.freeThrows,
+    total: team1.total - team2.total,
+  };
 }

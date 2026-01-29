@@ -1,7 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
-import { GameTeamStats, calculatePossessions } from '@/lib/types';
+import { GameTeamStats, LEAGUE_EFFICIENCY, LEAGUE_OREB_PCT } from '@/lib/types';
 import { WaterfallChart } from './WaterfallChart';
 
 interface FourFactorsSectionProps {
@@ -10,25 +9,17 @@ interface FourFactorsSectionProps {
 }
 
 export function FourFactorsSection({ homeTeam, awayTeam }: FourFactorsSectionProps) {
-  // Calculate actual game possessions (average of both teams' estimates)
-  const possessions = useMemo(() => {
-    const homePoss = calculatePossessions(homeTeam);
-    const awayPoss = calculatePossessions(awayTeam);
-    return Math.round((homePoss + awayPoss) / 2);
-  }, [homeTeam, awayTeam]);
-
   return (
     <div>
       <WaterfallChart
         homeTeam={homeTeam}
         awayTeam={awayTeam}
-        possessions={possessions}
       />
 
       {/* Info tooltip for points mode */}
       <p className="mt-4 text-xs text-[var(--foreground-muted)] text-center">
-        Points impact calculated using {possessions} possessions (actual game pace).
-        Coefficients from &quot;Dean Oliver&apos;s Four Factors Revisited&quot; (2023).
+        Point contributions calculated using Dean Oliver&apos;s Four Factors formulas
+        (LgEffic={LEAGUE_EFFICIENCY}, LgOR%={Math.round(LEAGUE_OREB_PCT * 100)}%).
       </p>
     </div>
   );

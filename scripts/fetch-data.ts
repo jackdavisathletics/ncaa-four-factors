@@ -85,7 +85,12 @@ interface TeamStandings {
 }
 
 const ESPN_BASE = 'https://site.api.espn.com/apis/site/v2/sports/basketball';
-const CUSA_GROUP_ID = '11';
+const ESPN_WEB_BASE = 'https://site.web.api.espn.com/apis/v2/sports/basketball';
+
+interface Conference {
+  id: string;
+  name: string;
+}
 
 function getLeaguePath(gender: Gender): string {
   return gender === 'mens' ? 'mens-college-basketball' : 'womens-college-basketball';
@@ -106,12 +111,37 @@ function calculateFourFactors(stats: BoxScoreStats, opponentDreb: number): FourF
   return { efg, tov, orb, ftr };
 }
 
+async function fetchAllConferences(gender: Gender): Promise<Conference[]> {
+  const league = getLeaguePath(gender);
+  const url = `${ESPN_BASE}/${league}/scoreboard/conferences`;
+
+  console.log(`Fetching conference list...`);
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    console.error(`Failed to fetch conferences: ${response.statusText}`);
+    return [];
+  }
+
+  const data = await response.json();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const conferences = (data.conferences || [])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .filter((c: any) => c.groupId !== '50') // Exclude "NCAA Division I" aggregate
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .map((c: any) => ({
+      id: c.groupId,
+      name: c.name,
+    }));
+
+  console.log(`Found ${conferences.length} conferences`);
+  return conferences;
+}
+
 async function fetchConferenceTeams(gender: Gender, conferenceId: string, conferenceName: string): Promise<Team[]> {
   const league = getLeaguePath(gender);
   // Use the web API standings endpoint which returns actual conference teams
-  const url = `https://site.web.api.espn.com/apis/v2/sports/basketball/${league}/standings?region=us&lang=en&contentorigin=espn&group=${conferenceId}&sort=leaguewinpercent:desc`;
-
-  console.log(`Fetching ${conferenceName} teams from standings API...`);
+  const url = `${ESPN_WEB_BASE}/${league}/standings?region=us&lang=en&contentorigin=espn&group=${conferenceId}&sort=leaguewinpercent:desc`;
 
   const response = await fetch(url);
   if (!response.ok) {
@@ -121,8 +151,6 @@ async function fetchConferenceTeams(gender: Gender, conferenceId: string, confer
 
   const data = await response.json();
   const entries = data.standings?.entries || [];
-
-  console.log(`Found ${entries.length} teams in ${conferenceName}`);
 
   const teams: Team[] = [];
 
@@ -159,15 +187,34 @@ async function fetchConferenceTeams(gender: Gender, conferenceId: string, confer
       conferenceId: conferenceId,
     });
 
-    await delay(50); // Rate limiting
+    await delay(30); // Rate limiting
   }
 
   return teams;
 }
 
-async function fetchCusaTeams(gender: Gender): Promise<Team[]> {
-  // Fetch only Conference USA teams using the standings API
-  return fetchConferenceTeams(gender, CUSA_GROUP_ID, 'Conference USA');
+async function fetchAllTeams(gender: Gender): Promise<Team[]> {
+  const conferences = await fetchAllConferences(gender);
+  const allTeams: Team[] = [];
+  const seenTeamIds = new Set<string>();
+
+  for (const conf of conferences) {
+    console.log(`  Fetching ${conf.name}...`);
+    const teams = await fetchConferenceTeams(gender, conf.id, conf.name);
+
+    // Deduplicate teams (in case a team appears in multiple places)
+    for (const team of teams) {
+      if (!seenTeamIds.has(team.id)) {
+        seenTeamIds.add(team.id);
+        allTeams.push(team);
+      }
+    }
+
+    await delay(100); // Rate limiting between conferences
+  }
+
+  console.log(`Total unique teams: ${allTeams.length}`);
+  return allTeams;
 }
 
 async function fetchTeamSchedule(
@@ -335,8 +382,14 @@ async function fetchGameDetails(
   const homeTeam = team0Stats.isHome ? team0Stats : team1Stats;
   const awayTeam = team0Stats.isHome ? team1Stats : team0Stats;
 
-  const homeInCusa = teamLookup.has(homeTeam.teamId);
-  const awayInCusa = teamLookup.has(awayTeam.teamId);
+  // Check if both teams are in our database and in the same conference
+  const homeTeamData = teamLookup.get(homeTeam.teamId);
+  const awayTeamData = teamLookup.get(awayTeam.teamId);
+  const isConferenceGame = !!(
+    homeTeamData &&
+    awayTeamData &&
+    homeTeamData.conferenceId === awayTeamData.conferenceId
+  );
 
   return {
     id: gameId,
@@ -345,7 +398,7 @@ async function fetchGameDetails(
     homeTeam,
     awayTeam,
     isComplete: competition.status?.type?.completed || false,
-    isConferenceGame: homeInCusa && awayInCusa,
+    isConferenceGame,
   };
 }
 
@@ -491,16 +544,20 @@ async function fetchGenderData(gender: Gender) {
   console.log(`Fetching ${gender.toUpperCase()} basketball data...`);
   console.log('='.repeat(50));
 
-  // Fetch teams
-  const teams = await fetchCusaTeams(gender);
-  console.log(`Found ${teams.length} teams`);
+  // Fetch all teams from all conferences
+  const teams = await fetchAllTeams(gender);
+  console.log(`Found ${teams.length} total teams`);
 
   const teamLookup = new Map(teams.map(t => [t.id, t]));
 
   // Collect all game IDs from team schedules
   const gameIds = new Set<string>();
+  let scheduleCount = 0;
   for (const team of teams) {
-    console.log(`Fetching schedule for ${team.displayName}...`);
+    scheduleCount++;
+    if (scheduleCount % 50 === 0) {
+      console.log(`Fetching schedules... ${scheduleCount}/${teams.length}`);
+    }
     const schedule = await fetchTeamSchedule(gender, team.id);
 
     for (const game of schedule) {
@@ -509,7 +566,7 @@ async function fetchGenderData(gender: Gender) {
       }
     }
 
-    await delay(100); // Rate limiting
+    await delay(50); // Rate limiting
   }
 
   console.log(`Found ${gameIds.size} unique completed games`);

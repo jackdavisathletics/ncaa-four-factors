@@ -22,10 +22,12 @@ export function Navigation() {
             className="flex items-center gap-3 group"
           >
             <div className="relative">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] flex items-center justify-center">
-                <span className="text-xl font-bold text-[var(--background)]">4F</span>
-              </div>
-              <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] opacity-0 group-hover:opacity-30 blur-lg transition-opacity" />
+              <img
+                src="/four-factors-logo.png"
+                alt="Four Factors Logo"
+                className="w-10 h-10 rounded-lg object-contain"
+              />
+              <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-30 blur-lg transition-opacity bg-[var(--accent-primary)]" />
             </div>
             <div className="hidden sm:block">
               <h1 className="text-lg tracking-wider">Four Factors</h1>

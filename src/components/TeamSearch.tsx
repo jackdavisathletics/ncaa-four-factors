@@ -75,7 +75,7 @@ export function TeamSearch({ gender, placeholder = 'Search teams...' }: TeamSear
   };
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-md">
+    <div ref={containerRef} className="relative w-full max-w-md z-20">
       <div className="relative">
         <input
           ref={inputRef}
@@ -112,7 +112,7 @@ export function TeamSearch({ gender, placeholder = 'Search teams...' }: TeamSear
 
       {isOpen && results.length > 0 && (
         <div className="
-          absolute z-50 w-full mt-2
+          absolute z-[100] w-full mt-2
           bg-[var(--background-secondary)] border border-[var(--border)]
           rounded-lg shadow-xl overflow-hidden
           animate-fade-in

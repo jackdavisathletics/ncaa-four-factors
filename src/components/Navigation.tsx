@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { ThemeToggle } from './ThemeToggle';
 
 const navItems = [
   { href: '/', label: 'Home' },
@@ -53,6 +54,9 @@ export function Navigation() {
                 </Link>
               );
             })}
+            <div className="ml-2 pl-2 border-l border-[var(--border)]">
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </nav>

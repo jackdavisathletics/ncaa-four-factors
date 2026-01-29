@@ -7,3 +7,5 @@ export { WaterfallChart } from './WaterfallChart';
 export { GameCard } from './GameCard';
 export { LeaderboardTable } from './LeaderboardTable';
 export { Navigation } from './Navigation';
+export { ThemeProvider, useTheme } from './ThemeProvider';
+export { ThemeToggle } from './ThemeToggle';

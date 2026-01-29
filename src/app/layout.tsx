@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AccessGate, Navigation } from "@/components";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -16,15 +17,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen">
-        <AccessGate>
-          <Navigation />
-          <main className="gradient-mesh min-h-[calc(100vh-4rem)]">
-            {children}
-          </main>
-          <footer className="border-t border-[var(--border)] py-6 text-center text-sm text-[var(--foreground-muted)]">
-            <p>Data from ESPN. Four Factors methodology by Dean Oliver.</p>
-          </footer>
-        </AccessGate>
+        <ThemeProvider>
+          <AccessGate>
+            <Navigation />
+            <main className="gradient-mesh min-h-[calc(100vh-4rem)]">
+              {children}
+            </main>
+            <footer className="border-t border-[var(--border)] py-6 text-center text-sm text-[var(--foreground-muted)]">
+              <p>Data from ESPN. Four Factors methodology by Dean Oliver.</p>
+            </footer>
+          </AccessGate>
+        </ThemeProvider>
       </body>
     </html>
   );

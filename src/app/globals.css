@@ -128,8 +128,12 @@ h1, h2, h3 {
   letter-spacing: -0.02em;
 }
 
-/* Glowing accent text */
+/* Glowing accent text - disabled in light mode */
 .glow-text {
+  text-shadow: none;
+}
+
+[data-theme="dark"] .glow-text {
   text-shadow: 0 0 20px currentColor;
 }
 
@@ -298,10 +302,16 @@ img[loading] {
 /* Access Gate Styles */
 .access-grid-bg {
   background-image:
-    linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(8, 145, 178, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(8, 145, 178, 0.08) 1px, transparent 1px);
   background-size: 50px 50px;
   animation: access-grid-move 20s linear infinite;
+}
+
+[data-theme="dark"] .access-grid-bg {
+  background-image:
+    linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
 }
 
 @keyframes access-grid-move {

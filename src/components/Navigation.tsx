@@ -24,7 +24,7 @@ export function Navigation() {
             <img
               src="/four-factors-logo.png"
               alt="Four Factors Logo"
-              className="w-12 h-12 object-contain"
+              className="w-12 h-12 object-contain mix-blend-multiply dark:brightness-150 dark:contrast-125"
             />
             <div className="hidden sm:block">
               <h1 className="text-lg tracking-wider">Four Factors</h1>

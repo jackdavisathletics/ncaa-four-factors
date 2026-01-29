@@ -106,73 +106,68 @@ function calculateFourFactors(stats: BoxScoreStats, opponentDreb: number): FourF
   return { efg, tov, orb, ftr };
 }
 
-async function fetchTeamDetails(gender: Gender, teamId: string): Promise<{ conferenceId: string; conference: string } | null> {
+async function fetchConferenceTeams(gender: Gender, conferenceId: string, conferenceName: string): Promise<Team[]> {
   const league = getLeaguePath(gender);
-  const url = `${ESPN_BASE}/${league}/teams/${teamId}`;
+  // Use the web API standings endpoint which returns actual conference teams
+  const url = `https://site.web.api.espn.com/apis/v2/sports/basketball/${league}/standings?region=us&lang=en&contentorigin=espn&group=${conferenceId}&sort=leaguewinpercent:desc`;
 
-  try {
-    const response = await fetch(url);
-    if (!response.ok) return null;
-
-    const data = await response.json();
-    const team = data.team;
-
-    // Get conference ID from groups
-    const conferenceId = team.groups?.id || CUSA_GROUP_ID;
-
-    // Parse conference name from standingSummary (e.g., "1st in Big 12" -> "Big 12")
-    let conference = 'Unknown';
-    if (team.standingSummary) {
-      const match = team.standingSummary.match(/in (.+)$/);
-      if (match) {
-        conference = match[1];
-      }
-    }
-
-    return { conferenceId, conference };
-  } catch {
-    return null;
-  }
-}
-
-async function fetchCusaTeams(gender: Gender): Promise<Team[]> {
-  const league = getLeaguePath(gender);
-  const url = `${ESPN_BASE}/${league}/teams?groups=${CUSA_GROUP_ID}`;
-
-  console.log(`Fetching ${gender} teams from: ${url}`);
+  console.log(`Fetching ${conferenceName} teams from standings API...`);
 
   const response = await fetch(url);
   if (!response.ok) {
-    throw new Error(`Failed to fetch teams: ${response.statusText}`);
+    console.error(`Failed to fetch ${conferenceName} standings: ${response.statusText}`);
+    return [];
   }
 
   const data = await response.json();
+  const entries = data.standings?.entries || [];
+
+  console.log(`Found ${entries.length} teams in ${conferenceName}`);
+
+  const teams: Team[] = [];
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const teamsBasic = data.sports[0].leagues[0].teams.map((t: any) => t.team);
+  for (const entry of entries) {
+    const teamInfo = entry.team;
+    if (!teamInfo) continue;
 
-  // Fetch detailed conference info for each team
-  const teams: Team[] = [];
-  for (const team of teamsBasic) {
-    console.log(`  Fetching conference for ${team.displayName}...`);
-    const details = await fetchTeamDetails(gender, team.id);
-    await delay(50); // Rate limiting
+    // Fetch full team details to get logo and colors
+    const detailUrl = `${ESPN_BASE}/${league}/teams/${teamInfo.id}`;
+    const detailResponse = await fetch(detailUrl);
+    let logo = `https://a.espncdn.com/i/teamlogos/ncaa/500/${teamInfo.id}.png`;
+    let color = '#666666';
+    let alternateColor = '#333333';
+
+    if (detailResponse.ok) {
+      const detailData = await detailResponse.json();
+      const fullTeam = detailData.team;
+      logo = fullTeam.logos?.[0]?.href || logo;
+      color = fullTeam.color ? `#${fullTeam.color}` : color;
+      alternateColor = fullTeam.alternateColor ? `#${fullTeam.alternateColor}` : alternateColor;
+    }
 
     teams.push({
-      id: team.id,
-      name: team.name,
-      abbreviation: team.abbreviation,
-      displayName: team.displayName,
-      shortDisplayName: team.shortDisplayName,
-      logo: team.logos?.[0]?.href || '',
-      color: team.color ? `#${team.color}` : '#666666',
-      alternateColor: team.alternateColor ? `#${team.alternateColor}` : '#333333',
-      conference: details?.conference || 'Conference USA',
-      conferenceId: details?.conferenceId || CUSA_GROUP_ID,
+      id: teamInfo.id,
+      name: teamInfo.name || teamInfo.displayName?.split(' ').pop() || 'Unknown',
+      abbreviation: teamInfo.abbreviation || teamInfo.id,
+      displayName: teamInfo.displayName || teamInfo.name,
+      shortDisplayName: teamInfo.shortDisplayName || teamInfo.displayName || teamInfo.name,
+      logo,
+      color,
+      alternateColor,
+      conference: conferenceName,
+      conferenceId: conferenceId,
     });
+
+    await delay(50); // Rate limiting
   }
 
   return teams;
+}
+
+async function fetchCusaTeams(gender: Gender): Promise<Team[]> {
+  // Fetch only Conference USA teams using the standings API
+  return fetchConferenceTeams(gender, CUSA_GROUP_ID, 'Conference USA');
 }
 
 async function fetchTeamSchedule(

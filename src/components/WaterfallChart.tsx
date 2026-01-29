@@ -1,7 +1,7 @@
 'use client';
 
-import { useMemo } from 'react';
-import { FOUR_FACTORS_META, GameTeamStats, calculatePointsImpact } from '@/lib/types';
+import { useMemo, useState } from 'react';
+import { FOUR_FACTORS_META, GameTeamStats, calculatePointsImpact, FourFactors } from '@/lib/types';
 
 interface WaterfallChartProps {
   homeTeam: GameTeamStats;
@@ -10,7 +10,7 @@ interface WaterfallChartProps {
 }
 
 interface WaterfallBar {
-  key: string;
+  key: keyof FourFactors;
   label: string;
   value: number; // Points impact from winning team's perspective
   runningTotal: number;
@@ -18,9 +18,13 @@ interface WaterfallBar {
   winningTeamAdvantage: boolean; // true if winning team had the advantage in this factor
   advantageTeamColor: string;
   advantageTeamAbbr: string;
+  homeValue: number; // actual percentage for home team
+  awayValue: number; // actual percentage for away team
 }
 
 export function WaterfallChart({ homeTeam, awayTeam, possessions }: WaterfallChartProps) {
+  const [hoveredBar, setHoveredBar] = useState<keyof FourFactors | null>(null);
+
   const data = useMemo(() => {
     // Determine winning team (by Four Factors total, not actual score)
     const homeTotal = FOUR_FACTORS_META.reduce((sum, meta) => {
@@ -57,6 +61,8 @@ export function WaterfallChart({ homeTeam, awayTeam, possessions }: WaterfallCha
         winningTeamAdvantage,
         advantageTeamColor: advantageTeam.teamColor,
         advantageTeamAbbr: advantageTeam.teamAbbreviation,
+        homeValue: homeTeam[meta.key],
+        awayValue: awayTeam[meta.key],
       };
     });
 
@@ -143,22 +149,35 @@ export function WaterfallChart({ homeTeam, awayTeam, possessions }: WaterfallCha
             const endPercent = valueToPercent(bar.runningTotal);
             const left = Math.min(startPercent, endPercent);
             const width = Math.abs(endPercent - startPercent);
-            const isPositive = bar.value >= 0;
-
-            // Calculate center position of the bar for label placement
-            const barCenterPercent = (left + left + width) / 2;
+            const isHovered = hoveredBar === bar.key;
 
             return (
-              <div key={bar.key} className="relative">
-                {/* Factor label */}
-                <div className="mb-1">
+              <div
+                key={bar.key}
+                className="relative cursor-pointer"
+                onMouseEnter={() => setHoveredBar(bar.key)}
+                onMouseLeave={() => setHoveredBar(null)}
+              >
+                {/* Factor label with hover percentages */}
+                <div className="mb-1 flex items-center justify-between">
                   <span className="text-sm font-medium text-[var(--foreground-muted)] uppercase tracking-wide">
                     {bar.label}
                   </span>
+                  {isHovered && (
+                    <div className="flex items-center gap-3 text-xs animate-in fade-in duration-150">
+                      <span style={{ color: awayTeam.teamColor }} className="font-semibold">
+                        {awayTeam.teamAbbreviation}: {bar.awayValue.toFixed(1)}%
+                      </span>
+                      <span className="text-[var(--foreground-muted)]">vs</span>
+                      <span style={{ color: homeTeam.teamColor }} className="font-semibold">
+                        {homeTeam.teamAbbreviation}: {bar.homeValue.toFixed(1)}%
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Bar container */}
-                <div className="relative h-10 bg-[var(--background-tertiary)] rounded-lg overflow-hidden">
+                <div className={`relative h-10 bg-[var(--background-tertiary)] rounded-lg overflow-hidden transition-all duration-150 ${isHovered ? 'ring-2 ring-[var(--foreground-muted)]/30' : ''}`}>
                   {/* Center line */}
                   <div
                     className="absolute top-0 bottom-0 w-px bg-[var(--border)] z-10"

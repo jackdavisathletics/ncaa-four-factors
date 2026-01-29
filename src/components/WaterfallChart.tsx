@@ -1,0 +1,265 @@
+'use client';
+
+import { useMemo } from 'react';
+import { FOUR_FACTORS_META, GameTeamStats, calculatePointsImpact } from '@/lib/types';
+
+interface WaterfallChartProps {
+  homeTeam: GameTeamStats;
+  awayTeam: GameTeamStats;
+  possessions: number;
+}
+
+interface WaterfallBar {
+  key: string;
+  label: string;
+  value: number; // Points impact from winning team's perspective
+  runningTotal: number;
+  previousTotal: number;
+  winningTeamAdvantage: boolean; // true if winning team had the advantage in this factor
+  advantageTeamColor: string;
+  advantageTeamAbbr: string;
+}
+
+export function WaterfallChart({ homeTeam, awayTeam, possessions }: WaterfallChartProps) {
+  const data = useMemo(() => {
+    // Determine winning team (by Four Factors total, not actual score)
+    const homeTotal = FOUR_FACTORS_META.reduce((sum, meta) => {
+      const homeDiff = homeTeam[meta.key] - awayTeam[meta.key];
+      return sum + calculatePointsImpact(meta.key, homeDiff, possessions);
+    }, 0);
+
+    const homeIsWinner = homeTotal >= 0;
+    const winningTeam = homeIsWinner ? homeTeam : awayTeam;
+    const losingTeam = homeIsWinner ? awayTeam : homeTeam;
+
+    // Calculate each factor's contribution from winning team's perspective
+    let runningTotal = 0;
+    const bars: WaterfallBar[] = FOUR_FACTORS_META.map(meta => {
+      // Calculate from winning team's perspective
+      const winnerValue = winningTeam[meta.key];
+      const loserValue = losingTeam[meta.key];
+      const diff = winnerValue - loserValue;
+      const pointsImpact = calculatePointsImpact(meta.key, diff, possessions);
+
+      const previousTotal = runningTotal;
+      runningTotal += pointsImpact;
+
+      // Determine which team had the advantage in this factor
+      const winningTeamAdvantage = pointsImpact >= 0;
+      const advantageTeam = winningTeamAdvantage ? winningTeam : losingTeam;
+
+      return {
+        key: meta.key,
+        label: meta.shortLabel,
+        value: pointsImpact,
+        runningTotal,
+        previousTotal,
+        winningTeamAdvantage,
+        advantageTeamColor: advantageTeam.teamColor,
+        advantageTeamAbbr: advantageTeam.teamAbbreviation,
+      };
+    });
+
+    return {
+      bars,
+      total: runningTotal,
+      winningTeam,
+      losingTeam,
+    };
+  }, [homeTeam, awayTeam, possessions]);
+
+  // Calculate scale: find the max absolute value we need to display
+  // This includes intermediate running totals and individual bar values
+  const maxAbsValue = useMemo(() => {
+    let max = Math.abs(data.total);
+    data.bars.forEach(bar => {
+      max = Math.max(max, Math.abs(bar.runningTotal), Math.abs(bar.previousTotal));
+    });
+    // Add some padding
+    return Math.ceil(max * 1.2);
+  }, [data]);
+
+  // Convert value to percentage position (0 = center, positive = right, negative = left)
+  const valueToPercent = (value: number) => {
+    return 50 + (value / maxAbsValue) * 50;
+  };
+
+  return (
+    <div className="space-y-2">
+      {/* Header showing team perspectives */}
+      <div className="flex justify-between items-center mb-4 px-2">
+        <div className="flex items-center gap-2">
+          <div
+            className="w-6 h-6 rounded flex items-center justify-center overflow-hidden"
+            style={{ backgroundColor: data.losingTeam.teamColor + '20' }}
+          >
+            {data.losingTeam.teamLogo && (
+              <img
+                src={data.losingTeam.teamLogo}
+                alt={data.losingTeam.teamName}
+                width={16}
+                height={16}
+                className="object-contain"
+              />
+            )}
+          </div>
+          <span className="text-sm text-[var(--foreground-muted)]">
+            {data.losingTeam.teamAbbreviation} advantage
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-[var(--foreground-muted)]">
+            {data.winningTeam.teamAbbreviation} advantage
+          </span>
+          <div
+            className="w-6 h-6 rounded flex items-center justify-center overflow-hidden"
+            style={{ backgroundColor: data.winningTeam.teamColor + '20' }}
+          >
+            {data.winningTeam.teamLogo && (
+              <img
+                src={data.winningTeam.teamLogo}
+                alt={data.winningTeam.teamName}
+                width={16}
+                height={16}
+                className="object-contain"
+              />
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Scale markers */}
+      <div className="relative h-6 mb-2">
+        <div className="absolute left-0 text-xs text-[var(--foreground-muted)]">
+          -{maxAbsValue.toFixed(0)}
+        </div>
+        <div className="absolute left-1/2 -translate-x-1/2 text-xs text-[var(--foreground-muted)] font-medium">
+          0
+        </div>
+        <div className="absolute right-0 text-xs text-[var(--foreground-muted)]">
+          +{maxAbsValue.toFixed(0)}
+        </div>
+      </div>
+
+      {/* Center line background */}
+      <div className="relative">
+        {/* Vertical center line */}
+        <div
+          className="absolute top-0 bottom-0 w-px bg-[var(--foreground-muted)] opacity-30"
+          style={{ left: '50%' }}
+        />
+
+        {/* Waterfall bars */}
+        <div className="space-y-3">
+          {data.bars.map((bar, index) => {
+            const startPercent = valueToPercent(bar.previousTotal);
+            const endPercent = valueToPercent(bar.runningTotal);
+            const left = Math.min(startPercent, endPercent);
+            const width = Math.abs(endPercent - startPercent);
+            const isPositive = bar.value >= 0;
+
+            return (
+              <div key={bar.key} className="relative">
+                {/* Factor label */}
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-medium text-[var(--foreground-muted)] uppercase tracking-wide">
+                    {bar.label}
+                  </span>
+                  <span className="text-xs text-[var(--foreground-muted)]">
+                    {bar.advantageTeamAbbr} {bar.value >= 0 ? '+' : ''}{bar.value.toFixed(1)} pts
+                  </span>
+                </div>
+
+                {/* Bar container */}
+                <div className="relative h-10 bg-[var(--background-tertiary)] rounded-lg overflow-hidden">
+                  {/* Center line */}
+                  <div
+                    className="absolute top-0 bottom-0 w-px bg-[var(--border)] z-10"
+                    style={{ left: '50%' }}
+                  />
+
+                  {/* Connector line from previous bar (except first) */}
+                  {index > 0 && (
+                    <div
+                      className="absolute top-0 h-full w-px bg-[var(--foreground-muted)] opacity-20"
+                      style={{ left: `${startPercent}%` }}
+                    />
+                  )}
+
+                  {/* The bar itself */}
+                  <div
+                    className="absolute top-1 bottom-1 rounded transition-all duration-500"
+                    style={{
+                      left: `${left}%`,
+                      width: `${Math.max(width, 0.5)}%`,
+                      backgroundColor: bar.advantageTeamColor,
+                    }}
+                  />
+
+                  {/* Value label on bar */}
+                  <div
+                    className="absolute top-1/2 -translate-y-1/2 text-sm font-bold px-2"
+                    style={{
+                      left: isPositive ? `${endPercent}%` : `${left}%`,
+                      transform: isPositive
+                        ? 'translateY(-50%) translateX(4px)'
+                        : 'translateY(-50%) translateX(-100%) translateX(-4px)',
+                      color: 'var(--foreground)',
+                    }}
+                  >
+                    {bar.value >= 0 ? '+' : ''}{bar.value.toFixed(1)}
+                  </div>
+                </div>
+
+                {/* Running total indicator */}
+                <div
+                  className="absolute -bottom-1 text-[10px] font-medium text-[var(--foreground-muted)]"
+                  style={{
+                    left: `${endPercent}%`,
+                    transform: 'translateX(-50%)',
+                  }}
+                >
+                  = {bar.runningTotal >= 0 ? '+' : ''}{bar.runningTotal.toFixed(1)}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Final total */}
+      <div className="mt-8 pt-4 border-t border-[var(--border)]">
+        <div className="flex items-center justify-center gap-4">
+          <div
+            className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden"
+            style={{ backgroundColor: data.winningTeam.teamColor + '20' }}
+          >
+            {data.winningTeam.teamLogo && (
+              <img
+                src={data.winningTeam.teamLogo}
+                alt={data.winningTeam.teamName}
+                width={28}
+                height={28}
+                className="object-contain"
+              />
+            )}
+          </div>
+          <div className="text-center">
+            <p className="text-xs text-[var(--foreground-muted)] uppercase tracking-wide">
+              Four Factors Edge
+            </p>
+            <p
+              className="stat-number text-3xl font-bold"
+              style={{ color: data.winningTeam.teamColor }}
+            >
+              +{Math.abs(data.total).toFixed(1)} pts
+            </p>
+          </div>
+          <div className="text-sm text-[var(--foreground-muted)]">
+            {data.winningTeam.teamAbbreviation}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { GameTeamStats, calculatePossessions } from '@/lib/types';
 import { FourFactorsChart, DisplayMode } from './FourFactorsChart';
+import { WaterfallChart } from './WaterfallChart';
 
 interface FourFactorsSectionProps {
   homeTeam: GameTeamStats;
@@ -51,57 +52,67 @@ export function FourFactorsSection({ homeTeam, awayTeam }: FourFactorsSectionPro
         </div>
       </div>
 
-      {/* Team labels */}
-      <div className="flex justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <div
-            className="w-6 h-6 rounded flex items-center justify-center overflow-hidden"
-            style={{ backgroundColor: awayTeam.teamColor + '20' }}
-          >
-            {awayTeam.teamLogo ? (
-              <img
-                src={awayTeam.teamLogo}
-                alt={awayTeam.teamName}
-                width={16}
-                height={16}
-                className="object-contain"
-              />
-            ) : null}
+      {displayMode === 'percentage' ? (
+        <>
+          {/* Team labels for percentage view */}
+          <div className="flex justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div
+                className="w-6 h-6 rounded flex items-center justify-center overflow-hidden"
+                style={{ backgroundColor: awayTeam.teamColor + '20' }}
+              >
+                {awayTeam.teamLogo ? (
+                  <img
+                    src={awayTeam.teamLogo}
+                    alt={awayTeam.teamName}
+                    width={16}
+                    height={16}
+                    className="object-contain"
+                  />
+                ) : null}
+              </div>
+              <span className="font-medium">{awayTeam.teamAbbreviation}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-medium">{homeTeam.teamAbbreviation}</span>
+              <div
+                className="w-6 h-6 rounded flex items-center justify-center overflow-hidden"
+                style={{ backgroundColor: homeTeam.teamColor + '20' }}
+              >
+                {homeTeam.teamLogo ? (
+                  <img
+                    src={homeTeam.teamLogo}
+                    alt={homeTeam.teamName}
+                    width={16}
+                    height={16}
+                    className="object-contain"
+                  />
+                ) : null}
+              </div>
+            </div>
           </div>
-          <span className="font-medium">{awayTeam.teamAbbreviation}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="font-medium">{homeTeam.teamAbbreviation}</span>
-          <div
-            className="w-6 h-6 rounded flex items-center justify-center overflow-hidden"
-            style={{ backgroundColor: homeTeam.teamColor + '20' }}
-          >
-            {homeTeam.teamLogo ? (
-              <img
-                src={homeTeam.teamLogo}
-                alt={homeTeam.teamName}
-                width={16}
-                height={16}
-                className="object-contain"
-              />
-            ) : null}
-          </div>
-        </div>
-      </div>
 
-      <FourFactorsChart
-        homeTeam={homeTeam}
-        awayTeam={awayTeam}
-        displayMode={displayMode}
-        possessions={possessions}
-      />
+          <FourFactorsChart
+            homeTeam={homeTeam}
+            awayTeam={awayTeam}
+            displayMode={displayMode}
+            possessions={possessions}
+          />
+        </>
+      ) : (
+        <>
+          <WaterfallChart
+            homeTeam={homeTeam}
+            awayTeam={awayTeam}
+            possessions={possessions}
+          />
 
-      {/* Info tooltip for points mode */}
-      {displayMode === 'points' && (
-        <p className="mt-4 text-xs text-[var(--foreground-muted)] text-center">
-          Points impact calculated using {possessions} possessions (actual game pace).
-          Coefficients from &quot;Dean Oliver&apos;s Four Factors Revisited&quot; (2023).
-        </p>
+          {/* Info tooltip for points mode */}
+          <p className="mt-4 text-xs text-[var(--foreground-muted)] text-center">
+            Points impact calculated using {possessions} possessions (actual game pace).
+            Coefficients from &quot;Dean Oliver&apos;s Four Factors Revisited&quot; (2023).
+          </p>
+        </>
       )}
     </div>
   );

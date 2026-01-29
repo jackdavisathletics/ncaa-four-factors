@@ -149,7 +149,7 @@ export const FOUR_FACTORS_META: FactorMeta[] = [
     key: 'ftr',
     label: 'Free Throw Rate',
     shortLabel: 'FTR',
-    description: 'Measures ability to get to the free throw line and convert',
+    description: "Measures a team's ability to get to the free throw line",
     higherIsBetter: true,
     format: (v) => `${v.toFixed(1)}%`,
     pointsImpact: 0.253, // +0.253 pts/100 poss per 1% increase

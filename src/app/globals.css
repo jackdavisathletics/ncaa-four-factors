@@ -1,7 +1,42 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
-:root {
+:root, [data-theme="light"] {
+  /* Core light theme - clean professional look */
+  --background: #f8fafc;
+  --background-secondary: #ffffff;
+  --background-tertiary: #f1f5f9;
+  --foreground: #0f172a;
+  --foreground-muted: #64748b;
+
+  /* Accent colors - adjusted for light mode readability */
+  --accent-primary: #0891b2;
+  --accent-secondary: #e11d48;
+  --accent-success: #059669;
+  --accent-warning: #d97706;
+
+  /* Four factors colors - deeper tones for light backgrounds */
+  --factor-efg: #0891b2;
+  --factor-tov: #e11d48;
+  --factor-orb: #059669;
+  --factor-ftr: #d97706;
+
+  /* Chart colors */
+  --chart-positive: #059669;
+  --chart-negative: #e11d48;
+  --chart-neutral: #94a3b8;
+
+  /* Borders and surfaces */
+  --border: #e2e8f0;
+  --border-light: #cbd5e1;
+  --surface-hover: rgba(0, 0, 0, 0.04);
+
+  /* Shadows */
+  --shadow-glow: 0 0 20px rgba(8, 145, 178, 0.12);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] {
   /* Core dark theme - sports broadcast aesthetic */
   --background: #0a0b0f;
   --background-secondary: #12141a;
@@ -61,7 +96,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Noise texture overlay for depth */
+/* Noise texture overlay for depth - hidden in light mode */
 body::before {
   content: '';
   position: fixed;
@@ -69,10 +104,14 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.015;
+  opacity: 0;
   z-index: 9999;
   pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+[data-theme="dark"] body::before {
+  opacity: 0.015;
 }
 
 /* Display headings */
@@ -109,6 +148,13 @@ h1, h2, h3 {
 
 /* Gradient mesh background for hero areas */
 .gradient-mesh {
+  background:
+    radial-gradient(at 20% 30%, rgba(8, 145, 178, 0.06) 0%, transparent 50%),
+    radial-gradient(at 80% 70%, rgba(225, 29, 72, 0.04) 0%, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(5, 150, 105, 0.03) 0%, transparent 50%);
+}
+
+[data-theme="dark"] .gradient-mesh {
   background:
     radial-gradient(at 20% 30%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
     radial-gradient(at 80% 70%, rgba(255, 51, 102, 0.06) 0%, transparent 50%),
@@ -248,3 +294,103 @@ img[loading] {
 .stagger-children > *:nth-child(8) { animation-delay: 0.4s; }
 .stagger-children > *:nth-child(9) { animation-delay: 0.45s; }
 .stagger-children > *:nth-child(10) { animation-delay: 0.5s; }
+
+/* Access Gate Styles */
+.access-grid-bg {
+  background-image:
+    linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: access-grid-move 20s linear infinite;
+}
+
+@keyframes access-grid-move {
+  0% { background-position: 0 0; }
+  100% { background-position: 50px 50px; }
+}
+
+.access-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.4;
+  animation: access-orb-float 8s ease-in-out infinite;
+}
+
+.access-orb-1 {
+  width: 400px;
+  height: 400px;
+  background: var(--accent-primary);
+  top: 10%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.access-orb-2 {
+  width: 300px;
+  height: 300px;
+  background: var(--accent-secondary);
+  bottom: 20%;
+  right: 15%;
+  animation-delay: -3s;
+}
+
+.access-orb-3 {
+  width: 250px;
+  height: 250px;
+  background: var(--accent-success);
+  bottom: 30%;
+  left: 20%;
+  animation-delay: -5s;
+}
+
+@keyframes access-orb-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(30px, -20px) scale(1.05); }
+  50% { transform: translate(-20px, 30px) scale(0.95); }
+  75% { transform: translate(-30px, -10px) scale(1.02); }
+}
+
+.access-scanlines {
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.1) 2px,
+    rgba(0, 0, 0, 0.1) 4px
+  );
+  opacity: 0.3;
+}
+
+.access-shake {
+  animation: access-shake 0.5s ease-in-out;
+}
+
+@keyframes access-shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.access-loader {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent-primary);
+  border-radius: 50%;
+  animation: access-spin 0.8s linear infinite;
+}
+
+@keyframes access-spin {
+  to { transform: rotate(360deg); }
+}
+
+.access-check-animation {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  animation: access-check-draw 0.4s ease-out forwards;
+}
+
+@keyframes access-check-draw {
+  to { stroke-dashoffset: 0; }
+}

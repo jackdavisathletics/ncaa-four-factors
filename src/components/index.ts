@@ -1,3 +1,4 @@
+export { AccessGate } from './AccessGate';
 export { GenderToggle } from './GenderToggle';
 export { TeamSearch } from './TeamSearch';
 export { FourFactorsChart, type DisplayMode } from './FourFactorsChart';

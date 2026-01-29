@@ -88,12 +88,12 @@ function getContrastColor(hexColor: string): string {
   return luminance > 0.4 ? '#1a1a1a' : '#ffffff';
 }
 
-function BoxScoreDetail({ label, home, away, higherBetter = true, boldValue = false }: {
+function BoxScoreDetail({ label, home, away, higherBetter = true, isKeyMetric = false }: {
   label: string;
   home: string | number;
   away: string | number;
   higherBetter?: boolean;
-  boldValue?: boolean;
+  isKeyMetric?: boolean;
 }) {
   const homeNum = typeof home === 'number' ? home : parseFloat(home);
   const awayNum = typeof away === 'number' ? away : parseFloat(away);
@@ -101,12 +101,12 @@ function BoxScoreDetail({ label, home, away, higherBetter = true, boldValue = fa
   const awayBetter = higherBetter ? awayNum > homeNum : awayNum < homeNum;
 
   return (
-    <div className="flex items-center py-2 border-b border-[var(--border)] last:border-0">
-      <span className={`w-16 text-right stat-number ${homeBetter ? 'text-[var(--accent-success)] font-semibold' : 'text-[var(--foreground-muted)]'} ${boldValue ? 'font-bold' : ''}`}>
+    <div className={`flex items-center py-2 ${isKeyMetric ? 'border-y border-[var(--foreground)]' : 'border-b border-[var(--border)] last:border-0'}`}>
+      <span className={`w-16 text-right stat-number ${homeBetter ? 'text-[var(--accent-success)] font-semibold' : 'text-[var(--foreground-muted)]'} ${isKeyMetric ? 'font-bold' : ''}`}>
         {home}
       </span>
-      <span className="flex-1 text-center text-sm text-[var(--foreground-muted)]">{label}</span>
-      <span className={`w-16 text-left stat-number ${awayBetter ? 'text-[var(--accent-success)] font-semibold' : 'text-[var(--foreground-muted)]'} ${boldValue ? 'font-bold' : ''}`}>
+      <span className={`flex-1 text-center text-sm ${isKeyMetric ? 'text-[var(--foreground)] font-bold' : 'text-[var(--foreground-muted)]'}`}>{label}</span>
+      <span className={`w-16 text-left stat-number ${awayBetter ? 'text-[var(--accent-success)] font-semibold' : 'text-[var(--foreground-muted)]'} ${isKeyMetric ? 'font-bold' : ''}`}>
         {away}
       </span>
     </div>
@@ -251,12 +251,12 @@ export default async function GamePage({ params }: GamePageProps) {
             home={game.homeTeam.fga > 0 ? ((game.homeTeam.fg3a / game.homeTeam.fga) * 100).toFixed(1) : '0.0'}
             away={game.awayTeam.fga > 0 ? ((game.awayTeam.fg3a / game.awayTeam.fga) * 100).toFixed(1) : '0.0'}
           />
-          {/* EFG% (bolded) */}
+          {/* EFG% (key metric) */}
           <BoxScoreDetail
             label="eFG%"
             home={game.homeTeam.efg.toFixed(1)}
             away={game.awayTeam.efg.toFixed(1)}
-            boldValue
+            isKeyMetric
           />
           {/* TOV% (lower is better) */}
           <BoxScoreDetail
@@ -271,12 +271,12 @@ export default async function GamePage({ params }: GamePageProps) {
             home={game.homeTeam.orb.toFixed(1)}
             away={game.awayTeam.orb.toFixed(1)}
           />
-          {/* Total Possessions Gained (bolded) */}
+          {/* Total Possessions Gained (key metric) */}
           <BoxScoreDetail
             label="Poss. Gained"
             home={game.homeTeam.oreb - game.homeTeam.turnovers - game.awayTeam.oreb + game.awayTeam.turnovers}
             away={game.awayTeam.oreb - game.awayTeam.turnovers - game.homeTeam.oreb + game.homeTeam.turnovers}
-            boldValue
+            isKeyMetric
           />
           {/* FTR */}
           <BoxScoreDetail
@@ -290,12 +290,12 @@ export default async function GamePage({ params }: GamePageProps) {
             home={game.homeTeam.fta > 0 ? ((game.homeTeam.ftm / game.homeTeam.fta) * 100).toFixed(1) : '0.0'}
             away={game.awayTeam.fta > 0 ? ((game.awayTeam.ftm / game.awayTeam.fta) * 100).toFixed(1) : '0.0'}
           />
-          {/* FTM (bolded) */}
+          {/* FTM (key metric) */}
           <BoxScoreDetail
             label="FTM"
             home={game.homeTeam.ftm}
             away={game.awayTeam.ftm}
-            boldValue
+            isKeyMetric
           />
         </div>
       </div>

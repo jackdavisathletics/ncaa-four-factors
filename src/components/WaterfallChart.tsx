@@ -128,19 +128,6 @@ export function WaterfallChart({ homeTeam, awayTeam, possessions }: WaterfallCha
         </div>
       </div>
 
-      {/* Scale markers */}
-      <div className="relative h-6 mb-2">
-        <div className="absolute left-0 text-xs text-[var(--foreground-muted)]">
-          -{maxAbsValue.toFixed(0)}
-        </div>
-        <div className="absolute left-1/2 -translate-x-1/2 text-xs text-[var(--foreground-muted)] font-medium">
-          0
-        </div>
-        <div className="absolute right-0 text-xs text-[var(--foreground-muted)]">
-          +{maxAbsValue.toFixed(0)}
-        </div>
-      </div>
-
       {/* Center line background */}
       <div className="relative">
         {/* Vertical center line */}
@@ -158,15 +145,15 @@ export function WaterfallChart({ homeTeam, awayTeam, possessions }: WaterfallCha
             const width = Math.abs(endPercent - startPercent);
             const isPositive = bar.value >= 0;
 
+            // Calculate center position of the bar for label placement
+            const barCenterPercent = (left + left + width) / 2;
+
             return (
               <div key={bar.key} className="relative">
                 {/* Factor label */}
-                <div className="flex items-center justify-between mb-1">
+                <div className="mb-1">
                   <span className="text-sm font-medium text-[var(--foreground-muted)] uppercase tracking-wide">
                     {bar.label}
-                  </span>
-                  <span className="text-xs text-[var(--foreground-muted)]">
-                    {bar.advantageTeamAbbr} {bar.value >= 0 ? '+' : ''}{bar.value.toFixed(1)} pts
                   </span>
                 </div>
 
@@ -188,38 +175,18 @@ export function WaterfallChart({ homeTeam, awayTeam, possessions }: WaterfallCha
 
                   {/* The bar itself */}
                   <div
-                    className="absolute top-1 bottom-1 rounded transition-all duration-500"
+                    className="absolute top-1 bottom-1 rounded transition-all duration-500 flex items-center justify-center"
                     style={{
                       left: `${left}%`,
                       width: `${Math.max(width, 0.5)}%`,
                       backgroundColor: bar.advantageTeamColor,
                     }}
-                  />
-
-                  {/* Value label on bar */}
-                  <div
-                    className="absolute top-1/2 -translate-y-1/2 text-sm font-bold px-2"
-                    style={{
-                      left: isPositive ? `${endPercent}%` : `${left}%`,
-                      transform: isPositive
-                        ? 'translateY(-50%) translateX(4px)'
-                        : 'translateY(-50%) translateX(-100%) translateX(-4px)',
-                      color: 'var(--foreground)',
-                    }}
                   >
-                    {bar.value >= 0 ? '+' : ''}{bar.value.toFixed(1)}
+                    {/* Value label centered on bar */}
+                    <span className="text-sm font-bold text-white drop-shadow-md">
+                      {Math.abs(bar.value).toFixed(1)}
+                    </span>
                   </div>
-                </div>
-
-                {/* Running total indicator */}
-                <div
-                  className="absolute -bottom-1 text-[10px] font-medium text-[var(--foreground-muted)]"
-                  style={{
-                    left: `${endPercent}%`,
-                    transform: 'translateX(-50%)',
-                  }}
-                >
-                  = {bar.runningTotal >= 0 ? '+' : ''}{bar.runningTotal.toFixed(1)}
                 </div>
               </div>
             );

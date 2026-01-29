@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { TeamStandings, Gender, SortField, SortDirection, FOUR_FACTORS_META } from '@/lib/types';
+import { TeamStandings, Gender, SortField, SortDirection, FOUR_FACTORS_META, NCAA_AVERAGES } from '@/lib/types';
 
 type ViewMode = 'percentages' | 'points-impact';
 
@@ -74,41 +74,15 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
     }
   };
 
-  // Calculate league averages for points impact calculation
-  const leagueAverages = useMemo(() => {
-    if (standings.length === 0) return null;
-
-    const sum = standings.reduce((acc, team) => ({
-      efg: acc.efg + team.efg,
-      tov: acc.tov + team.tov,
-      orb: acc.orb + team.orb,
-      ftr: acc.ftr + team.ftr,
-      oppEfg: acc.oppEfg + team.oppEfg,
-      oppTov: acc.oppTov + team.oppTov,
-      oppOrb: acc.oppOrb + team.oppOrb,
-      oppFtr: acc.oppFtr + team.oppFtr,
-    }), { efg: 0, tov: 0, orb: 0, ftr: 0, oppEfg: 0, oppTov: 0, oppOrb: 0, oppFtr: 0 });
-
-    const count = standings.length;
-    return {
-      efg: sum.efg / count,
-      tov: sum.tov / count,
-      orb: sum.orb / count,
-      ftr: sum.ftr / count,
-      oppEfg: sum.oppEfg / count,
-      oppTov: sum.oppTov / count,
-      oppOrb: sum.oppOrb / count,
-      oppFtr: sum.oppFtr / count,
-    };
-  }, [standings]);
-
-  // Calculate points impact for a given value
+  // Calculate points impact for a given value vs NCAA D1 averages
+  // Uses 70 possessions per game as standard pace
+  const PACE = 70;
   const calculatePointsImpact = (col: ColumnDef, value: number): number => {
-    if (!leagueAverages || !col.factorKey) return 0;
+    if (!col.factorKey) return 0;
 
-    const avgKey = col.key as keyof typeof leagueAverages;
-    const leagueAvg = leagueAverages[avgKey];
-    const differential = value - leagueAvg;
+    const avgKey = col.key as keyof typeof NCAA_AVERAGES;
+    const ncaaAvg = NCAA_AVERAGES[avgKey];
+    const differential = value - ncaaAvg;
 
     const factor = FOUR_FACTORS_META.find(f => f.key === col.factorKey);
     if (!factor) return 0;
@@ -118,10 +92,9 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
     const isDefensive = col.category === 'defensive';
     const adjustedDiff = isDefensive ? -differential : differential;
 
-    // For TOV%, the pointsImpact is already negative
-    // For offensive TOV%: higher is bad, so diff * negative = negative points (correct)
-    // For defensive TOV% (oppTov): we already negated, so -diff * negative = positive when we force more TOV (correct)
-    return adjustedDiff * factor.pointsImpact;
+    // Scale by possessions (pointsImpact is per 100 possessions)
+    const pointsPer100 = adjustedDiff * factor.pointsImpact;
+    return pointsPer100 * (PACE / 100);
   };
 
   // Format points impact for display
@@ -183,8 +156,9 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
             <th colSpan={offensiveColumns.length} className="bg-[var(--background-secondary)]" />
             <th
               colSpan={defensiveColumns.length}
-              className="bg-[var(--background-secondary)] text-[var(--foreground)] text-xs font-bold py-1 px-2 text-center border-l-2 border-[var(--foreground)] pl-5"
+              className="bg-[var(--background-secondary)] text-[var(--foreground)] text-xs font-bold py-1 px-2 text-center pl-6 relative"
             >
+              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[var(--foreground)] -translate-x-1/2" />
               ALLOWED
             </th>
           </tr>
@@ -200,14 +174,17 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
                 <th
                   key={col.key}
                   className={`
-                    py-3 px-3 bg-[var(--background-secondary)]
+                    py-3 px-3 bg-[var(--background-secondary)] relative
                     ${col.key === 'team' ? 'text-left sticky left-8 z-10' : 'text-right'}
                     ${col.key !== 'team' && col.key !== 'record' ? 'cursor-pointer hover:text-[var(--accent-primary)]' : ''}
-                    ${isLastOffensive ? 'pr-5' : ''}
-                    ${isFirstDefensive ? 'border-l-2 border-[var(--foreground)] pl-5' : ''}
+                    ${isLastOffensive ? 'pr-6' : ''}
+                    ${isFirstDefensive ? 'pl-6' : ''}
                   `}
                   onClick={() => col.key !== 'team' && col.key !== 'record' && handleSort(col.key as SortField)}
                 >
+                  {isFirstDefensive && (
+                    <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[var(--foreground)] -translate-x-1/2" />
+                  )}
                   <div className={`flex items-center gap-1 ${col.key === 'team' ? 'justify-start' : 'justify-end'}`}>
                     <span className="text-xs text-[var(--foreground)]">
                       {col.shortLabel}
@@ -284,8 +261,11 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
                   return (
                     <td
                       key={col.key}
-                      className={`py-3 px-3 text-right ${isLastOffensive ? 'pr-5' : ''} ${isFirstDefensive ? 'border-l-2 border-[var(--foreground)] pl-5' : ''}`}
+                      className={`py-3 px-3 text-right relative ${isLastOffensive ? 'pr-6' : ''} ${isFirstDefensive ? 'pl-6' : ''}`}
                     >
+                      {isFirstDefensive && (
+                        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[var(--foreground)] -translate-x-1/2" />
+                      )}
                       <span
                         className="stat-number text-sm font-semibold"
                         style={{ color }}
@@ -301,8 +281,11 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
                 return (
                   <td
                     key={col.key}
-                    className={`py-3 px-3 text-right ${isLastOffensive ? 'pr-5' : ''} ${isFirstDefensive ? 'border-l-2 border-[var(--foreground)] pl-5' : ''}`}
+                    className={`py-3 px-3 text-right relative ${isLastOffensive ? 'pr-6' : ''} ${isFirstDefensive ? 'pl-6' : ''}`}
                   >
+                    {isFirstDefensive && (
+                      <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[var(--foreground)] -translate-x-1/2" />
+                    )}
                     <span
                       className="stat-number text-sm"
                       style={{ color }}

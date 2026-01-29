@@ -109,6 +109,19 @@ export interface FactorMeta {
 // Average possessions per team per game in college basketball (~67)
 export const AVG_POSSESSIONS_PER_GAME = 67;
 
+// NCAA Division 1 season averages for Four Factors (2024-25 season estimates)
+// Used as baseline for points impact calculations
+export const NCAA_AVERAGES = {
+  efg: 50.5,      // NCAA D1 average eFG%
+  tov: 18.5,      // NCAA D1 average TOV%
+  orb: 28.0,      // NCAA D1 average ORB%
+  ftr: 30.0,      // NCAA D1 average FTR
+  oppEfg: 50.5,   // Defense (same as offensive since it's symmetric league-wide)
+  oppTov: 18.5,
+  oppOrb: 28.0,
+  oppFtr: 30.0,
+};
+
 // League constants for Dean Oliver's point contribution formulas
 // LgEffic: Points per possession (college basketball ~1.02)
 export const LEAGUE_EFFICIENCY = 1.02;
@@ -193,6 +206,56 @@ export function calculatePointsImpact(
 export function formatPointsImpact(points: number): string {
   const sign = points >= 0 ? '+' : '';
   return `${sign}${points.toFixed(1)}`;
+}
+
+/**
+ * Calculate points impact vs NCAA average for a single stat
+ * @param factorKey - The factor key (efg, tov, orb, ftr)
+ * @param value - The team's stat value
+ * @param isDefensive - Whether this is a defensive stat (oppEfg, oppTov, etc.)
+ * @param possessions - Possessions per game (default 70)
+ * @returns Points gained/lost relative to NCAA average
+ */
+export function calculatePointsImpactVsAvg(
+  factorKey: keyof FourFactors,
+  value: number,
+  isDefensive: boolean = false,
+  possessions: number = 70
+): number {
+  const factor = FOUR_FACTORS_META.find(f => f.key === factorKey);
+  if (!factor) return 0;
+
+  const avgKey = isDefensive
+    ? `opp${factorKey.charAt(0).toUpperCase()}${factorKey.slice(1)}` as keyof typeof NCAA_AVERAGES
+    : factorKey as keyof typeof NCAA_AVERAGES;
+  const ncaaAvg = NCAA_AVERAGES[avgKey];
+
+  const differential = value - ncaaAvg;
+  // For defensive stats, being BELOW average is good (you're allowing less)
+  // So we negate the differential for defensive stats
+  const adjustedDiff = isDefensive ? -differential : differential;
+
+  const pointsPer100 = adjustedDiff * factor.pointsImpact;
+  return pointsPer100 * (possessions / 100);
+}
+
+/**
+ * Calculate total points impact for a factor (combining offensive and defensive)
+ * @param factorKey - The factor key (efg, tov, orb, ftr)
+ * @param offValue - Team's offensive stat
+ * @param defValue - Team's defensive stat (what they allow)
+ * @param possessions - Possessions per game (default 70)
+ * @returns Combined points impact (offensive advantage + defensive advantage)
+ */
+export function calculateCombinedPointsImpact(
+  factorKey: keyof FourFactors,
+  offValue: number,
+  defValue: number,
+  possessions: number = 70
+): number {
+  const offImpact = calculatePointsImpactVsAvg(factorKey, offValue, false, possessions);
+  const defImpact = calculatePointsImpactVsAvg(factorKey, defValue, true, possessions);
+  return offImpact + defImpact;
 }
 
 // ============================================================================

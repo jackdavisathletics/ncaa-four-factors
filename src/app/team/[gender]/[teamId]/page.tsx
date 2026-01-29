@@ -147,9 +147,6 @@ export default async function TeamPage({ params }: TeamPageProps) {
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-sm text-[var(--foreground-muted)]">
                         {factor.label}
-                        <span className="text-xs ml-2">
-                          ({factor.higherIsBetter ? '↑ higher is better' : '↓ lower is better'})
-                        </span>
                       </span>
                       <span
                         className="stat-number text-lg font-bold"

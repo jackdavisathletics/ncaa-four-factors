@@ -15,7 +15,7 @@ export function Navigation() {
   return (
     <header className="sticky top-0 z-50 bg-[var(--background)]/80 backdrop-blur-lg border-b border-[var(--border)]">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-24">
           {/* Logo */}
           <Link
             href="/"
@@ -24,7 +24,7 @@ export function Navigation() {
             <img
               src="/four-factors-logo.png"
               alt="Four Factors Logo"
-              className="w-14 h-14 object-contain mix-blend-multiply dark:brightness-150 dark:contrast-125"
+              className="w-20 h-20 object-contain mix-blend-multiply dark:brightness-150 dark:contrast-125"
             />
             <div className="hidden sm:block">
               <h1 className="text-lg tracking-wider">Four Factors</h1>

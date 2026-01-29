@@ -30,7 +30,7 @@ export function GameCard({ game, gender, showFactors = false }: GameCardProps) {
     >
       {/* Date header */}
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs text-[var(--foreground-muted)] uppercase tracking-wide">
+        <span className="text-xs text-[var(--foreground-muted)] uppercase tracking-wide" suppressHydrationWarning>
           {formatDate(game.date)}
         </span>
         {game.isConferenceGame && (

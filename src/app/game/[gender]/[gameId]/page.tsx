@@ -120,7 +120,7 @@ export default async function GamePage({ params }: GamePageProps) {
           <p className="text-sm text-[var(--foreground-muted)] uppercase tracking-wide mb-1">
             {gender === 'mens' ? "Men's" : "Women's"} Basketball
           </p>
-          <p className="text-lg">{formatDate(game.date)}</p>
+          <p className="text-lg" suppressHydrationWarning>{formatDate(game.date)}</p>
           {game.venue && (
             <p className="text-sm text-[var(--foreground-muted)]">{game.venue}</p>
           )}

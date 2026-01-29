@@ -173,72 +173,103 @@ export default async function TeamPage({ params }: TeamPageProps) {
             </div>
           </div>
 
-          {/* Points Impact */}
+          {/* Points Impact - Waterfall Chart */}
           <div className="card p-6">
             <h2 className="text-xl mb-4" style={{ color: 'var(--accent-success)' }}>
               Points Impact
             </h2>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {(() => {
-                const pointsImpactData = FOUR_FACTORS_META.map((factor, index) => {
+                // Build waterfall data with running totals
+                let runningTotal = 0;
+                const waterfallData = FOUR_FACTORS_META.map((factor, index) => {
                   const offValue = standings[factor.key];
                   const defKey = `opp${factor.key.charAt(0).toUpperCase()}${factor.key.slice(1)}` as keyof typeof standings;
                   const defValue = standings[defKey] as number;
 
-                  // Calculate differential (positive means team is better)
-                  // For TOV%: lower is better, so we flip the sign
-                  const differential = factor.higherIsBetter
-                    ? offValue - defValue
-                    : defValue - offValue;
-
                   // Calculate points impact using the factor's coefficient
-                  const pointsImpact = calculatePointsImpact(factor.key,
-                    factor.higherIsBetter ? offValue - defValue : offValue - defValue,
-                    AVERAGE_PACE);
+                  const diff = offValue - defValue;
+                  const pointsImpact = calculatePointsImpact(factor.key, diff, AVERAGE_PACE);
+
+                  const previousTotal = runningTotal;
+                  runningTotal += pointsImpact;
 
                   return {
                     label: factor.shortLabel,
-                    differential,
                     pointsImpact,
+                    previousTotal,
+                    runningTotal,
                     color: factorColors[index],
                   };
                 });
 
-                const totalImpact = pointsImpactData.reduce((sum, d) => sum + d.pointsImpact, 0);
-                const maxAbsImpact = Math.max(...pointsImpactData.map(d => Math.abs(d.pointsImpact)), 5);
+                const totalImpact = runningTotal;
+
+                // Calculate scale - need to fit all running totals
+                let maxAbsValue = Math.abs(totalImpact);
+                waterfallData.forEach(bar => {
+                  maxAbsValue = Math.max(maxAbsValue, Math.abs(bar.runningTotal), Math.abs(bar.previousTotal));
+                });
+                maxAbsValue = Math.max(maxAbsValue * 1.2, 5); // Add padding, minimum of 5
+
+                // Convert value to percentage (0 = 50%, positive = right, negative = left)
+                const valueToPercent = (value: number) => 50 + (value / maxAbsValue) * 50;
 
                 return (
                   <>
-                    {pointsImpactData.map((data) => (
-                      <div key={data.label}>
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-sm text-[var(--foreground-muted)]">
-                            {data.label}
-                          </span>
-                          <span
-                            className="stat-number text-lg font-bold"
-                            style={{ color: data.pointsImpact >= 0 ? 'var(--accent-success)' : 'var(--accent-secondary)' }}
-                          >
-                            {formatPointsImpact(data.pointsImpact)}
-                          </span>
+                    {waterfallData.map((data, index) => {
+                      const startPercent = valueToPercent(data.previousTotal);
+                      const endPercent = valueToPercent(data.runningTotal);
+                      const left = Math.min(startPercent, endPercent);
+                      const width = Math.abs(endPercent - startPercent);
+                      const isPositive = data.pointsImpact >= 0;
+
+                      return (
+                        <div key={data.label}>
+                          <div className="flex justify-between items-center mb-1">
+                            <span className="text-sm text-[var(--foreground-muted)]">
+                              {data.label}
+                            </span>
+                            <span
+                              className="stat-number text-sm font-bold"
+                              style={{ color: isPositive ? 'var(--accent-success)' : 'var(--accent-secondary)' }}
+                            >
+                              {formatPointsImpact(data.pointsImpact)}
+                            </span>
+                          </div>
+                          <div className="h-6 bg-[var(--background-tertiary)] rounded overflow-hidden relative">
+                            {/* Center line (0 point) */}
+                            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-[var(--border)] z-10" />
+
+                            {/* Connector line from previous bar */}
+                            {index > 0 && (
+                              <div
+                                className="absolute top-0 bottom-0 w-px bg-[var(--foreground-muted)] opacity-30"
+                                style={{ left: `${startPercent}%` }}
+                              />
+                            )}
+
+                            {/* Waterfall bar */}
+                            <div
+                              className="absolute top-1 bottom-1 rounded transition-all duration-500 flex items-center justify-center"
+                              style={{
+                                left: `${left}%`,
+                                width: `${Math.max(width, 1)}%`,
+                                backgroundColor: isPositive ? 'var(--accent-success)' : 'var(--accent-secondary)',
+                              }}
+                            >
+                              {width > 8 && (
+                                <span className="text-xs font-bold text-white drop-shadow-sm">
+                                  {Math.abs(data.pointsImpact).toFixed(1)}
+                                </span>
+                              )}
+                            </div>
+                          </div>
                         </div>
-                        <div className="h-2 bg-[var(--background-tertiary)] rounded-full overflow-hidden relative">
-                          {/* Center line */}
-                          <div className="absolute left-1/2 top-0 bottom-0 w-px bg-[var(--border)] z-10" />
-                          {/* Bar */}
-                          <div
-                            className="absolute top-0 bottom-0 rounded-full transition-all duration-500"
-                            style={{
-                              left: data.pointsImpact >= 0 ? '50%' : `${50 - (Math.abs(data.pointsImpact) / maxAbsImpact) * 50}%`,
-                              width: `${(Math.abs(data.pointsImpact) / maxAbsImpact) * 50}%`,
-                              backgroundColor: data.pointsImpact >= 0 ? 'var(--accent-success)' : 'var(--accent-secondary)',
-                            }}
-                          />
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                     {/* Total */}
-                    <div className="pt-4 mt-2 border-t border-[var(--border)]">
+                    <div className="pt-3 mt-1 border-t border-[var(--border)]">
                       <div className="flex justify-between items-center">
                         <span className="text-sm font-medium">Total Impact</span>
                         <span

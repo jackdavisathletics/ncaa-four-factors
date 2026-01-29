@@ -183,7 +183,7 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
             <th colSpan={offensiveColumns.length} className="bg-[var(--background-secondary)]" />
             <th
               colSpan={defensiveColumns.length}
-              className="bg-[var(--background-secondary)] text-[var(--foreground)] text-xs font-bold py-1 px-2 text-center border-l-2 border-[var(--foreground)]"
+              className="bg-[var(--background-secondary)] text-[var(--foreground)] text-xs font-bold py-1 px-2 text-center border-l-2 border-[var(--foreground)] pl-5"
             >
               ALLOWED
             </th>
@@ -195,6 +195,7 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
             </th>
             {columns.map((col) => {
               const isFirstDefensive = col.key === 'oppEfg';
+              const isLastOffensive = col.key === 'ftr';
               return (
                 <th
                   key={col.key}
@@ -202,7 +203,8 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
                     py-3 px-3 bg-[var(--background-secondary)]
                     ${col.key === 'team' ? 'text-left sticky left-8 z-10' : 'text-right'}
                     ${col.key !== 'team' && col.key !== 'record' ? 'cursor-pointer hover:text-[var(--accent-primary)]' : ''}
-                    ${isFirstDefensive ? 'border-l-2 border-[var(--foreground)]' : ''}
+                    ${isLastOffensive ? 'pr-5' : ''}
+                    ${isFirstDefensive ? 'border-l-2 border-[var(--foreground)] pl-5' : ''}
                   `}
                   onClick={() => col.key !== 'team' && col.key !== 'record' && handleSort(col.key as SortField)}
                 >
@@ -273,6 +275,7 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
               {columns.slice(2).map(col => {
                 const value = team[col.key as keyof TeamStandings] as number;
                 const isFirstDefensive = col.key === 'oppEfg';
+                const isLastOffensive = col.key === 'ftr';
 
                 if (viewMode === 'points-impact' && col.factorKey) {
                   const pointsImpact = calculatePointsImpact(col, value);
@@ -281,7 +284,7 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
                   return (
                     <td
                       key={col.key}
-                      className={`py-3 px-3 text-right ${isFirstDefensive ? 'border-l-2 border-[var(--foreground)]' : ''}`}
+                      className={`py-3 px-3 text-right ${isLastOffensive ? 'pr-5' : ''} ${isFirstDefensive ? 'border-l-2 border-[var(--foreground)] pl-5' : ''}`}
                     >
                       <span
                         className="stat-number text-sm font-semibold"
@@ -298,7 +301,7 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
                 return (
                   <td
                     key={col.key}
-                    className={`py-3 px-3 text-right ${isFirstDefensive ? 'border-l-2 border-[var(--foreground)]' : ''}`}
+                    className={`py-3 px-3 text-right ${isLastOffensive ? 'pr-5' : ''} ${isFirstDefensive ? 'border-l-2 border-[var(--foreground)] pl-5' : ''}`}
                   >
                     <span
                       className="stat-number text-sm"

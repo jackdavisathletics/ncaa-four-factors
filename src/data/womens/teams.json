@@ -8,8 +8,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/44.png",
     "color": "#c41130",
     "alternateColor": "#c8102e",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Patriot",
+    "conferenceId": "22"
   },
   {
     "id": "9",
@@ -20,8 +20,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/9.png",
     "color": "#ffc627",
     "alternateColor": "#8c1d40",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Big 12",
+    "conferenceId": "8"
   },
   {
     "id": "12",
@@ -32,8 +32,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/12.png",
     "color": "#cc0033",
     "alternateColor": "#003366",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Big 12",
+    "conferenceId": "8"
   },
   {
     "id": "8",
@@ -44,8 +44,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/8.png",
     "color": "#a32136",
     "alternateColor": "#ffffff",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "SEC",
+    "conferenceId": "23"
   },
   {
     "id": "2",
@@ -56,8 +56,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2.png",
     "color": "#002b5c",
     "alternateColor": "#f26522",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "SEC",
+    "conferenceId": "23"
   },
   {
     "id": "91",
@@ -68,8 +68,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/91.png",
     "color": "#000000",
     "alternateColor": "#333333",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "ASUN",
+    "conferenceId": "46"
   },
   {
     "id": "68",
@@ -80,8 +80,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/68.png",
     "color": "#0033a0",
     "alternateColor": "#d64309",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Mountain West",
+    "conferenceId": "44"
   },
   {
     "id": "71",
@@ -92,8 +92,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/71.png",
     "color": "#b70002",
     "alternateColor": "#c0c0c0",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "MVC",
+    "conferenceId": "18"
   },
   {
     "id": "13",
@@ -104,8 +104,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/13.png",
     "color": "#1E4D2B",
     "alternateColor": "#eed897",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Big West",
+    "conferenceId": "9"
   },
   {
     "id": "25",
@@ -116,8 +116,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/25.png",
     "color": "#041e42",
     "alternateColor": "#ffc72c",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "ACC",
+    "conferenceId": "2"
   },
   {
     "id": "38",
@@ -128,8 +128,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/38.png",
     "color": "#cfb87c",
     "alternateColor": "#000000",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Big 12",
+    "conferenceId": "8"
   },
   {
     "id": "36",
@@ -140,8 +140,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/36.png",
     "color": "#004c23",
     "alternateColor": "#c8c372",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Mountain West",
+    "conferenceId": "44"
   },
   {
     "id": "48",
@@ -152,7 +152,7 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/48.png",
     "color": "#00539f",
     "alternateColor": "#ffd200",
-    "conference": "Conference USA",
+    "conference": "CUSA",
     "conferenceId": "11"
   },
   {
@@ -164,8 +164,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/50.png",
     "color": "#F89728",
     "alternateColor": "#00843d",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "SWAC",
+    "conferenceId": "26"
   },
   {
     "id": "57",
@@ -176,8 +176,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/57.png",
     "color": "#0021a5",
     "alternateColor": "#fa4616",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "SEC",
+    "conferenceId": "23"
   },
   {
     "id": "52",
@@ -188,8 +188,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/52.png",
     "color": "#782f40",
     "alternateColor": "#ceb888",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "ACC",
+    "conferenceId": "2"
   },
   {
     "id": "45",
@@ -200,8 +200,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/45.png",
     "color": "#002843",
     "alternateColor": "#e8d2a1",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "A-10",
+    "conferenceId": "3"
   },
   {
     "id": "46",
@@ -212,8 +212,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/46.png",
     "color": "#110E42",
     "alternateColor": "#001c58",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Big East",
+    "conferenceId": "4"
   },
   {
     "id": "61",
@@ -224,8 +224,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/61.png",
     "color": "#ba0c2f",
     "alternateColor": "#2c2a29",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "SEC",
+    "conferenceId": "23"
   },
   {
     "id": "59",
@@ -236,8 +236,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/59.png",
     "color": "#b3a369",
     "alternateColor": "#ffffff",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "ACC",
+    "conferenceId": "2"
   },
   {
     "id": "62",
@@ -248,8 +248,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/62.png",
     "color": "#005737",
     "alternateColor": "#000000",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Big West",
+    "conferenceId": "9"
   },
   {
     "id": "47",
@@ -260,8 +260,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/47.png",
     "color": "#003a63",
     "alternateColor": "#e51937",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "MEAC",
+    "conferenceId": "16"
   },
   {
     "id": "85",
@@ -272,8 +272,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/85.png",
     "color": "#A81F30",
     "alternateColor": "#d59f0f",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Horizon",
+    "conferenceId": "45"
   },
   {
     "id": "70",
@@ -284,8 +284,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/70.png",
     "color": "#000000",
     "alternateColor": "#8c6e4a",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Big Sky",
+    "conferenceId": "5"
   },
   {
     "id": "84",
@@ -296,8 +296,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/84.png",
     "color": "#970310",
     "alternateColor": "#ffffff",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Big Ten",
+    "conferenceId": "7"
   },
   {
     "id": "66",
@@ -308,8 +308,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/66.png",
     "color": "#ae192d",
     "alternateColor": "#ffc72a",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Big 12",
+    "conferenceId": "8"
   },
   {
     "id": "55",
@@ -320,7 +320,7 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/55.png",
     "color": "#cc0000",
     "alternateColor": "#000000",
-    "conference": "Conference USA",
+    "conference": "CUSA",
     "conferenceId": "11"
   },
   {
@@ -332,8 +332,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/96.png",
     "color": "#0033a0",
     "alternateColor": "#ffffff",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "SEC",
+    "conferenceId": "23"
   },
   {
     "id": "97",
@@ -344,8 +344,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/97.png",
     "color": "#c9001f",
     "alternateColor": "#ffffff",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "ACC",
+    "conferenceId": "2"
   },
   {
     "id": "93",
@@ -356,8 +356,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/93.png",
     "color": "#002148",
     "alternateColor": "#000e00",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "MVC",
+    "conferenceId": "18"
   },
   {
     "id": "94",
@@ -368,8 +368,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/94.png",
     "color": "#ffc82e",
     "alternateColor": "#000000",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Horizon",
+    "conferenceId": "45"
   },
   {
     "id": "77",
@@ -380,8 +380,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/77.png",
     "color": "#492f92",
     "alternateColor": "#ffffff",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Big Ten",
+    "conferenceId": "7"
   },
   {
     "id": "87",
@@ -392,8 +392,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/87.png",
     "color": "#c99700",
     "alternateColor": "#062340",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "ACC",
+    "conferenceId": "2"
   },
   {
     "id": "16",
@@ -404,8 +404,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/16.png",
     "color": "#00573C",
     "alternateColor": "#cdb97d",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Big Sky",
+    "conferenceId": "5"
   },
   {
     "id": "21",
@@ -416,8 +416,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/21.png",
     "color": "#a6192e",
     "alternateColor": "#000000",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Mountain West",
+    "conferenceId": "44"
   },
   {
     "id": "23",
@@ -428,8 +428,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/23.png",
     "color": "#0038a8",
     "alternateColor": "#ffb81a",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Mountain West",
+    "conferenceId": "44"
   },
   {
     "id": "6",
@@ -440,8 +440,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/6.png",
     "color": "#00205b",
     "alternateColor": "#bf0d3e",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Sun Belt",
+    "conferenceId": "27"
   },
   {
     "id": "58",
@@ -452,8 +452,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/58.png",
     "color": "#006747",
     "alternateColor": "#cfc493",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "American",
+    "conferenceId": "62"
   },
   {
     "id": "79",
@@ -464,8 +464,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/79.png",
     "color": "#85283D",
     "alternateColor": "#c2c3c0",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "MVC",
+    "conferenceId": "18"
   },
   {
     "id": "88",
@@ -476,8 +476,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/88.png",
     "color": "#000000",
     "alternateColor": "#333333",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "OVC",
+    "conferenceId": "20"
   },
   {
     "id": "24",
@@ -488,8 +488,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/24.png",
     "color": "#8c1515",
     "alternateColor": "#ffffff",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "ACC",
+    "conferenceId": "2"
   },
   {
     "id": "56",
@@ -500,8 +500,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/56.png",
     "color": "#0a5640",
     "alternateColor": "#56854e",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "ASUN",
+    "conferenceId": "46"
   },
   {
     "id": "5",
@@ -512,8 +512,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/5.png",
     "color": "#1a5632",
     "alternateColor": "#fdb913",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "American",
+    "conferenceId": "62"
   },
   {
     "id": "27",
@@ -524,8 +524,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/27.png",
     "color": "#14234F",
     "alternateColor": "#333333",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Big West",
+    "conferenceId": "9"
   },
   {
     "id": "28",
@@ -536,8 +536,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/28.png",
     "color": "#000000",
     "alternateColor": "#ffcd00",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Big West",
+    "conferenceId": "9"
   },
   {
     "id": "26",
@@ -548,8 +548,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/26.png",
     "color": "#2774ae",
     "alternateColor": "#f2a900",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Big Ten",
+    "conferenceId": "7"
   },
   {
     "id": "41",
@@ -560,8 +560,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/41.png",
     "color": "#0c2340",
     "alternateColor": "#a2aaad",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Big East",
+    "conferenceId": "4"
   },
   {
     "id": "82",
@@ -572,8 +572,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/82.png",
     "color": "#001e62",
     "alternateColor": "#d50032",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "MVC",
+    "conferenceId": "18"
   },
   {
     "id": "30",
@@ -584,8 +584,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/30.png",
     "color": "#9d2235",
     "alternateColor": "#ffc72c",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Big Ten",
+    "conferenceId": "7"
   },
   {
     "id": "43",
@@ -596,7 +596,7 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/43.png",
     "color": "#004a81",
     "alternateColor": "#286dc0",
-    "conference": "Conference USA",
-    "conferenceId": "11"
+    "conference": "Ivy",
+    "conferenceId": "12"
   }
 ]

@@ -106,6 +106,35 @@ function calculateFourFactors(stats: BoxScoreStats, opponentDreb: number): FourF
   return { efg, tov, orb, ftr };
 }
 
+async function fetchTeamDetails(gender: Gender, teamId: string): Promise<{ conferenceId: string; conference: string } | null> {
+  const league = getLeaguePath(gender);
+  const url = `${ESPN_BASE}/${league}/teams/${teamId}`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return null;
+
+    const data = await response.json();
+    const team = data.team;
+
+    // Get conference ID from groups
+    const conferenceId = team.groups?.id || CUSA_GROUP_ID;
+
+    // Parse conference name from standingSummary (e.g., "1st in Big 12" -> "Big 12")
+    let conference = 'Unknown';
+    if (team.standingSummary) {
+      const match = team.standingSummary.match(/in (.+)$/);
+      if (match) {
+        conference = match[1];
+      }
+    }
+
+    return { conferenceId, conference };
+  } catch {
+    return null;
+  }
+}
+
 async function fetchCusaTeams(gender: Gender): Promise<Team[]> {
   const league = getLeaguePath(gender);
   const url = `${ESPN_BASE}/${league}/teams?groups=${CUSA_GROUP_ID}`;
@@ -120,9 +149,16 @@ async function fetchCusaTeams(gender: Gender): Promise<Team[]> {
   const data = await response.json();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return data.sports[0].leagues[0].teams.map((t: any) => {
-    const team = t.team;
-    return {
+  const teamsBasic = data.sports[0].leagues[0].teams.map((t: any) => t.team);
+
+  // Fetch detailed conference info for each team
+  const teams: Team[] = [];
+  for (const team of teamsBasic) {
+    console.log(`  Fetching conference for ${team.displayName}...`);
+    const details = await fetchTeamDetails(gender, team.id);
+    await delay(50); // Rate limiting
+
+    teams.push({
       id: team.id,
       name: team.name,
       abbreviation: team.abbreviation,
@@ -131,10 +167,12 @@ async function fetchCusaTeams(gender: Gender): Promise<Team[]> {
       logo: team.logos?.[0]?.href || '',
       color: team.color ? `#${team.color}` : '#666666',
       alternateColor: team.alternateColor ? `#${team.alternateColor}` : '#333333',
-      conference: 'Conference USA',
-      conferenceId: CUSA_GROUP_ID,
-    };
-  });
+      conference: details?.conference || 'Conference USA',
+      conferenceId: details?.conferenceId || CUSA_GROUP_ID,
+    });
+  }
+
+  return teams;
 }
 
 async function fetchTeamSchedule(

@@ -64,9 +64,6 @@ export default function HomePage() {
                 <p className="text-sm text-[var(--foreground-muted)]">
                   {factor.description}
                 </p>
-                <p className="text-xs mt-3 text-[var(--foreground-muted)]">
-                  {factor.higherIsBetter ? '↑ Higher is better' : '↓ Lower is better'}
-                </p>
               </div>
             );
           })}

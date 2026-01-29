@@ -70,11 +70,30 @@ function TeamHeader({ team, won, gender }: { team: GameTeamStats; won: boolean; 
   );
 }
 
-function BoxScoreDetail({ label, home, away, higherBetter = true }: {
+// Calculate relative luminance of a hex color for contrast checking
+function getLuminance(hexColor: string): number {
+  const hex = hexColor.replace('#', '');
+  const r = parseInt(hex.substring(0, 2), 16) / 255;
+  const g = parseInt(hex.substring(2, 4), 16) / 255;
+  const b = parseInt(hex.substring(4, 6), 16) / 255;
+
+  const toLinear = (c: number) => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  return 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
+}
+
+// Get contrasting text color based on background luminance
+function getContrastColor(hexColor: string): string {
+  const luminance = getLuminance(hexColor);
+  // Use dark text for light backgrounds, light text for dark backgrounds
+  return luminance > 0.4 ? '#1a1a1a' : '#ffffff';
+}
+
+function BoxScoreDetail({ label, home, away, higherBetter = true, boldValue = false }: {
   label: string;
   home: string | number;
   away: string | number;
   higherBetter?: boolean;
+  boldValue?: boolean;
 }) {
   const homeNum = typeof home === 'number' ? home : parseFloat(home);
   const awayNum = typeof away === 'number' ? away : parseFloat(away);
@@ -83,11 +102,11 @@ function BoxScoreDetail({ label, home, away, higherBetter = true }: {
 
   return (
     <div className="flex items-center py-2 border-b border-[var(--border)] last:border-0">
-      <span className={`w-16 text-right stat-number ${homeBetter ? 'text-[var(--accent-success)] font-semibold' : 'text-[var(--foreground-muted)]'}`}>
+      <span className={`w-16 text-right stat-number ${homeBetter ? 'text-[var(--accent-success)] font-semibold' : 'text-[var(--foreground-muted)]'} ${boldValue ? 'font-bold' : ''}`}>
         {home}
       </span>
       <span className="flex-1 text-center text-sm text-[var(--foreground-muted)]">{label}</span>
-      <span className={`w-16 text-left stat-number ${awayBetter ? 'text-[var(--accent-success)] font-semibold' : 'text-[var(--foreground-muted)]'}`}>
+      <span className={`w-16 text-left stat-number ${awayBetter ? 'text-[var(--accent-success)] font-semibold' : 'text-[var(--foreground-muted)]'} ${boldValue ? 'font-bold' : ''}`}>
         {away}
       </span>
     </div>
@@ -185,50 +204,98 @@ export default async function GamePage({ params }: GamePageProps) {
 
         {/* Team labels for box score */}
         <div className="flex justify-between mb-4 px-4">
-          <span className="font-medium text-sm" style={{ color: game.homeTeam.teamColor }}>
+          <span
+            className="font-medium text-sm px-2 py-1 rounded"
+            style={{
+              backgroundColor: game.homeTeam.teamColor,
+              color: getContrastColor(game.homeTeam.teamColor)
+            }}
+          >
             {game.homeTeam.teamAbbreviation}
           </span>
-          <span className="font-medium text-sm" style={{ color: game.awayTeam.teamColor }}>
+          <span
+            className="font-medium text-sm px-2 py-1 rounded"
+            style={{
+              backgroundColor: game.awayTeam.teamColor,
+              color: getContrastColor(game.awayTeam.teamColor)
+            }}
+          >
             {game.awayTeam.teamAbbreviation}
           </span>
         </div>
 
         <div className="divide-y divide-[var(--border)]">
+          {/* 2P% */}
           <BoxScoreDetail
-            label="Field Goals"
-            home={`${game.homeTeam.fgm}-${game.homeTeam.fga}`}
-            away={`${game.awayTeam.fgm}-${game.awayTeam.fga}`}
+            label="2P%"
+            home={(() => {
+              const fg2a = game.homeTeam.fga - game.homeTeam.fg3a;
+              const fg2m = game.homeTeam.fgm - game.homeTeam.fg3m;
+              return fg2a > 0 ? ((fg2m / fg2a) * 100).toFixed(1) : '0.0';
+            })()}
+            away={(() => {
+              const fg2a = game.awayTeam.fga - game.awayTeam.fg3a;
+              const fg2m = game.awayTeam.fgm - game.awayTeam.fg3m;
+              return fg2a > 0 ? ((fg2m / fg2a) * 100).toFixed(1) : '0.0';
+            })()}
           />
+          {/* 3P% */}
           <BoxScoreDetail
-            label="FG%"
-            home={game.homeTeam.fga > 0 ? ((game.homeTeam.fgm / game.homeTeam.fga) * 100).toFixed(1) : '0.0'}
-            away={game.awayTeam.fga > 0 ? ((game.awayTeam.fgm / game.awayTeam.fga) * 100).toFixed(1) : '0.0'}
+            label="3P%"
+            home={game.homeTeam.fg3a > 0 ? ((game.homeTeam.fg3m / game.homeTeam.fg3a) * 100).toFixed(1) : '0.0'}
+            away={game.awayTeam.fg3a > 0 ? ((game.awayTeam.fg3m / game.awayTeam.fg3a) * 100).toFixed(1) : '0.0'}
           />
+          {/* 3PR (3-Point Rate) */}
           <BoxScoreDetail
-            label="3-Pointers"
-            home={`${game.homeTeam.fg3m}-${game.homeTeam.fg3a}`}
-            away={`${game.awayTeam.fg3m}-${game.awayTeam.fg3a}`}
+            label="3PR"
+            home={game.homeTeam.fga > 0 ? ((game.homeTeam.fg3a / game.homeTeam.fga) * 100).toFixed(1) : '0.0'}
+            away={game.awayTeam.fga > 0 ? ((game.awayTeam.fg3a / game.awayTeam.fga) * 100).toFixed(1) : '0.0'}
           />
+          {/* EFG% (bolded) */}
           <BoxScoreDetail
-            label="Free Throws"
-            home={`${game.homeTeam.ftm}-${game.homeTeam.fta}`}
-            away={`${game.awayTeam.ftm}-${game.awayTeam.fta}`}
+            label="eFG%"
+            home={game.homeTeam.efg.toFixed(1)}
+            away={game.awayTeam.efg.toFixed(1)}
+            boldValue
           />
+          {/* TOV% (lower is better) */}
           <BoxScoreDetail
-            label="Offensive Rebounds"
-            home={game.homeTeam.oreb}
-            away={game.awayTeam.oreb}
-          />
-          <BoxScoreDetail
-            label="Defensive Rebounds"
-            home={game.homeTeam.dreb}
-            away={game.awayTeam.dreb}
-          />
-          <BoxScoreDetail
-            label="Turnovers"
-            home={game.homeTeam.turnovers}
-            away={game.awayTeam.turnovers}
+            label="TOV%"
+            home={game.homeTeam.tov.toFixed(1)}
+            away={game.awayTeam.tov.toFixed(1)}
             higherBetter={false}
+          />
+          {/* ORB% */}
+          <BoxScoreDetail
+            label="ORB%"
+            home={game.homeTeam.orb.toFixed(1)}
+            away={game.awayTeam.orb.toFixed(1)}
+          />
+          {/* Total Possessions Gained (bolded) */}
+          <BoxScoreDetail
+            label="Poss. Gained"
+            home={game.homeTeam.oreb - game.homeTeam.turnovers - game.awayTeam.oreb + game.awayTeam.turnovers}
+            away={game.awayTeam.oreb - game.awayTeam.turnovers - game.homeTeam.oreb + game.homeTeam.turnovers}
+            boldValue
+          />
+          {/* FTR */}
+          <BoxScoreDetail
+            label="FTR"
+            home={game.homeTeam.ftr.toFixed(1)}
+            away={game.awayTeam.ftr.toFixed(1)}
+          />
+          {/* FT% */}
+          <BoxScoreDetail
+            label="FT%"
+            home={game.homeTeam.fta > 0 ? ((game.homeTeam.ftm / game.homeTeam.fta) * 100).toFixed(1) : '0.0'}
+            away={game.awayTeam.fta > 0 ? ((game.awayTeam.ftm / game.awayTeam.fta) * 100).toFixed(1) : '0.0'}
+          />
+          {/* FTM (bolded) */}
+          <BoxScoreDetail
+            label="FTM"
+            home={game.homeTeam.ftm}
+            away={game.awayTeam.ftm}
+            boldValue
           />
         </div>
       </div>

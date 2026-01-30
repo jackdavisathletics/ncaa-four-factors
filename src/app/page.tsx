@@ -45,13 +45,13 @@ function HomePageContent() {
         .slice(0, 12);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
       {/* Hero Section */}
       <section className="text-center mb-16 stagger-children relative z-10">
         <img
           src="/four-factors-logo.png"
           alt="Four Factors Logo"
-          className="w-[32rem] h-[32rem] mx-auto mb-2 object-contain"
+          className="w-[32rem] h-[32rem] mx-auto -mb-8 object-contain"
         />
         <h1 className="text-5xl sm:text-6xl lg:text-7xl mb-4 glow-text" style={{ color: 'var(--accent-primary)' }}>
           Four Factors

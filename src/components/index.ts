@@ -1,6 +1,7 @@
 export { AccessGate } from './AccessGate';
 export { FactorBar } from './FactorBar';
 export { GenderToggle } from './GenderToggle';
+export { TeamGenderToggle } from './TeamGenderToggle';
 export { TeamSearch } from './TeamSearch';
 export { FourFactorsChart, type DisplayMode } from './FourFactorsChart';
 export { FourFactorsSection } from './FourFactorsSection';

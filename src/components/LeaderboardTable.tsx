@@ -13,7 +13,7 @@ interface LeaderboardTableProps {
 }
 
 interface ColumnDef {
-  key: SortField | 'team' | 'record';
+  key: SortField | 'team' | 'record' | 'confRecord';
   label: string;
   shortLabel: string;
   category: 'info' | 'offensive' | 'defensive';
@@ -25,6 +25,7 @@ interface ColumnDef {
 const columns: ColumnDef[] = [
   { key: 'team', label: 'Team', shortLabel: 'Team', category: 'info' },
   { key: 'record', label: 'Record', shortLabel: 'W-L', category: 'info' },
+  { key: 'confRecord', label: 'Conference', shortLabel: 'Conf', category: 'info' },
   { key: 'efg', label: 'eFG%', shortLabel: 'eFG%', category: 'offensive', higherIsBetter: true, format: v => v.toFixed(1), factorKey: 'efg' },
   { key: 'tov', label: 'TOV%', shortLabel: 'TOV%', category: 'offensive', higherIsBetter: false, format: v => v.toFixed(1), factorKey: 'tov' },
   { key: 'orb', label: 'ORB%', shortLabel: 'ORB%', category: 'offensive', higherIsBetter: true, format: v => v.toFixed(1), factorKey: 'orb' },
@@ -159,6 +160,7 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
             <th className="bg-[var(--background-secondary)] sticky left-0 z-10" />
             <th className="bg-[var(--background-secondary)] sticky left-8 z-10" />
             <th className="bg-[var(--background-secondary)]" />
+            <th className="bg-[var(--background-secondary)]" />
             <th colSpan={offensiveColumns.length} className="bg-[var(--background-secondary)]" />
             <th
               colSpan={defensiveColumns.length}
@@ -182,11 +184,11 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
                   className={`
                     py-3 px-3 bg-[var(--background-secondary)] relative
                     ${col.key === 'team' ? 'text-left sticky left-8 z-10' : 'text-right'}
-                    ${col.key !== 'team' && col.key !== 'record' ? 'cursor-pointer hover:text-[var(--accent-primary)]' : ''}
+                    ${col.key !== 'team' && col.key !== 'record' && col.key !== 'confRecord' ? 'cursor-pointer hover:text-[var(--accent-primary)]' : ''}
                     ${isLastOffensive ? 'pr-6' : ''}
                     ${isFirstDefensive ? 'pl-6' : ''}
                   `}
-                  onClick={() => col.key !== 'team' && col.key !== 'record' && handleSort(col.key as SortField)}
+                  onClick={() => col.key !== 'team' && col.key !== 'record' && col.key !== 'confRecord' && handleSort(col.key as SortField)}
                 >
                   {isFirstDefensive && (
                     <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[var(--foreground)] -translate-x-1/2" />
@@ -254,8 +256,15 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
                 </span>
               </td>
 
+              {/* Conference Record */}
+              <td className="py-3 px-3 text-right">
+                <span className="stat-number text-sm text-[var(--foreground-muted)]">
+                  {team.confWins}-{team.confLosses}
+                </span>
+              </td>
+
               {/* Stats */}
-              {columns.slice(2).map(col => {
+              {columns.slice(3).map(col => {
                 const value = team[col.key as keyof TeamStandings] as number;
                 const isFirstDefensive = col.key === 'oppEfg';
                 const isLastOffensive = col.key === 'ftr';

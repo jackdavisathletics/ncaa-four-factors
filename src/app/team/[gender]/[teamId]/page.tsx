@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Gender, FOUR_FACTORS_META, calculateCombinedPointsImpact, formatPointsImpact, calculateAveragesFromStandings, calculatePercentilesFromStandings } from '@/lib/types';
 import { getTeamById, getTeamStandings, getTeamGames, getStandings, getTeamConference, getConferenceStandings } from '@/lib/data';
-import { GameCard, FactorBar } from '@/components';
+import { GameCard, FactorBar, TeamGenderToggle } from '@/components';
 
 const AVERAGE_PACE = 70;
 
@@ -55,6 +55,9 @@ export default async function TeamPage({ params }: TeamPageProps) {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Team Header */}
       <div className="card p-8 mb-8">
+        <div className="flex justify-end mb-4">
+          <TeamGenderToggle currentGender={gender} teamId={teamId} />
+        </div>
         <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
           {/* Team Logo */}
           <div

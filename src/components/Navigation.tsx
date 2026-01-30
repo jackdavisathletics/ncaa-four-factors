@@ -21,11 +21,13 @@ export function Navigation() {
             href="/"
             className="flex items-center gap-3 group"
           >
-            <img
-              src="/four-factors-logo.png"
-              alt="Four Factors Logo"
-              className="w-20 h-20 object-contain"
-            />
+            <div className="w-20 h-20 rounded-full bg-gray-800 p-1.5">
+              <img
+                src="/four-factors-logo.png"
+                alt="Four Factors Logo"
+                className="w-full h-full object-contain"
+              />
+            </div>
             <div className="hidden sm:block">
               <h1 className="text-lg tracking-wider">Four Factors</h1>
               <p className="text-xs text-[var(--foreground-muted)] -mt-1">NCAA Basketball Analytics</p>

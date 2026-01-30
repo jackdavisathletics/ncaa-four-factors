@@ -157,6 +157,11 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
         </div>
       </div>
 
+      {/* Zero marker at top center */}
+      <div className="flex justify-center mb-1">
+        <span className="text-xs text-[var(--foreground-muted)]">0</span>
+      </div>
+
       {/* Center line background */}
       <div className="relative">
         {/* Vertical center line */}
@@ -236,8 +241,39 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
         </div>
       </div>
 
+      {/* Connector line from final bar to total */}
+      {(() => {
+        const finalPercent = valueToPercent(data.total);
+        const centerPercent = 50;
+        const goesRight = finalPercent > centerPercent;
+
+        return (
+          <div className="relative mt-4">
+            {/* Vertical line down from final bar position */}
+            <div
+              className="absolute w-px h-4 bg-[var(--foreground-muted)] opacity-40"
+              style={{ left: `${finalPercent}%`, top: 0 }}
+            />
+            {/* Horizontal line to center */}
+            <div
+              className="absolute h-px bg-[var(--foreground-muted)] opacity-40"
+              style={{
+                left: goesRight ? `${centerPercent}%` : `${finalPercent}%`,
+                width: `${Math.abs(finalPercent - centerPercent)}%`,
+                top: '16px',
+              }}
+            />
+            {/* Vertical line down to total */}
+            <div
+              className="absolute w-px h-4 bg-[var(--foreground-muted)] opacity-40"
+              style={{ left: '50%', top: '16px' }}
+            />
+          </div>
+        );
+      })()}
+
       {/* Final total */}
-      <div className="mt-8 pt-4 border-t border-[var(--border)]">
+      <div className="mt-12 pt-4 border-t border-[var(--border)]">
         <div className="flex items-center justify-center gap-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden"

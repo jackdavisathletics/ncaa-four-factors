@@ -161,9 +161,9 @@ export default async function GamePage({ params }: GamePageProps) {
         </div>
       </div>
 
-      {/* Four Factors Analysis */}
+      {/* Estimated Point Impact */}
       <div className="card p-8 mb-8">
-        <h2 className="text-2xl text-center mb-6">Four Factors Analysis</h2>
+        <h2 className="text-2xl text-center mb-6">Estimated Point Impact</h2>
 
         <FourFactorsSection homeTeam={game.homeTeam} awayTeam={game.awayTeam} />
       </div>

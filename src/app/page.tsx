@@ -1,13 +1,33 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { GenderToggle, TeamSearch, GameCard } from '@/components';
 import { Gender, FOUR_FACTORS_META } from '@/lib/types';
 import { getRecentGames, getConferences, getTeams } from '@/lib/data';
 
-export default function HomePage() {
-  const [gender, setGender] = useState<Gender>('mens');
-  const [selectedConference, setSelectedConference] = useState<string>('all');
+function HomePageContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const [gender, setGender] = useState<Gender>(() => {
+    const g = searchParams.get('gender');
+    return g === 'womens' ? 'womens' : 'mens';
+  });
+  const [selectedConference, setSelectedConference] = useState<string>(() => {
+    return searchParams.get('conference') || 'all';
+  });
+
+  // Update URL when filters change
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (gender !== 'mens') params.set('gender', gender);
+    if (selectedConference !== 'all') params.set('conference', selectedConference);
+
+    const queryString = params.toString();
+    const newUrl = queryString ? `?${queryString}` : '/';
+    router.replace(newUrl, { scroll: false });
+  }, [gender, selectedConference, router]);
 
   const conferences = getConferences(gender);
   const teams = getTeams(gender);
@@ -133,5 +153,13 @@ export default function HomePage() {
         )}
       </section>
     </div>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">Loading...</div>}>
+      <HomePageContent />
+    </Suspense>
   );
 }

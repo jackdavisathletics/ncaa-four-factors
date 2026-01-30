@@ -1,16 +1,40 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { GenderToggle, LeaderboardTable } from '@/components';
 import { Gender } from '@/lib/types';
 import { getStandings, getConferences, getTeamConference } from '@/lib/data';
 
 export type ViewMode = 'percentages' | 'points-impact';
 
-export default function LeaderboardPage() {
-  const [gender, setGender] = useState<Gender>('mens');
-  const [selectedConference, setSelectedConference] = useState<string>('all');
-  const [viewMode, setViewMode] = useState<ViewMode>('percentages');
+function LeaderboardPageContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const [gender, setGender] = useState<Gender>(() => {
+    const g = searchParams.get('gender');
+    return g === 'womens' ? 'womens' : 'mens';
+  });
+  const [selectedConference, setSelectedConference] = useState<string>(() => {
+    return searchParams.get('conference') || 'all';
+  });
+  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    const v = searchParams.get('view');
+    return v === 'points-impact' ? 'points-impact' : 'percentages';
+  });
+
+  // Update URL when filters change
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (gender !== 'mens') params.set('gender', gender);
+    if (selectedConference !== 'all') params.set('conference', selectedConference);
+    if (viewMode !== 'percentages') params.set('view', viewMode);
+
+    const queryString = params.toString();
+    const newUrl = queryString ? `/leaderboard?${queryString}` : '/leaderboard';
+    router.replace(newUrl, { scroll: false });
+  }, [gender, selectedConference, viewMode, router]);
 
   const conferences = getConferences(gender);
   const allStandings = getStandings(gender);
@@ -143,5 +167,13 @@ export default function LeaderboardPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LeaderboardPage() {
+  return (
+    <Suspense fallback={<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">Loading...</div>}>
+      <LeaderboardPageContent />
+    </Suspense>
   );
 }

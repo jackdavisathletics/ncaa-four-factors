@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import { PercentileThresholds } from '@/lib/types';
 
-// Percentile-based colors
+// Percentile-based colors with their contrasting text colors
 const COLORS = {
-  good: '#22c55e',    // Green - above 75th percentile (good)
-  average: '#eab308', // Yellow - 25th to 75th percentile
-  bad: '#ef4444',     // Red - below 25th percentile (bad)
+  good: { bg: '#22c55e', text: '#ffffff' },    // Green - white text
+  average: { bg: '#eab308', text: '#1a1a1a' }, // Yellow - dark text for contrast
+  bad: { bg: '#ef4444', text: '#ffffff' },     // Red - white text
 };
 
 interface FactorBarProps {
@@ -20,13 +20,13 @@ interface FactorBarProps {
 }
 
 /**
- * Determine the bar color based on percentile ranking
+ * Determine the bar colors based on percentile ranking
  * @param value - The metric value
  * @param percentiles - The 25th and 75th percentile thresholds
  * @param higherIsBetter - Whether higher values are better for this metric
- * @returns The color to use for the bar
+ * @returns Object with background color and contrasting text color
  */
-function getPercentileColor(value: number, percentiles: PercentileThresholds, higherIsBetter: boolean): string {
+function getPercentileColors(value: number, percentiles: PercentileThresholds, higherIsBetter: boolean): { bg: string; text: string } {
   const { p25, p75 } = percentiles;
 
   if (higherIsBetter) {
@@ -56,8 +56,8 @@ export function FactorBar({
 }: FactorBarProps) {
   const [isHovered, setIsHovered] = useState(false);
 
-  // Determine the bar color based on percentile ranking
-  const color = getPercentileColor(value, percentiles, higherIsBetter);
+  // Determine the bar colors based on percentile ranking
+  const { bg: barColor, text: textColor } = getPercentileColors(value, percentiles, higherIsBetter);
 
   // Determine if team is above or below average (accounting for direction)
   const diff = value - average;
@@ -82,7 +82,7 @@ export function FactorBar({
           </span>
           <span
             className="stat-number text-lg font-bold"
-            style={{ color }}
+            style={{ color: barColor }}
           >
             {value.toFixed(1)}%
           </span>
@@ -92,7 +92,7 @@ export function FactorBar({
             className="h-full rounded-full transition-all duration-500"
             style={{
               width: `${Math.min(value, 100)}%`,
-              backgroundColor: color,
+              backgroundColor: barColor,
             }}
           />
         </div>
@@ -110,7 +110,7 @@ export function FactorBar({
             <div className="space-y-2">
               {/* Team bar */}
               <div className="flex items-center gap-2">
-                <span className="text-xs w-12 text-right font-medium" style={{ color }}>
+                <span className="text-xs w-12 text-right font-medium" style={{ color: barColor }}>
                   {teamAbbreviation}
                 </span>
                 <div className="flex-1 h-5 bg-[var(--background-tertiary)] rounded overflow-hidden relative">
@@ -118,10 +118,13 @@ export function FactorBar({
                     className="h-full rounded transition-all duration-300"
                     style={{
                       width: `${teamWidth}%`,
-                      backgroundColor: color,
+                      backgroundColor: barColor,
                     }}
                   />
-                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-bold text-white drop-shadow-sm">
+                  <span
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-bold drop-shadow-sm"
+                    style={{ color: textColor }}
+                  >
                     {value.toFixed(1)}%
                   </span>
                 </div>

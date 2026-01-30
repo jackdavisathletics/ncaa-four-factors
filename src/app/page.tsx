@@ -51,7 +51,7 @@ function HomePageContent() {
         <img
           src="/four-factors-logo.png"
           alt="Four Factors Logo"
-          className="w-32 h-32 mx-auto mb-6 object-contain mix-blend-multiply dark:brightness-150 dark:contrast-125"
+          className="w-32 h-32 mx-auto mb-6 object-contain"
         />
         <h1 className="text-5xl sm:text-6xl lg:text-7xl mb-4 glow-text" style={{ color: 'var(--accent-primary)' }}>
           Four Factors

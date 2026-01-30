@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { TeamStandings, Gender, SortField, SortDirection, FOUR_FACTORS_META, calculateAveragesFromStandings, FourFactorsAverages } from '@/lib/types';
 
@@ -10,6 +10,7 @@ interface LeaderboardTableProps {
   standings: TeamStandings[];
   gender: Gender;
   viewMode: ViewMode;
+  selectedConference?: string;
 }
 
 interface ColumnDef {
@@ -24,8 +25,8 @@ interface ColumnDef {
 
 const columns: ColumnDef[] = [
   { key: 'team', label: 'Team', shortLabel: 'Team', category: 'info' },
-  { key: 'record', label: 'Record', shortLabel: 'W-L', category: 'info' },
-  { key: 'confRecord', label: 'Conference', shortLabel: 'Conf', category: 'info' },
+  { key: 'record', label: 'Record', shortLabel: 'W-L', category: 'info', higherIsBetter: true },
+  { key: 'confRecord', label: 'Conference', shortLabel: 'Conf', category: 'info', higherIsBetter: true },
   { key: 'efg', label: 'eFG%', shortLabel: 'eFG%', category: 'offensive', higherIsBetter: true, format: v => v.toFixed(1), factorKey: 'efg' },
   { key: 'tov', label: 'TOV%', shortLabel: 'TOV%', category: 'offensive', higherIsBetter: false, format: v => v.toFixed(1), factorKey: 'tov' },
   { key: 'orb', label: 'ORB%', shortLabel: 'ORB%', category: 'offensive', higherIsBetter: true, format: v => v.toFixed(1), factorKey: 'orb' },
@@ -36,9 +37,21 @@ const columns: ColumnDef[] = [
   { key: 'oppFtr', label: 'Opp FTR', shortLabel: 'FTR', category: 'defensive', higherIsBetter: false, format: v => v.toFixed(1), factorKey: 'ftr' },
 ];
 
-export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTableProps) {
-  const [sortField, setSortField] = useState<SortField>('wins');
+export function LeaderboardTable({ standings, gender, viewMode, selectedConference = 'all' }: LeaderboardTableProps) {
+  const [sortField, setSortField] = useState<SortField>(selectedConference !== 'all' ? 'confRecord' : 'record');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+
+  // Update sort field when conference filter changes
+  useEffect(() => {
+    setSortField(selectedConference !== 'all' ? 'confRecord' : 'record');
+    setSortDirection('desc');
+  }, [selectedConference]);
+
+  // Helper to calculate win percentage
+  const getWinPct = (wins: number, losses: number): number => {
+    const total = wins + losses;
+    return total > 0 ? wins / total : 0;
+  };
 
   const sortedStandings = useMemo(() => {
     const col = columns.find(c => c.key === sortField);
@@ -46,9 +59,14 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
     return [...standings].sort((a, b) => {
       let aVal: number, bVal: number;
 
-      if (sortField === 'wins') {
-        aVal = a.wins;
-        bVal = b.wins;
+      if (sortField === 'wins' || sortField === 'record') {
+        // Sort by overall win percentage
+        aVal = getWinPct(a.wins, a.losses);
+        bVal = getWinPct(b.wins, b.losses);
+      } else if (sortField === 'confRecord') {
+        // Sort by conference win percentage
+        aVal = getWinPct(a.confWins, a.confLosses);
+        bVal = getWinPct(b.confWins, b.confLosses);
       } else {
         aVal = a[sortField] as number;
         bVal = b[sortField] as number;
@@ -184,11 +202,11 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
                   className={`
                     py-3 px-3 bg-[var(--background-secondary)] relative
                     ${col.key === 'team' ? 'text-left sticky left-8 z-10' : 'text-right'}
-                    ${col.key !== 'team' && col.key !== 'record' && col.key !== 'confRecord' ? 'cursor-pointer hover:text-[var(--accent-primary)]' : ''}
+                    ${col.key !== 'team' ? 'cursor-pointer hover:text-[var(--accent-primary)]' : ''}
                     ${isLastOffensive ? 'pr-6' : ''}
                     ${isFirstDefensive ? 'pl-6' : ''}
                   `}
-                  onClick={() => col.key !== 'team' && col.key !== 'record' && col.key !== 'confRecord' && handleSort(col.key as SortField)}
+                  onClick={() => col.key !== 'team' && handleSort(col.key as SortField)}
                 >
                   {isFirstDefensive && (
                     <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[var(--foreground)] -translate-x-1/2" />

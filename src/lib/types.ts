@@ -88,6 +88,7 @@ export interface TeamStandings {
 // Sort configuration for leaderboard
 export type SortField =
   | 'wins'
+  | 'record' | 'confRecord'
   | 'efg' | 'tov' | 'orb' | 'ftr'
   | 'oppEfg' | 'oppTov' | 'oppOrb' | 'oppFtr';
 

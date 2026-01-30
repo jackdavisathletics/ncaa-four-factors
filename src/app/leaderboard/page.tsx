@@ -82,7 +82,7 @@ export default function LeaderboardPage() {
       {/* Table */}
       <div className="card overflow-hidden">
         {standings.length > 0 ? (
-          <LeaderboardTable standings={standings} gender={gender} viewMode={viewMode} />
+          <LeaderboardTable standings={standings} gender={gender} viewMode={viewMode} selectedConference={selectedConference} />
         ) : (
           <div className="p-12 text-center">
             <p className="text-[var(--foreground-muted)]">

@@ -1,25 +1,63 @@
 'use client';
 
 import { useState } from 'react';
+import { PercentileThresholds } from '@/lib/types';
+
+// Percentile-based colors
+const COLORS = {
+  good: '#22c55e',    // Green - above 75th percentile (good)
+  average: '#eab308', // Yellow - 25th to 75th percentile
+  bad: '#ef4444',     // Red - below 25th percentile (bad)
+};
 
 interface FactorBarProps {
   label: string;
   value: number;
   average: number;
-  color: string;
+  percentiles: PercentileThresholds;
   higherIsBetter: boolean;
   teamAbbreviation: string;
+}
+
+/**
+ * Determine the bar color based on percentile ranking
+ * @param value - The metric value
+ * @param percentiles - The 25th and 75th percentile thresholds
+ * @param higherIsBetter - Whether higher values are better for this metric
+ * @returns The color to use for the bar
+ */
+function getPercentileColor(value: number, percentiles: PercentileThresholds, higherIsBetter: boolean): string {
+  const { p25, p75 } = percentiles;
+
+  if (higherIsBetter) {
+    // For metrics where higher is better (eFG%, ORB%, FTR)
+    // >= 75th percentile = good (green)
+    // <= 25th percentile = bad (red)
+    if (value >= p75) return COLORS.good;
+    if (value <= p25) return COLORS.bad;
+    return COLORS.average;
+  } else {
+    // For metrics where lower is better (TOV%)
+    // <= 25th percentile = good (green) - low turnovers
+    // >= 75th percentile = bad (red) - high turnovers
+    if (value <= p25) return COLORS.good;
+    if (value >= p75) return COLORS.bad;
+    return COLORS.average;
+  }
 }
 
 export function FactorBar({
   label,
   value,
   average,
-  color,
+  percentiles,
   higherIsBetter,
   teamAbbreviation,
 }: FactorBarProps) {
   const [isHovered, setIsHovered] = useState(false);
+
+  // Determine the bar color based on percentile ranking
+  const color = getPercentileColor(value, percentiles, higherIsBetter);
 
   // Determine if team is above or below average (accounting for direction)
   const diff = value - average;

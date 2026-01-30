@@ -121,6 +121,24 @@ export interface FourFactorsAverages {
   oppFtr: number;
 }
 
+// Percentile thresholds for a single metric
+export interface PercentileThresholds {
+  p25: number;
+  p75: number;
+}
+
+// Percentile thresholds for all Four Factors metrics
+export interface FourFactorsPercentiles {
+  efg: PercentileThresholds;
+  tov: PercentileThresholds;
+  orb: PercentileThresholds;
+  ftr: PercentileThresholds;
+  oppEfg: PercentileThresholds;
+  oppTov: PercentileThresholds;
+  oppOrb: PercentileThresholds;
+  oppFtr: PercentileThresholds;
+}
+
 /**
  * Calculate averages from standings data
  * This computes the mean of each Four Factor across all teams
@@ -158,6 +176,55 @@ export function calculateAveragesFromStandings(standings: TeamStandings[]): Four
     oppTov: sum.oppTov / count,
     oppOrb: sum.oppOrb / count,
     oppFtr: sum.oppFtr / count,
+  };
+}
+
+/**
+ * Calculate a specific percentile from an array of numbers
+ * Uses linear interpolation for values between data points
+ */
+function calculatePercentile(values: number[], percentile: number): number {
+  if (values.length === 0) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const index = (percentile / 100) * (sorted.length - 1);
+  const lower = Math.floor(index);
+  const upper = Math.ceil(index);
+  if (lower === upper) return sorted[lower];
+  return sorted[lower] + (sorted[upper] - sorted[lower]) * (index - lower);
+}
+
+/**
+ * Calculate 25th and 75th percentile thresholds from standings data
+ * This computes percentiles for each Four Factor across all provided teams
+ */
+export function calculatePercentilesFromStandings(standings: TeamStandings[]): FourFactorsPercentiles {
+  if (standings.length === 0) {
+    // Fallback defaults if no data
+    const defaultThreshold = { p25: 0, p75: 100 };
+    return {
+      efg: defaultThreshold, tov: defaultThreshold, orb: defaultThreshold, ftr: defaultThreshold,
+      oppEfg: defaultThreshold, oppTov: defaultThreshold, oppOrb: defaultThreshold, oppFtr: defaultThreshold,
+    };
+  }
+
+  const efgValues = standings.map(t => t.efg);
+  const tovValues = standings.map(t => t.tov);
+  const orbValues = standings.map(t => t.orb);
+  const ftrValues = standings.map(t => t.ftr);
+  const oppEfgValues = standings.map(t => t.oppEfg);
+  const oppTovValues = standings.map(t => t.oppTov);
+  const oppOrbValues = standings.map(t => t.oppOrb);
+  const oppFtrValues = standings.map(t => t.oppFtr);
+
+  return {
+    efg: { p25: calculatePercentile(efgValues, 25), p75: calculatePercentile(efgValues, 75) },
+    tov: { p25: calculatePercentile(tovValues, 25), p75: calculatePercentile(tovValues, 75) },
+    orb: { p25: calculatePercentile(orbValues, 25), p75: calculatePercentile(orbValues, 75) },
+    ftr: { p25: calculatePercentile(ftrValues, 25), p75: calculatePercentile(ftrValues, 75) },
+    oppEfg: { p25: calculatePercentile(oppEfgValues, 25), p75: calculatePercentile(oppEfgValues, 75) },
+    oppTov: { p25: calculatePercentile(oppTovValues, 25), p75: calculatePercentile(oppTovValues, 75) },
+    oppOrb: { p25: calculatePercentile(oppOrbValues, 25), p75: calculatePercentile(oppOrbValues, 75) },
+    oppFtr: { p25: calculatePercentile(oppFtrValues, 25), p75: calculatePercentile(oppFtrValues, 75) },
   };
 }
 

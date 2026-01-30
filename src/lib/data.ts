@@ -92,3 +92,20 @@ export function getTeamConference(gender: Gender, teamId: string): Conference | 
   if (!team) return undefined;
   return { id: team.conferenceId, name: team.conference };
 }
+
+/**
+ * Get standings for all teams in a specific conference
+ * Filters by gender and conference ID
+ */
+export function getConferenceStandings(gender: Gender, conferenceId: string): TeamStandings[] {
+  const teams = dataCache[gender].teams;
+  const standings = dataCache[gender].standings;
+
+  // Get team IDs in this conference
+  const conferenceTeamIds = new Set(
+    teams.filter(t => t.conferenceId === conferenceId).map(t => t.id)
+  );
+
+  // Filter standings to only include teams in this conference
+  return standings.filter(s => conferenceTeamIds.has(s.teamId));
+}

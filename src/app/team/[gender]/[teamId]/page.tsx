@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { Gender, FOUR_FACTORS_META, calculateCombinedPointsImpact, formatPointsImpact, calculateAveragesFromStandings } from '@/lib/types';
-import { getTeamById, getTeamStandings, getTeamGames, getStandings } from '@/lib/data';
+import { Gender, FOUR_FACTORS_META, calculateCombinedPointsImpact, formatPointsImpact, calculateAveragesFromStandings, calculatePercentilesFromStandings } from '@/lib/types';
+import { getTeamById, getTeamStandings, getTeamGames, getStandings, getTeamConference, getConferenceStandings } from '@/lib/data';
 import { GameCard, FactorBar } from '@/components';
 
 const AVERAGE_PACE = 70;
@@ -25,14 +25,25 @@ export default async function TeamPage({ params }: TeamPageProps) {
   const standings = getTeamStandings(gender, teamId);
   const games = getTeamGames(gender, teamId);
 
-  // Get all standings to calculate dynamic averages for this gender
-  const allStandings = getStandings(gender);
-  const datasetAverages = calculateAveragesFromStandings(allStandings);
-
   if (!team) {
     notFound();
   }
 
+  // Get the team's conference and conference-specific standings
+  const teamConference = getTeamConference(gender, teamId);
+  const conferenceStandings = teamConference
+    ? getConferenceStandings(gender, teamConference.id)
+    : [];
+
+  // Calculate averages and percentiles from conference standings (gender-specific)
+  const conferenceAverages = calculateAveragesFromStandings(conferenceStandings);
+  const conferencePercentiles = calculatePercentilesFromStandings(conferenceStandings);
+
+  // Waterfall chart still uses overall averages for broader context
+  const allStandings = getStandings(gender);
+  const datasetAverages = calculateAveragesFromStandings(allStandings);
+
+  // Colors for the waterfall chart (per factor type)
   const factorColors = [
     'var(--factor-efg)',
     'var(--factor-tov)',
@@ -105,16 +116,17 @@ export default async function TeamPage({ params }: TeamPageProps) {
               Offensive Factors
             </h2>
             <div className="space-y-4">
-              {FOUR_FACTORS_META.map((factor, index) => {
+              {FOUR_FACTORS_META.map((factor) => {
                 const value = standings[factor.key];
-                const average = datasetAverages[factor.key];
+                const average = conferenceAverages[factor.key];
+                const percentiles = conferencePercentiles[factor.key];
                 return (
                   <FactorBar
                     key={factor.key}
                     label={factor.label}
                     value={value}
                     average={average}
-                    color={factorColors[index]}
+                    percentiles={percentiles}
                     higherIsBetter={factor.higherIsBetter}
                     teamAbbreviation={team.abbreviation}
                   />
@@ -130,20 +142,21 @@ export default async function TeamPage({ params }: TeamPageProps) {
             </h2>
             <div className="space-y-4">
               {[
-                { key: 'oppEfg', label: 'Opp eFG%', higherIsBetter: false },
-                { key: 'oppTov', label: 'Opp TOV%', higherIsBetter: true },
-                { key: 'oppOrb', label: 'Opp ORB%', higherIsBetter: false },
-                { key: 'oppFtr', label: 'Opp FTR', higherIsBetter: false },
-              ].map((factor, index) => {
-                const value = standings[factor.key as keyof typeof standings] as number;
-                const average = datasetAverages[factor.key as keyof typeof datasetAverages];
+                { key: 'oppEfg' as const, label: 'Opp eFG%', higherIsBetter: false },
+                { key: 'oppTov' as const, label: 'Opp TOV%', higherIsBetter: true },
+                { key: 'oppOrb' as const, label: 'Opp ORB%', higherIsBetter: false },
+                { key: 'oppFtr' as const, label: 'Opp FTR', higherIsBetter: false },
+              ].map((factor) => {
+                const value = standings[factor.key] as number;
+                const average = conferenceAverages[factor.key];
+                const percentiles = conferencePercentiles[factor.key];
                 return (
                   <FactorBar
                     key={factor.key}
                     label={factor.label}
                     value={value}
                     average={average}
-                    color={factorColors[index]}
+                    percentiles={percentiles}
                     higherIsBetter={factor.higherIsBetter}
                     teamAbbreviation={team.abbreviation}
                   />

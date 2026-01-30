@@ -27,8 +27,8 @@ export function Navigation() {
               className="w-48 h-48 object-contain"
             />
             <div className="hidden sm:block">
-              <h1 className="text-lg tracking-wider">Four Factors</h1>
-              <p className="text-xs text-[var(--foreground-muted)] -mt-1">NCAA Basketball Analytics</p>
+              <h1 className="text-3xl tracking-wider">Four Factors</h1>
+              <p className="text-base text-[var(--foreground-muted)]">NCAA Basketball Analytics</p>
             </div>
           </Link>
 

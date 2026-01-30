@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { Gender, FOUR_FACTORS_META, calculatePointsImpact, formatPointsImpact } from '@/lib/types';
-import { getTeamById, getTeamStandings, getTeamGames } from '@/lib/data';
-import { GameCard } from '@/components';
+import { Gender, FOUR_FACTORS_META, calculateCombinedPointsImpact, formatPointsImpact, calculateAveragesFromStandings } from '@/lib/types';
+import { getTeamById, getTeamStandings, getTeamGames, getStandings } from '@/lib/data';
+import { GameCard, FactorBar } from '@/components';
 
 const AVERAGE_PACE = 70;
 
@@ -24,6 +24,10 @@ export default async function TeamPage({ params }: TeamPageProps) {
   const team = getTeamById(gender, teamId);
   const standings = getTeamStandings(gender, teamId);
   const games = getTeamGames(gender, teamId);
+
+  // Get all standings to calculate dynamic averages for this gender
+  const allStandings = getStandings(gender);
+  const datasetAverages = calculateAveragesFromStandings(allStandings);
 
   if (!team) {
     notFound();
@@ -103,29 +107,17 @@ export default async function TeamPage({ params }: TeamPageProps) {
             <div className="space-y-4">
               {FOUR_FACTORS_META.map((factor, index) => {
                 const value = standings[factor.key];
+                const average = datasetAverages[factor.key];
                 return (
-                  <div key={factor.key}>
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm text-[var(--foreground-muted)]">
-                        {factor.label}
-                      </span>
-                      <span
-                        className="stat-number text-lg font-bold"
-                        style={{ color: factorColors[index] }}
-                      >
-                        {factor.format(value)}
-                      </span>
-                    </div>
-                    <div className="h-2 bg-[var(--background-tertiary)] rounded-full overflow-hidden">
-                      <div
-                        className="h-full rounded-full transition-all duration-500"
-                        style={{
-                          width: `${Math.min(value, 100)}%`,
-                          backgroundColor: factorColors[index],
-                        }}
-                      />
-                    </div>
-                  </div>
+                  <FactorBar
+                    key={factor.key}
+                    label={factor.label}
+                    value={value}
+                    average={average}
+                    color={factorColors[index]}
+                    higherIsBetter={factor.higherIsBetter}
+                    teamAbbreviation={team.abbreviation}
+                  />
                 );
               })}
             </div>
@@ -144,30 +136,17 @@ export default async function TeamPage({ params }: TeamPageProps) {
                 { key: 'oppFtr', label: 'Opp FTR', higherIsBetter: false },
               ].map((factor, index) => {
                 const value = standings[factor.key as keyof typeof standings] as number;
+                const average = datasetAverages[factor.key as keyof typeof datasetAverages];
                 return (
-                  <div key={factor.key}>
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm text-[var(--foreground-muted)]">
-                        {factor.label}
-                      </span>
-                      <span
-                        className="stat-number text-lg font-bold"
-                        style={{ color: factorColors[index] }}
-                      >
-                        {value.toFixed(1)}%
-                      </span>
-                    </div>
-                    <div className="h-2 bg-[var(--background-tertiary)] rounded-full overflow-hidden">
-                      <div
-                        className="h-full rounded-full transition-all duration-500"
-                        style={{
-                          width: `${Math.min(value, 100)}%`,
-                          backgroundColor: factorColors[index],
-                          opacity: 0.6,
-                        }}
-                      />
-                    </div>
-                  </div>
+                  <FactorBar
+                    key={factor.key}
+                    label={factor.label}
+                    value={value}
+                    average={average}
+                    color={factorColors[index]}
+                    higherIsBetter={factor.higherIsBetter}
+                    teamAbbreviation={team.abbreviation}
+                  />
                 );
               })}
             </div>
@@ -181,15 +160,15 @@ export default async function TeamPage({ params }: TeamPageProps) {
             <div className="space-y-3">
               {(() => {
                 // Build waterfall data with running totals
+                // Compare each stat to NCAA D1 averages
                 let runningTotal = 0;
                 const waterfallData = FOUR_FACTORS_META.map((factor, index) => {
                   const offValue = standings[factor.key];
                   const defKey = `opp${factor.key.charAt(0).toUpperCase()}${factor.key.slice(1)}` as keyof typeof standings;
                   const defValue = standings[defKey] as number;
 
-                  // Calculate points impact using the factor's coefficient
-                  const diff = offValue - defValue;
-                  const pointsImpact = calculatePointsImpact(factor.key, diff, AVERAGE_PACE);
+                  // Calculate combined points impact vs dataset averages
+                  const pointsImpact = calculateCombinedPointsImpact(factor.key, offValue, defValue, datasetAverages, AVERAGE_PACE);
 
                   const previousTotal = runningTotal;
                   runningTotal += pointsImpact;

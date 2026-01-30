@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { Gender, FOUR_FACTORS_META, GameTeamStats } from '@/lib/types';
+import { Gender, GameTeamStats } from '@/lib/types';
 import { getGameById } from '@/lib/data';
 import { FourFactorsSection } from '@/components';
 
@@ -166,36 +166,6 @@ export default async function GamePage({ params }: GamePageProps) {
         <h2 className="text-2xl text-center mb-6">Four Factors Analysis</h2>
 
         <FourFactorsSection homeTeam={game.homeTeam} awayTeam={game.awayTeam} />
-
-        {/* Key Takeaways */}
-        <div className="mt-8 p-4 rounded-lg bg-[var(--background-tertiary)]">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-[var(--foreground-muted)] mb-3">
-            Key Takeaways
-          </h3>
-          <div className="space-y-2 text-sm">
-            {FOUR_FACTORS_META.map(factor => {
-              const homeVal = game.homeTeam[factor.key];
-              const awayVal = game.awayTeam[factor.key];
-              const diff = Math.abs(homeVal - awayVal);
-
-              if (diff < 1) return null;
-
-              const homeBetter = factor.higherIsBetter
-                ? homeVal > awayVal
-                : homeVal < awayVal;
-              const winner = homeBetter ? game.homeTeam : game.awayTeam;
-
-              return (
-                <p key={factor.key} className="text-[var(--foreground-muted)]">
-                  <span className="font-medium text-[var(--foreground)]">{winner.teamAbbreviation}</span>
-                  {' '}had the edge in{' '}
-                  <span className="font-medium text-[var(--foreground)]">{factor.label}</span>
-                  {' '}({factor.format(homeBetter ? homeVal : awayVal)} vs {factor.format(homeBetter ? awayVal : homeVal)})
-                </p>
-              );
-            })}
-          </div>
-        </div>
       </div>
 
       {/* Box Score Details */}

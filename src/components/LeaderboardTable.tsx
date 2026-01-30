@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { TeamStandings, Gender, SortField, SortDirection, FOUR_FACTORS_META, NCAA_AVERAGES } from '@/lib/types';
+import { TeamStandings, Gender, SortField, SortDirection, FOUR_FACTORS_META, calculateAveragesFromStandings, FourFactorsAverages } from '@/lib/types';
 
 type ViewMode = 'percentages' | 'points-impact';
 
@@ -74,15 +74,21 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
     }
   };
 
-  // Calculate points impact for a given value vs NCAA D1 averages
+  // Calculate dynamic averages from the standings data
+  // This ensures men's and women's teams are compared to their own baselines
+  const datasetAverages = useMemo(() => {
+    return calculateAveragesFromStandings(standings);
+  }, [standings]);
+
+  // Calculate points impact for a given value vs dataset averages
   // Uses 70 possessions per game as standard pace
   const PACE = 70;
-  const calculatePointsImpact = (col: ColumnDef, value: number): number => {
+  const calculatePointsImpact = (col: ColumnDef, value: number, averages: FourFactorsAverages): number => {
     if (!col.factorKey) return 0;
 
-    const avgKey = col.key as keyof typeof NCAA_AVERAGES;
-    const ncaaAvg = NCAA_AVERAGES[avgKey];
-    const differential = value - ncaaAvg;
+    const avgKey = col.key as keyof FourFactorsAverages;
+    const datasetAvg = averages[avgKey];
+    const differential = value - datasetAvg;
 
     const factor = FOUR_FACTORS_META.find(f => f.key === col.factorKey);
     if (!factor) return 0;
@@ -255,7 +261,7 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
                 const isLastOffensive = col.key === 'ftr';
 
                 if (viewMode === 'points-impact' && col.factorKey) {
-                  const pointsImpact = calculatePointsImpact(col, value);
+                  const pointsImpact = calculatePointsImpact(col, value, datasetAverages);
                   const color = getPointsImpactColor(pointsImpact);
 
                   return (
@@ -267,7 +273,7 @@ export function LeaderboardTable({ standings, gender, viewMode }: LeaderboardTab
                         <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[var(--foreground)] -translate-x-1/2" />
                       )}
                       <span
-                        className="stat-number text-sm font-semibold"
+                        className="stat-number text-sm"
                         style={{ color }}
                         title={`${col.format ? col.format(value) : value}%`}
                       >

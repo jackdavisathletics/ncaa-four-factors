@@ -24,17 +24,26 @@ function formatDate(dateString: string): string {
   });
 }
 
-function TeamHeader({ team, won, gender, season }: { team: GameTeamStats; won: boolean; gender: Gender; season: Season }) {
+function formatDateShort(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
+
+function TeamHeader({ team, won, gender, season, compact = false }: { team: GameTeamStats; won: boolean; gender: Gender; season: Season; compact?: boolean }) {
   const seasonParam = season !== DEFAULT_SEASON ? `?season=${season}` : '';
   return (
     <Link
       href={`/team/${gender}/${team.teamId}${seasonParam}`}
-      className={`flex flex-col items-center gap-3 p-6 rounded-xl transition-all hover:scale-105 ${
+      className={`flex flex-col items-center gap-2 sm:gap-3 p-3 sm:p-6 rounded-xl transition-all hover:scale-105 ${
         won ? 'bg-[var(--accent-success)]/5 ring-2 ring-[var(--accent-success)]/30' : ''
       }`}
     >
       <div
-        className="w-20 h-20 rounded-2xl flex items-center justify-center overflow-hidden"
+        className={`${compact ? 'w-12 h-12 sm:w-20 sm:h-20' : 'w-16 h-16 sm:w-20 sm:h-20'} rounded-2xl flex items-center justify-center overflow-hidden`}
         style={{ backgroundColor: team.teamColor + '20' }}
       >
         {team.teamLogo ? (
@@ -43,11 +52,11 @@ function TeamHeader({ team, won, gender, season }: { team: GameTeamStats; won: b
             alt={team.teamName}
             width={56}
             height={56}
-            className="object-contain"
+            className={`object-contain ${compact ? 'w-8 h-8 sm:w-14 sm:h-14' : 'w-10 h-10 sm:w-14 sm:h-14'}`}
           />
         ) : (
           <span
-            className="text-2xl font-bold"
+            className={`${compact ? 'text-lg sm:text-2xl' : 'text-xl sm:text-2xl'} font-bold`}
             style={{ color: team.teamColor }}
           >
             {team.teamAbbreviation}
@@ -55,18 +64,20 @@ function TeamHeader({ team, won, gender, season }: { team: GameTeamStats; won: b
         )}
       </div>
       <div className="text-center">
-        <p className="font-medium">{team.teamName}</p>
-        <p className="text-xs text-[var(--foreground-muted)]">
+        <p className={`font-medium ${compact ? 'text-xs sm:text-base' : 'text-sm sm:text-base'} truncate max-w-[80px] sm:max-w-none`}>
+          {compact ? team.teamAbbreviation : team.teamName}
+        </p>
+        <p className="text-[10px] sm:text-xs text-[var(--foreground-muted)]">
           {team.isHome ? 'Home' : 'Away'}
         </p>
       </div>
       <p
-        className={`text-5xl font-bold stat-number ${won ? 'text-[var(--accent-success)]' : 'text-[var(--foreground-muted)]'}`}
+        className={`${compact ? 'text-3xl sm:text-5xl' : 'text-4xl sm:text-5xl'} font-bold stat-number ${won ? 'text-[var(--accent-success)]' : 'text-[var(--foreground-muted)]'}`}
       >
         {team.score}
       </p>
       {won && (
-        <span className="text-xs font-semibold uppercase tracking-wide text-[var(--accent-success)]">
+        <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-[var(--accent-success)]">
           Winner
         </span>
       )}
@@ -106,11 +117,11 @@ function BoxScoreDetail({ label, home, away, higherBetter = true, isKeyMetric = 
 
   return (
     <div className={`flex items-center py-2 ${isKeyMetric ? 'border-y border-[var(--foreground)]' : 'border-b border-[var(--border)] last:border-0'}`}>
-      <span className={`w-16 text-right stat-number ${homeBetter ? 'text-[var(--accent-success)] font-semibold' : 'text-[var(--foreground-muted)]'} ${isKeyMetric ? 'font-bold' : ''}`}>
+      <span className={`w-12 sm:w-16 text-right stat-number text-sm sm:text-base ${homeBetter ? 'text-[var(--accent-success)] font-semibold' : 'text-[var(--foreground-muted)]'} ${isKeyMetric ? 'font-bold' : ''}`}>
         {home}
       </span>
-      <span className={`flex-1 text-center text-sm ${isKeyMetric ? 'text-[var(--foreground)] font-bold' : 'text-[var(--foreground-muted)]'}`}>{label}</span>
-      <span className={`w-16 text-left stat-number ${awayBetter ? 'text-[var(--accent-success)] font-semibold' : 'text-[var(--foreground-muted)]'} ${isKeyMetric ? 'font-bold' : ''}`}>
+      <span className={`flex-1 text-center text-xs sm:text-sm ${isKeyMetric ? 'text-[var(--foreground)] font-bold' : 'text-[var(--foreground-muted)]'}`}>{label}</span>
+      <span className={`w-12 sm:w-16 text-left stat-number text-sm sm:text-base ${awayBetter ? 'text-[var(--accent-success)] font-semibold' : 'text-[var(--foreground-muted)]'} ${isKeyMetric ? 'font-bold' : ''}`}>
         {away}
       </span>
     </div>
@@ -136,52 +147,53 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
   const homeWon = game.homeTeam.score > game.awayTeam.score;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* Game Header */}
-      <div className="card p-8 mb-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
+      {/* Game Header - Mobile optimized */}
+      <div className="card p-4 sm:p-8 mb-6 sm:mb-8">
         {/* Date and venue */}
-        <div className="text-center mb-6">
-          <p className="text-sm text-[var(--foreground-muted)] uppercase tracking-wide mb-1">
+        <div className="text-center mb-4 sm:mb-6">
+          <p className="text-xs sm:text-sm text-[var(--foreground-muted)] uppercase tracking-wide mb-1">
             {gender === 'mens' ? "Men's" : "Women's"} Basketball &bull; {season}
           </p>
-          <p className="text-lg" suppressHydrationWarning>{formatDate(game.date)}</p>
+          <p className="text-base sm:text-lg hidden sm:block" suppressHydrationWarning>{formatDate(game.date)}</p>
+          <p className="text-base sm:hidden" suppressHydrationWarning>{formatDateShort(game.date)}</p>
           {game.venue && (
-            <p className="text-sm text-[var(--foreground-muted)]">{game.venue}</p>
+            <p className="text-xs sm:text-sm text-[var(--foreground-muted)] truncate">{game.venue}</p>
           )}
           {game.isConferenceGame && (
-            <span className="inline-block mt-2 text-xs px-3 py-1 rounded-full bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]">
+            <span className="inline-block mt-2 text-[10px] sm:text-xs px-2 sm:px-3 py-1 rounded-full bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]">
               Conference Game
             </span>
           )}
         </div>
 
-        {/* Score */}
-        <div className="grid grid-cols-3 gap-4 items-center">
-          <TeamHeader team={game.awayTeam} won={!homeWon} gender={gender} season={season} />
+        {/* Score - Responsive grid */}
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 items-center">
+          <TeamHeader team={game.awayTeam} won={!homeWon} gender={gender} season={season} compact />
 
           <div className="text-center">
-            <span className="text-2xl font-bold text-[var(--foreground-muted)]">@</span>
+            <span className="text-xl sm:text-2xl font-bold text-[var(--foreground-muted)]">@</span>
           </div>
 
-          <TeamHeader team={game.homeTeam} won={homeWon} gender={gender} season={season} />
+          <TeamHeader team={game.homeTeam} won={homeWon} gender={gender} season={season} compact />
         </div>
       </div>
 
       {/* Estimated Point Impact */}
-      <div className="card p-8 mb-8">
-        <h2 className="text-2xl text-center mb-6">Estimated Point Impact</h2>
+      <div className="card p-4 sm:p-8 mb-6 sm:mb-8">
+        <h2 className="text-xl sm:text-2xl text-center mb-4 sm:mb-6">Estimated Point Impact</h2>
 
         <FourFactorsSection homeTeam={game.homeTeam} awayTeam={game.awayTeam} />
       </div>
 
       {/* Box Score Details */}
-      <div className="card p-8">
-        <h2 className="text-2xl text-center mb-6">Box Score Details</h2>
+      <div className="card p-4 sm:p-8">
+        <h2 className="text-xl sm:text-2xl text-center mb-4 sm:mb-6">Box Score Details</h2>
 
         {/* Team labels for box score */}
-        <div className="flex justify-between mb-4 px-4">
+        <div className="flex justify-between mb-4 px-2 sm:px-4">
           <span
-            className="font-medium text-sm px-2 py-1 rounded"
+            className="font-medium text-xs sm:text-sm px-2 py-1 rounded"
             style={{
               backgroundColor: game.homeTeam.teamColor,
               color: getContrastColor(game.homeTeam.teamColor)
@@ -190,7 +202,7 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
             {game.homeTeam.teamAbbreviation}
           </span>
           <span
-            className="font-medium text-sm px-2 py-1 rounded"
+            className="font-medium text-xs sm:text-sm px-2 py-1 rounded"
             style={{
               backgroundColor: game.awayTeam.teamColor,
               color: getContrastColor(game.awayTeam.teamColor)
@@ -277,7 +289,7 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
       </div>
 
       {/* Back link */}
-      <div className="mt-8 text-center">
+      <div className="mt-6 sm:mt-8 text-center">
         <Link
           href={season !== DEFAULT_SEASON ? `/?season=${season}` : '/'}
           className="text-sm text-[var(--accent-primary)] hover:underline"

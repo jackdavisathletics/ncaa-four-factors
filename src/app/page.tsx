@@ -2,8 +2,8 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { GenderToggle, TeamSearch, GameCard, SeasonSelector } from '@/components';
-import { Gender, Season, DEFAULT_SEASON, FOUR_FACTORS_META } from '@/lib/types';
+import { GenderToggle, TeamSearch, SeasonSelector, FourFactorsAccordion, GamesCarousel } from '@/components';
+import { Gender, Season, DEFAULT_SEASON } from '@/lib/types';
 import { getRecentGames, getConferences, getTeams } from '@/lib/data';
 
 function HomePageContent() {
@@ -51,23 +51,23 @@ function HomePageContent() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-      {/* Hero Section */}
-      <section className="text-center mb-16 stagger-children relative z-10">
+      {/* Hero Section - Mobile Optimized */}
+      <section className="text-center mb-8 sm:mb-16 stagger-children relative z-10">
         <img
           src="/four-factors-logo.png"
           alt="Four Factors Logo"
-          className="w-64 h-64 mx-auto mb-4 object-contain"
+          className="w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 mx-auto mb-2 sm:mb-4 object-contain"
         />
-        <h1 className="text-5xl sm:text-6xl lg:text-7xl mb-4 glow-text" style={{ color: 'var(--accent-primary)' }}>
+        <h1 className="text-4xl sm:text-5xl lg:text-7xl mb-2 sm:mb-4 glow-text" style={{ color: 'var(--accent-primary)' }}>
           Four Factors
         </h1>
-        <p className="text-xl text-[var(--foreground-muted)] max-w-2xl mx-auto mb-8">
+        <p className="text-base sm:text-xl text-[var(--foreground-muted)] max-w-2xl mx-auto mb-6 sm:mb-8 px-2">
           Understand college basketball through the lens of Dean Oliver&apos;s Four Factors.
-          Every game, every team, every stat that matters.
+          <span className="hidden sm:inline"> Every game, every team, every stat that matters.</span>
         </p>
 
-        {/* Gender Toggle and Season Selector */}
-        <div className="flex justify-center items-center gap-4 mb-8">
+        {/* Gender Toggle and Season Selector - Stack on mobile */}
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
           <GenderToggle value={gender} onChange={(g) => {
             setGender(g);
             setSelectedConference('all');
@@ -75,58 +75,27 @@ function HomePageContent() {
           <SeasonSelector value={season} onChange={setSeason} />
         </div>
 
-        {/* Search */}
-        <div className="flex justify-center">
+        {/* Search - Full width on mobile */}
+        <div className="flex justify-center px-2 sm:px-0">
           <TeamSearch gender={gender} season={season} placeholder="Search for a team..." />
         </div>
       </section>
 
-      {/* Four Factors Explanation */}
-      <section className="mb-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 stagger-children">
-          {FOUR_FACTORS_META.map((factor, index) => {
-            const colors = [
-              'var(--factor-efg)',
-              'var(--factor-tov)',
-              'var(--factor-orb)',
-              'var(--factor-ftr)',
-            ];
-            return (
-              <div
-                key={factor.key}
-                className="card p-6 text-center group hover:border-opacity-50"
-                style={{ '--hover-color': colors[index] } as React.CSSProperties}
-              >
-                <div
-                  className="inline-block px-3 py-1 rounded-full text-sm font-bold mb-3"
-                  style={{
-                    backgroundColor: colors[index] + '20',
-                    color: colors[index],
-                  }}
-                >
-                  {factor.shortLabel}
-                </div>
-                <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: 'var(--font-sans)' }}>
-                  {factor.label}
-                </h3>
-                <p className="text-sm text-[var(--foreground-muted)]">
-                  {factor.description}
-                </p>
-              </div>
-            );
-          })}
-        </div>
+      {/* Four Factors Explanation - Accordion on mobile, grid on desktop */}
+      <section className="mb-8 sm:mb-16">
+        <FourFactorsAccordion />
       </section>
 
       {/* Recent Games */}
       <section>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl">Recent Games</h2>
-          <div className="flex items-center gap-4">
+        {/* Header - Stack on mobile */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
+          <h2 className="text-xl sm:text-2xl">Recent Games</h2>
+          <div className="flex items-center gap-2 sm:gap-4">
             <select
               value={selectedConference}
               onChange={(e) => setSelectedConference(e.target.value)}
-              className="px-3 py-1.5 rounded-lg text-sm bg-[var(--card-bg)] border border-[var(--border)] text-[var(--foreground)] focus:outline-none focus:border-[var(--accent-primary)]"
+              className="flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-sm bg-[var(--background-secondary)] border border-[var(--border)] text-[var(--foreground)] focus:outline-none focus:border-[var(--accent-primary)]"
             >
               <option value="all">All Conferences</option>
               {conferences.map((conf) => (
@@ -135,20 +104,17 @@ function HomePageContent() {
                 </option>
               ))}
             </select>
-            <span className="text-sm text-[var(--foreground-muted)]">
+            <span className="hidden sm:inline text-sm text-[var(--foreground-muted)]">
               {gender === 'mens' ? "Men's" : "Women's"} Basketball
             </span>
           </div>
         </div>
 
+        {/* Games - Carousel on mobile, grid on desktop */}
         {recentGames.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 stagger-children">
-            {recentGames.map(game => (
-              <GameCard key={game.id} game={game} gender={gender} season={season} />
-            ))}
-          </div>
+          <GamesCarousel games={recentGames} gender={gender} season={season} />
         ) : (
-          <div className="card p-12 text-center">
+          <div className="card p-8 sm:p-12 text-center">
             <p className="text-[var(--foreground-muted)]">
               {selectedConference === 'all'
                 ? 'No games found. Data may still be loading.'

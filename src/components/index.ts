@@ -1,5 +1,7 @@
 export { AccessGate } from './AccessGate';
 export { FactorBar } from './FactorBar';
+export { FourFactorsAccordion } from './FourFactorsAccordion';
+export { GamesCarousel } from './GamesCarousel';
 export { GenderToggle } from './GenderToggle';
 export { SeasonSelector } from './SeasonSelector';
 export { TeamGenderToggle } from './TeamGenderToggle';

@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Gender, Season, DEFAULT_SEASON, FOUR_FACTORS_META, calculateCombinedPointsImpact, formatPointsImpact, calculateAveragesFromStandings, calculatePercentilesFromStandings } from '@/lib/types';
 import { getTeamById, getTeamStandings, getTeamGames, getStandings, getTeamConference, getConferenceStandings } from '@/lib/data';
-import { GameCard, FactorBar, TeamGenderToggle } from '@/components';
+import { FactorBar, TeamGenderToggle, GamesCarousel } from '@/components';
 import { TeamSeasonSelector } from './TeamSeasonSelector';
 
 const AVERAGE_PACE = 70;
@@ -58,17 +58,17 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* Team Header */}
-      <div className="card p-8 mb-8">
-        <div className="flex justify-end gap-4 mb-4">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
+      {/* Team Header - Mobile optimized */}
+      <div className="card p-4 sm:p-8 mb-6 sm:mb-8">
+        <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-4 mb-4">
           <TeamSeasonSelector currentSeason={season} />
           <TeamGenderToggle currentGender={gender} teamId={teamId} />
         </div>
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
           {/* Team Logo */}
           <div
-            className="w-24 h-24 rounded-2xl flex items-center justify-center overflow-hidden shrink-0"
+            className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center overflow-hidden shrink-0"
             style={{ backgroundColor: team.color + '20' }}
           >
             {team.logo ? (
@@ -77,11 +77,11 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
                 alt={team.name}
                 width={64}
                 height={64}
-                className="object-contain"
+                className="object-contain w-12 h-12 sm:w-16 sm:h-16"
               />
             ) : (
               <span
-                className="text-3xl font-bold"
+                className="text-2xl sm:text-3xl font-bold"
                 style={{ color: team.color }}
               >
                 {team.abbreviation}
@@ -90,11 +90,11 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
           </div>
 
           {/* Team Info */}
-          <div className="flex-1">
-            <p className="text-sm text-[var(--foreground-muted)] uppercase tracking-wide mb-1">
+          <div className="flex-1 text-center sm:text-left">
+            <p className="text-xs sm:text-sm text-[var(--foreground-muted)] uppercase tracking-wide mb-1">
               {gender === 'mens' ? "Men's" : "Women's"} Basketball &bull; {season}
             </p>
-            <h1 className="text-4xl mb-2" style={{ color: team.color }}>
+            <h1 className="text-3xl sm:text-4xl mb-1 sm:mb-2" style={{ color: team.color }}>
               {team.displayName}
             </h1>
             <p className="text-[var(--foreground-muted)]">{team.conference}</p>
@@ -102,8 +102,8 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
 
           {/* Record */}
           {standings && (
-            <div className="text-center md:text-right">
-              <p className="text-4xl font-bold stat-number">
+            <div className="text-center sm:text-right mt-2 sm:mt-0">
+              <p className="text-3xl sm:text-4xl font-bold stat-number">
                 {standings.wins}-{standings.losses}
               </p>
               <p className="text-sm text-[var(--foreground-muted)]">
@@ -117,15 +117,15 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
         </div>
       </div>
 
-      {/* Four Factors Summary */}
+      {/* Four Factors Summary - Stack on mobile */}
       {standings && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
           {/* Offensive Factors */}
-          <div className="card p-6">
-            <h2 className="text-xl mb-4" style={{ color: 'var(--accent-primary)' }}>
+          <div className="card p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl mb-3 sm:mb-4" style={{ color: 'var(--accent-primary)' }}>
               Offensive Factors
             </h2>
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {FOUR_FACTORS_META.map((factor) => {
                 const value = standings[factor.key];
                 const average = conferenceAverages[factor.key];
@@ -146,11 +146,11 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
           </div>
 
           {/* Defensive Factors */}
-          <div className="card p-6">
-            <h2 className="text-xl mb-4" style={{ color: 'var(--accent-secondary)' }}>
+          <div className="card p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl mb-3 sm:mb-4" style={{ color: 'var(--accent-secondary)' }}>
               Defensive Factors (Allowed)
             </h2>
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {[
                 { key: 'oppEfg' as const, label: 'Opp eFG%', higherIsBetter: false },
                 { key: 'oppTov' as const, label: 'Opp TOV%', higherIsBetter: true },
@@ -176,8 +176,8 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
           </div>
 
           {/* Points Impact - Waterfall Chart */}
-          <div className="card p-6">
-            <h2 className="text-xl mb-4" style={{ color: 'var(--accent-success)' }}>
+          <div className="card p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl mb-3 sm:mb-4" style={{ color: 'var(--accent-success)' }}>
               Points Impact
             </h2>
             <div className="space-y-3">
@@ -229,17 +229,17 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
                       return (
                         <div key={data.label}>
                           <div className="flex justify-between items-center mb-1">
-                            <span className="text-sm text-[var(--foreground-muted)]">
+                            <span className="text-xs sm:text-sm text-[var(--foreground-muted)]">
                               {data.label}
                             </span>
                             <span
-                              className="stat-number text-sm font-bold"
+                              className="stat-number text-xs sm:text-sm font-bold"
                               style={{ color: isPositive ? 'var(--accent-success)' : 'var(--accent-secondary)' }}
                             >
                               {formatPointsImpact(data.pointsImpact)}
                             </span>
                           </div>
-                          <div className="h-6 bg-[var(--background-tertiary)] rounded overflow-hidden relative">
+                          <div className="h-5 sm:h-6 bg-[var(--background-tertiary)] rounded overflow-hidden relative">
                             {/* Center line (0 point) */}
                             <div className="absolute left-1/2 top-0 bottom-0 w-px bg-[var(--border)] z-10" />
 
@@ -261,7 +261,7 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
                               }}
                             >
                               {width > 8 && (
-                                <span className="text-xs font-bold text-white drop-shadow-sm">
+                                <span className="text-[10px] sm:text-xs font-bold text-white drop-shadow-sm">
                                   {Math.abs(data.pointsImpact).toFixed(1)}
                                 </span>
                               )}
@@ -273,15 +273,15 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
                     {/* Total */}
                     <div className="pt-3 mt-1 border-t border-[var(--border)]">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium">Total Impact</span>
+                        <span className="text-xs sm:text-sm font-medium">Total Impact</span>
                         <span
-                          className="stat-number text-xl font-bold"
+                          className="stat-number text-lg sm:text-xl font-bold"
                           style={{ color: totalImpact >= 0 ? 'var(--accent-success)' : 'var(--accent-secondary)' }}
                         >
                           {formatPointsImpact(totalImpact)} pts
                         </span>
                       </div>
-                      <p className="text-xs text-[var(--foreground-muted)] mt-1">
+                      <p className="text-[10px] sm:text-xs text-[var(--foreground-muted)] mt-1">
                         Avg. per game @ {AVERAGE_PACE} pace
                       </p>
                     </div>
@@ -293,10 +293,10 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
         </div>
       )}
 
-      {/* Games List */}
+      {/* Games List - Carousel on mobile */}
       <section>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl">Games ({games.length})</h2>
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <h2 className="text-xl sm:text-2xl">Games ({games.length})</h2>
           <Link
             href={`/leaderboard`}
             className="text-sm text-[var(--accent-primary)] hover:underline"
@@ -306,13 +306,9 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
         </div>
 
         {games.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {games.map(game => (
-              <GameCard key={game.id} game={game} gender={gender} season={season} showFactors />
-            ))}
-          </div>
+          <GamesCarousel games={games} gender={gender} season={season} showFactors />
         ) : (
-          <div className="card p-12 text-center">
+          <div className="card p-8 sm:p-12 text-center">
             <p className="text-[var(--foreground-muted)]">No games found for this team.</p>
           </div>
         )}

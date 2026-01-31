@@ -1,6 +1,15 @@
 // Gender type for routing and data selection
 export type Gender = 'mens' | 'womens';
 
+// Season type (format: YYYY-YY)
+export type Season = '2025-26' | '2024-25';
+
+// Available seasons (most recent first)
+export const AVAILABLE_SEASONS: Season[] = ['2025-26', '2024-25'];
+
+// Default season (current)
+export const DEFAULT_SEASON: Season = '2025-26';
+
 // Team metadata
 export interface Team {
   id: string;

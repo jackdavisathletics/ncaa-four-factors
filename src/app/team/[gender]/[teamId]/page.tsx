@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { Gender, FOUR_FACTORS_META, calculateCombinedPointsImpact, formatPointsImpact, calculateAveragesFromStandings, calculatePercentilesFromStandings } from '@/lib/types';
+import { Gender, Season, DEFAULT_SEASON, FOUR_FACTORS_META, calculateCombinedPointsImpact, formatPointsImpact, calculateAveragesFromStandings, calculatePercentilesFromStandings } from '@/lib/types';
 import { getTeamById, getTeamStandings, getTeamGames, getStandings, getTeamConference, getConferenceStandings } from '@/lib/data';
 import { GameCard, FactorBar, TeamGenderToggle } from '@/components';
+import { TeamSeasonSelector } from './TeamSeasonSelector';
 
 const AVERAGE_PACE = 70;
 
@@ -11,28 +12,33 @@ interface TeamPageProps {
     gender: string;
     teamId: string;
   }>;
+  searchParams: Promise<{
+    season?: string;
+  }>;
 }
 
-export default async function TeamPage({ params }: TeamPageProps) {
+export default async function TeamPage({ params, searchParams }: TeamPageProps) {
   const { gender: genderParam, teamId } = await params;
+  const { season: seasonParam } = await searchParams;
   const gender = genderParam as Gender;
+  const season = (seasonParam === '2024-25' ? '2024-25' : DEFAULT_SEASON) as Season;
 
   if (gender !== 'mens' && gender !== 'womens') {
     notFound();
   }
 
-  const team = getTeamById(gender, teamId);
-  const standings = getTeamStandings(gender, teamId);
-  const games = getTeamGames(gender, teamId);
+  const team = getTeamById(gender, teamId, season);
+  const standings = getTeamStandings(gender, teamId, season);
+  const games = getTeamGames(gender, teamId, season);
 
   if (!team) {
     notFound();
   }
 
   // Get the team's conference and conference-specific standings
-  const teamConference = getTeamConference(gender, teamId);
+  const teamConference = getTeamConference(gender, teamId, season);
   const conferenceStandings = teamConference
-    ? getConferenceStandings(gender, teamConference.id)
+    ? getConferenceStandings(gender, teamConference.id, season)
     : [];
 
   // Calculate averages and percentiles from conference standings (gender-specific)
@@ -40,7 +46,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
   const conferencePercentiles = calculatePercentilesFromStandings(conferenceStandings);
 
   // Waterfall chart still uses overall averages for broader context
-  const allStandings = getStandings(gender);
+  const allStandings = getStandings(gender, season);
   const datasetAverages = calculateAveragesFromStandings(allStandings);
 
   // Colors for the waterfall chart (per factor type)
@@ -55,7 +61,8 @@ export default async function TeamPage({ params }: TeamPageProps) {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Team Header */}
       <div className="card p-8 mb-8">
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-end gap-4 mb-4">
+          <TeamSeasonSelector currentSeason={season} />
           <TeamGenderToggle currentGender={gender} teamId={teamId} />
         </div>
         <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
@@ -85,7 +92,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
           {/* Team Info */}
           <div className="flex-1">
             <p className="text-sm text-[var(--foreground-muted)] uppercase tracking-wide mb-1">
-              {gender === 'mens' ? "Men's" : "Women's"} Basketball
+              {gender === 'mens' ? "Men's" : "Women's"} Basketball &bull; {season}
             </p>
             <h1 className="text-4xl mb-2" style={{ color: team.color }}>
               {team.displayName}
@@ -301,7 +308,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
         {games.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {games.map(game => (
-              <GameCard key={game.id} game={game} gender={gender} showFactors />
+              <GameCard key={game.id} game={game} gender={gender} season={season} showFactors />
             ))}
           </div>
         ) : (

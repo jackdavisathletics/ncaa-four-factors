@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { Gender, GameTeamStats } from '@/lib/types';
+import { Gender, Season, DEFAULT_SEASON, GameTeamStats } from '@/lib/types';
 import { getGameById } from '@/lib/data';
 import { FourFactorsSection } from '@/components';
 
@@ -8,6 +8,9 @@ interface GamePageProps {
   params: Promise<{
     gender: string;
     gameId: string;
+  }>;
+  searchParams: Promise<{
+    season?: string;
   }>;
 }
 
@@ -21,10 +24,11 @@ function formatDate(dateString: string): string {
   });
 }
 
-function TeamHeader({ team, won, gender }: { team: GameTeamStats; won: boolean; gender: Gender }) {
+function TeamHeader({ team, won, gender, season }: { team: GameTeamStats; won: boolean; gender: Gender; season: Season }) {
+  const seasonParam = season !== DEFAULT_SEASON ? `?season=${season}` : '';
   return (
     <Link
-      href={`/team/${gender}/${team.teamId}`}
+      href={`/team/${gender}/${team.teamId}${seasonParam}`}
       className={`flex flex-col items-center gap-3 p-6 rounded-xl transition-all hover:scale-105 ${
         won ? 'bg-[var(--accent-success)]/5 ring-2 ring-[var(--accent-success)]/30' : ''
       }`}
@@ -113,15 +117,17 @@ function BoxScoreDetail({ label, home, away, higherBetter = true, isKeyMetric = 
   );
 }
 
-export default async function GamePage({ params }: GamePageProps) {
+export default async function GamePage({ params, searchParams }: GamePageProps) {
   const { gender: genderParam, gameId } = await params;
+  const { season: seasonParam } = await searchParams;
   const gender = genderParam as Gender;
+  const season = (seasonParam === '2024-25' ? '2024-25' : DEFAULT_SEASON) as Season;
 
   if (gender !== 'mens' && gender !== 'womens') {
     notFound();
   }
 
-  const game = getGameById(gender, gameId);
+  const game = getGameById(gender, gameId, season);
 
   if (!game) {
     notFound();
@@ -136,7 +142,7 @@ export default async function GamePage({ params }: GamePageProps) {
         {/* Date and venue */}
         <div className="text-center mb-6">
           <p className="text-sm text-[var(--foreground-muted)] uppercase tracking-wide mb-1">
-            {gender === 'mens' ? "Men's" : "Women's"} Basketball
+            {gender === 'mens' ? "Men's" : "Women's"} Basketball &bull; {season}
           </p>
           <p className="text-lg" suppressHydrationWarning>{formatDate(game.date)}</p>
           {game.venue && (
@@ -151,13 +157,13 @@ export default async function GamePage({ params }: GamePageProps) {
 
         {/* Score */}
         <div className="grid grid-cols-3 gap-4 items-center">
-          <TeamHeader team={game.awayTeam} won={!homeWon} gender={gender} />
+          <TeamHeader team={game.awayTeam} won={!homeWon} gender={gender} season={season} />
 
           <div className="text-center">
             <span className="text-2xl font-bold text-[var(--foreground-muted)]">@</span>
           </div>
 
-          <TeamHeader team={game.homeTeam} won={homeWon} gender={gender} />
+          <TeamHeader team={game.homeTeam} won={homeWon} gender={gender} season={season} />
         </div>
       </div>
 
@@ -273,7 +279,7 @@ export default async function GamePage({ params }: GamePageProps) {
       {/* Back link */}
       <div className="mt-8 text-center">
         <Link
-          href="/"
+          href={season !== DEFAULT_SEASON ? `/?season=${season}` : '/'}
           className="text-sm text-[var(--accent-primary)] hover:underline"
         >
           ← Back to Home

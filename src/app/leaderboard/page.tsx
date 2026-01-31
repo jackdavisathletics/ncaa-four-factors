@@ -2,8 +2,8 @@
 
 import { useState, useMemo, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { GenderToggle, LeaderboardTable } from '@/components';
-import { Gender } from '@/lib/types';
+import { GenderToggle, LeaderboardTable, SeasonSelector } from '@/components';
+import { Gender, Season, DEFAULT_SEASON } from '@/lib/types';
 import { getStandings, getConferences, getTeamConference } from '@/lib/data';
 
 export type ViewMode = 'percentages' | 'points-impact';
@@ -15,6 +15,10 @@ function LeaderboardPageContent() {
   const [gender, setGender] = useState<Gender>(() => {
     const g = searchParams.get('gender');
     return g === 'womens' ? 'womens' : 'mens';
+  });
+  const [season, setSeason] = useState<Season>(() => {
+    const s = searchParams.get('season');
+    return (s === '2024-25' ? '2024-25' : DEFAULT_SEASON) as Season;
   });
   const [selectedConference, setSelectedConference] = useState<string>(() => {
     return searchParams.get('conference') || 'all';
@@ -28,26 +32,27 @@ function LeaderboardPageContent() {
   useEffect(() => {
     const params = new URLSearchParams();
     if (gender !== 'mens') params.set('gender', gender);
+    if (season !== DEFAULT_SEASON) params.set('season', season);
     if (selectedConference !== 'all') params.set('conference', selectedConference);
     if (viewMode !== 'percentages') params.set('view', viewMode);
 
     const queryString = params.toString();
     const newUrl = queryString ? `/leaderboard?${queryString}` : '/leaderboard';
     router.replace(newUrl, { scroll: false });
-  }, [gender, selectedConference, viewMode, router]);
+  }, [gender, season, selectedConference, viewMode, router]);
 
-  const conferences = getConferences(gender);
-  const allStandings = getStandings(gender);
+  const conferences = getConferences(gender, season);
+  const allStandings = getStandings(gender, season);
 
   const standings = useMemo(() => {
     if (selectedConference === 'all') {
       return allStandings;
     }
     return allStandings.filter(team => {
-      const conference = getTeamConference(gender, team.teamId);
+      const conference = getTeamConference(gender, team.teamId, season);
       return conference?.id === selectedConference;
     });
-  }, [allStandings, selectedConference, gender]);
+  }, [allStandings, selectedConference, gender, season]);
 
   const currentConferenceName = selectedConference === 'all'
     ? 'All Conferences'
@@ -87,6 +92,7 @@ function LeaderboardPageContent() {
               Points Impact
             </button>
           </div>
+          <SeasonSelector value={season} onChange={setSeason} />
           <select
             value={selectedConference}
             onChange={(e) => setSelectedConference(e.target.value)}

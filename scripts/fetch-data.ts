@@ -1,10 +1,41 @@
 /**
  * Data fetching script for NCAA Four Factors
- * Run with: npx tsx scripts/fetch-data.ts
+ * Run with: npx tsx scripts/fetch-data.ts [--season YYYY-YY]
+ *
+ * Examples:
+ *   npx tsx scripts/fetch-data.ts                  # Fetch current season (2024-25)
+ *   npx tsx scripts/fetch-data.ts --season 2023-24 # Fetch 2023-24 season
  */
 
 import * as fs from 'fs';
 import * as path from 'path';
+
+// Parse command line arguments
+function parseArgs(): { season: string } {
+  const args = process.argv.slice(2);
+  let season = '2025-26'; // Default to current season
+
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--season' && args[i + 1]) {
+      season = args[i + 1];
+      i++;
+    }
+  }
+
+  // Validate season format (YYYY-YY)
+  if (!/^\d{4}-\d{2}$/.test(season)) {
+    console.error('Invalid season format. Use YYYY-YY (e.g., 2024-25)');
+    process.exit(1);
+  }
+
+  return { season };
+}
+
+// Convert season string to ESPN season year (e.g., "2024-25" -> 2025)
+function getEspnSeasonYear(season: string): number {
+  const [startYear] = season.split('-');
+  return parseInt(startYear) + 1; // ESPN uses the ending year
+}
 
 // Types (inline to avoid module resolution issues)
 type Gender = 'mens' | 'womens';
@@ -100,6 +131,26 @@ function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// Retry wrapper for fetch with exponential backoff
+async function fetchWithRetry(url: string, maxRetries: number = 3): Promise<Response> {
+  let lastError: Error | null = null;
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const response = await fetch(url);
+      return response;
+    } catch (error) {
+      lastError = error as Error;
+      console.error(`Fetch attempt ${attempt + 1} failed for ${url}: ${lastError.message}`);
+      if (attempt < maxRetries - 1) {
+        const backoff = Math.pow(2, attempt) * 1000; // 1s, 2s, 4s
+        console.log(`Retrying in ${backoff}ms...`);
+        await delay(backoff);
+      }
+    }
+  }
+  throw lastError;
+}
+
 function calculateFourFactors(stats: BoxScoreStats, opponentDreb: number): FourFactors {
   const efg = stats.fga === 0 ? 0 : ((stats.fgm + 0.5 * stats.fg3m) / stats.fga) * 100;
   const possessions = stats.fga + 0.44 * stats.fta + stats.turnovers;
@@ -111,11 +162,11 @@ function calculateFourFactors(stats: BoxScoreStats, opponentDreb: number): FourF
   return { efg, tov, orb, ftr };
 }
 
-async function fetchAllConferences(gender: Gender): Promise<Conference[]> {
+async function fetchAllConferences(gender: Gender, seasonYear: number): Promise<Conference[]> {
   const league = getLeaguePath(gender);
-  const url = `${ESPN_BASE}/${league}/scoreboard/conferences`;
+  const url = `${ESPN_BASE}/${league}/scoreboard/conferences?season=${seasonYear}`;
 
-  console.log(`Fetching conference list...`);
+  console.log(`Fetching conference list for season ${seasonYear}...`);
 
   const response = await fetch(url);
   if (!response.ok) {
@@ -138,10 +189,10 @@ async function fetchAllConferences(gender: Gender): Promise<Conference[]> {
   return conferences;
 }
 
-async function fetchConferenceTeams(gender: Gender, conferenceId: string, conferenceName: string): Promise<Team[]> {
+async function fetchConferenceTeams(gender: Gender, conferenceId: string, conferenceName: string, seasonYear: number): Promise<Team[]> {
   const league = getLeaguePath(gender);
   // Use the web API standings endpoint which returns actual conference teams
-  const url = `${ESPN_WEB_BASE}/${league}/standings?region=us&lang=en&contentorigin=espn&group=${conferenceId}&sort=leaguewinpercent:desc`;
+  const url = `${ESPN_WEB_BASE}/${league}/standings?region=us&lang=en&contentorigin=espn&group=${conferenceId}&sort=leaguewinpercent:desc&season=${seasonYear}`;
 
   const response = await fetch(url);
   if (!response.ok) {
@@ -193,14 +244,14 @@ async function fetchConferenceTeams(gender: Gender, conferenceId: string, confer
   return teams;
 }
 
-async function fetchAllTeams(gender: Gender): Promise<Team[]> {
-  const conferences = await fetchAllConferences(gender);
+async function fetchAllTeams(gender: Gender, seasonYear: number): Promise<Team[]> {
+  const conferences = await fetchAllConferences(gender, seasonYear);
   const allTeams: Team[] = [];
   const seenTeamIds = new Set<string>();
 
   for (const conf of conferences) {
     console.log(`  Fetching ${conf.name}...`);
-    const teams = await fetchConferenceTeams(gender, conf.id, conf.name);
+    const teams = await fetchConferenceTeams(gender, conf.id, conf.name, seasonYear);
 
     // Deduplicate teams (in case a team appears in multiple places)
     for (const team of teams) {
@@ -219,10 +270,11 @@ async function fetchAllTeams(gender: Gender): Promise<Team[]> {
 
 async function fetchTeamSchedule(
   gender: Gender,
-  teamId: string
+  teamId: string,
+  seasonYear: number
 ): Promise<{ gameId: string; date: string; isComplete: boolean }[]> {
   const league = getLeaguePath(gender);
-  const url = `${ESPN_BASE}/${league}/teams/${teamId}/schedule`;
+  const url = `${ESPN_BASE}/${league}/teams/${teamId}/schedule?season=${seasonYear}`;
 
   const response = await fetch(url);
   if (!response.ok) {
@@ -248,13 +300,14 @@ async function fetchGameDetails(
   const league = getLeaguePath(gender);
   const url = `${ESPN_BASE}/${league}/summary?event=${gameId}`;
 
-  const response = await fetch(url);
-  if (!response.ok) {
-    console.error(`Failed to fetch game ${gameId}: ${response.statusText}`);
-    return null;
-  }
+  try {
+    const response = await fetchWithRetry(url);
+    if (!response.ok) {
+      console.error(`Failed to fetch game ${gameId}: ${response.statusText}`);
+      return null;
+    }
 
-  const data = await response.json();
+    const data = await response.json();
 
   const boxscore = data.boxscore;
   if (!boxscore || !boxscore.teams || boxscore.teams.length < 2) {
@@ -400,6 +453,10 @@ async function fetchGameDetails(
     isComplete: competition.status?.type?.completed || false,
     isConferenceGame,
   };
+  } catch (error) {
+    console.error(`Error fetching game ${gameId}: ${(error as Error).message}`);
+    return null;
+  }
 }
 
 function calculateStandings(teams: Team[], games: Game[]): TeamStandings[] {
@@ -539,13 +596,13 @@ function calculateStandings(teams: Team[], games: Game[]): TeamStandings[] {
   });
 }
 
-async function fetchGenderData(gender: Gender) {
+async function fetchGenderData(gender: Gender, seasonYear: number) {
   console.log(`\n${'='.repeat(50)}`);
-  console.log(`Fetching ${gender.toUpperCase()} basketball data...`);
+  console.log(`Fetching ${gender.toUpperCase()} basketball data for season ${seasonYear}...`);
   console.log('='.repeat(50));
 
   // Fetch all teams from all conferences
-  const teams = await fetchAllTeams(gender);
+  const teams = await fetchAllTeams(gender, seasonYear);
   console.log(`Found ${teams.length} total teams`);
 
   const teamLookup = new Map(teams.map(t => [t.id, t]));
@@ -558,7 +615,7 @@ async function fetchGenderData(gender: Gender) {
     if (scheduleCount % 50 === 0) {
       console.log(`Fetching schedules... ${scheduleCount}/${teams.length}`);
     }
-    const schedule = await fetchTeamSchedule(gender, team.id);
+    const schedule = await fetchTeamSchedule(gender, team.id, seasonYear);
 
     for (const game of schedule) {
       if (game.isComplete) {
@@ -600,17 +657,23 @@ async function fetchGenderData(gender: Gender) {
 }
 
 async function main() {
+  const { season } = parseArgs();
+  const seasonYear = getEspnSeasonYear(season);
+
+  console.log(`\n🏀 NCAA Four Factors Data Fetcher`);
+  console.log(`📅 Season: ${season} (ESPN year: ${seasonYear})`);
+
   const dataDir = path.join(process.cwd(), 'src', 'data');
 
-  // Create data directories
-  const mensDir = path.join(dataDir, 'mens');
-  const womensDir = path.join(dataDir, 'womens');
+  // Create season-specific data directories
+  const mensDir = path.join(dataDir, 'mens', season);
+  const womensDir = path.join(dataDir, 'womens', season);
 
   fs.mkdirSync(mensDir, { recursive: true });
   fs.mkdirSync(womensDir, { recursive: true });
 
   // Fetch men's data
-  const mensData = await fetchGenderData('mens');
+  const mensData = await fetchGenderData('mens', seasonYear);
   fs.writeFileSync(
     path.join(mensDir, 'teams.json'),
     JSON.stringify(mensData.teams, null, 2)
@@ -626,7 +689,7 @@ async function main() {
   console.log(`\nMen's data saved to ${mensDir}`);
 
   // Fetch women's data
-  const womensData = await fetchGenderData('womens');
+  const womensData = await fetchGenderData('womens', seasonYear);
   fs.writeFileSync(
     path.join(womensDir, 'teams.json'),
     JSON.stringify(womensData.teams, null, 2)
@@ -641,7 +704,7 @@ async function main() {
   );
   console.log(`\nWomen's data saved to ${womensDir}`);
 
-  console.log('\n✅ Data fetch complete!');
+  console.log(`\n✅ Data fetch complete for season ${season}!`);
 }
 
 main().catch(console.error);

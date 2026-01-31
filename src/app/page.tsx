@@ -2,8 +2,8 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { GenderToggle, TeamSearch, GameCard } from '@/components';
-import { Gender, FOUR_FACTORS_META } from '@/lib/types';
+import { GenderToggle, TeamSearch, GameCard, SeasonSelector } from '@/components';
+import { Gender, Season, DEFAULT_SEASON, FOUR_FACTORS_META } from '@/lib/types';
 import { getRecentGames, getConferences, getTeams } from '@/lib/data';
 
 function HomePageContent() {
@@ -14,6 +14,10 @@ function HomePageContent() {
     const g = searchParams.get('gender');
     return g === 'womens' ? 'womens' : 'mens';
   });
+  const [season, setSeason] = useState<Season>(() => {
+    const s = searchParams.get('season');
+    return (s === '2024-25' ? '2024-25' : DEFAULT_SEASON) as Season;
+  });
   const [selectedConference, setSelectedConference] = useState<string>(() => {
     return searchParams.get('conference') || 'all';
   });
@@ -22,18 +26,19 @@ function HomePageContent() {
   useEffect(() => {
     const params = new URLSearchParams();
     if (gender !== 'mens') params.set('gender', gender);
+    if (season !== DEFAULT_SEASON) params.set('season', season);
     if (selectedConference !== 'all') params.set('conference', selectedConference);
 
     const queryString = params.toString();
     const newUrl = queryString ? `?${queryString}` : '/';
     router.replace(newUrl, { scroll: false });
-  }, [gender, selectedConference, router]);
+  }, [gender, season, selectedConference, router]);
 
-  const conferences = getConferences(gender);
-  const teams = getTeams(gender);
+  const conferences = getConferences(gender, season);
+  const teams = getTeams(gender, season);
   const teamConferenceMap = new Map(teams.map(t => [t.id, t.conferenceId]));
 
-  const allRecentGames = getRecentGames(gender, 100);
+  const allRecentGames = getRecentGames(gender, 100, season);
   const recentGames = selectedConference === 'all'
     ? allRecentGames.slice(0, 12)
     : allRecentGames
@@ -61,17 +66,18 @@ function HomePageContent() {
           Every game, every team, every stat that matters.
         </p>
 
-        {/* Gender Toggle */}
-        <div className="flex justify-center mb-8">
+        {/* Gender Toggle and Season Selector */}
+        <div className="flex justify-center items-center gap-4 mb-8">
           <GenderToggle value={gender} onChange={(g) => {
             setGender(g);
             setSelectedConference('all');
           }} />
+          <SeasonSelector value={season} onChange={setSeason} />
         </div>
 
         {/* Search */}
         <div className="flex justify-center">
-          <TeamSearch gender={gender} placeholder="Search for a team..." />
+          <TeamSearch gender={gender} season={season} placeholder="Search for a team..." />
         </div>
       </section>
 
@@ -138,7 +144,7 @@ function HomePageContent() {
         {recentGames.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 stagger-children">
             {recentGames.map(game => (
-              <GameCard key={game.id} game={game} gender={gender} />
+              <GameCard key={game.id} game={game} gender={gender} season={season} />
             ))}
           </div>
         ) : (

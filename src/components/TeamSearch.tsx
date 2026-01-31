@@ -2,15 +2,16 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Team, Gender } from '@/lib/types';
+import { Team, Gender, Season, DEFAULT_SEASON } from '@/lib/types';
 import { searchTeams } from '@/lib/data';
 
 interface TeamSearchProps {
   gender: Gender;
+  season?: Season;
   placeholder?: string;
 }
 
-export function TeamSearch({ gender, placeholder = 'Search teams...' }: TeamSearchProps) {
+export function TeamSearch({ gender, season = DEFAULT_SEASON, placeholder = 'Search teams...' }: TeamSearchProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Team[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -22,7 +23,7 @@ export function TeamSearch({ gender, placeholder = 'Search teams...' }: TeamSear
   // Search for teams
   useEffect(() => {
     if (query.length >= 2) {
-      const matches = searchTeams(gender, query).slice(0, 8);
+      const matches = searchTeams(gender, query, season).slice(0, 8);
       setResults(matches);
       setIsOpen(matches.length > 0);
       setSelectedIndex(-1);
@@ -30,7 +31,7 @@ export function TeamSearch({ gender, placeholder = 'Search teams...' }: TeamSear
       setResults([]);
       setIsOpen(false);
     }
-  }, [query, gender]);
+  }, [query, gender, season]);
 
   // Handle click outside
   useEffect(() => {
@@ -44,10 +45,11 @@ export function TeamSearch({ gender, placeholder = 'Search teams...' }: TeamSear
   }, []);
 
   const selectTeam = useCallback((team: Team) => {
-    router.push(`/team/${gender}/${team.id}`);
+    const seasonParam = season !== DEFAULT_SEASON ? `?season=${season}` : '';
+    router.push(`/team/${gender}/${team.id}${seasonParam}`);
     setIsOpen(false);
     setQuery('');
-  }, [gender, router]);
+  }, [gender, season, router]);
 
   // Handle keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {

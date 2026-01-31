@@ -1,11 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { Game, Gender } from '@/lib/types';
+import { Game, Gender, Season, DEFAULT_SEASON } from '@/lib/types';
 
 interface GameCardProps {
   game: Game;
   gender: Gender;
+  season?: Season;
   showFactors?: boolean;
 }
 
@@ -18,13 +19,14 @@ function formatDate(dateString: string): string {
   });
 }
 
-export function GameCard({ game, gender, showFactors = false }: GameCardProps) {
+export function GameCard({ game, gender, season = DEFAULT_SEASON, showFactors = false }: GameCardProps) {
   const homeWon = game.homeTeam.score > game.awayTeam.score;
   const awayWon = game.awayTeam.score > game.homeTeam.score;
+  const seasonParam = season !== DEFAULT_SEASON ? `?season=${season}` : '';
 
   return (
     <Link
-      href={`/game/${gender}/${game.id}`}
+      href={`/game/${gender}/${game.id}${seasonParam}`}
       className="card block p-4 hover:translate-y-[-2px] transition-transform duration-200"
     >
       {/* Date header */}

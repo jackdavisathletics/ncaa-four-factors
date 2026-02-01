@@ -132,7 +132,7 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
   const { gender: genderParam, gameId } = await params;
   const { season: seasonParam } = await searchParams;
   const gender = genderParam as Gender;
-  const season = (seasonParam === '2024-25' ? '2024-25' : DEFAULT_SEASON) as Season;
+  const season = (['2024-25', '2023-24'].includes(seasonParam || '') ? seasonParam : DEFAULT_SEASON) as Season;
 
   if (gender !== 'mens' && gender !== 'womens') {
     notFound();

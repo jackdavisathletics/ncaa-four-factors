@@ -18,7 +18,7 @@ function LeaderboardPageContent() {
   });
   const [season, setSeason] = useState<Season>(() => {
     const s = searchParams.get('season');
-    return (s === '2024-25' ? '2024-25' : DEFAULT_SEASON) as Season;
+    return (['2024-25', '2023-24'].includes(s || '') ? s : DEFAULT_SEASON) as Season;
   });
   const [selectedConference, setSelectedConference] = useState<string>(() => {
     return searchParams.get('conference') || 'all';

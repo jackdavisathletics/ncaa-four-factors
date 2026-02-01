@@ -17,6 +17,14 @@ import womensTeams202425 from '@/data/womens/2024-25/teams.json';
 import womensGames202425 from '@/data/womens/2024-25/games.json';
 import womensStandings202425 from '@/data/womens/2024-25/standings.json';
 
+// 2023-24 Season
+import mensTeams202324 from '@/data/mens/2023-24/teams.json';
+import mensGames202324 from '@/data/mens/2023-24/games.json';
+import mensStandings202324 from '@/data/mens/2023-24/standings.json';
+import womensTeams202324 from '@/data/womens/2023-24/teams.json';
+import womensGames202324 from '@/data/womens/2023-24/games.json';
+import womensStandings202324 from '@/data/womens/2023-24/standings.json';
+
 // Data cache organized by season and gender
 const dataCache: Record<Season, Record<Gender, {
   teams: Team[];
@@ -45,6 +53,18 @@ const dataCache: Record<Season, Record<Gender, {
       teams: womensTeams202425 as Team[],
       games: womensGames202425 as Game[],
       standings: womensStandings202425 as TeamStandings[],
+    },
+  },
+  '2023-24': {
+    mens: {
+      teams: mensTeams202324 as Team[],
+      games: mensGames202324 as Game[],
+      standings: mensStandings202324 as TeamStandings[],
+    },
+    womens: {
+      teams: womensTeams202324 as Team[],
+      games: womensGames202324 as Game[],
+      standings: womensStandings202324 as TeamStandings[],
     },
   },
 };

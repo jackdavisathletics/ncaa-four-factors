@@ -8,6 +8,7 @@ import { ThemeToggle } from './ThemeToggle';
 const navItems = [
   { href: '/', label: 'Home' },
   { href: '/leaderboard', label: 'Leaderboard' },
+  { href: '/trendline', label: 'Trendline' },
 ];
 
 export function Navigation() {

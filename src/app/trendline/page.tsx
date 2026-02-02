@@ -14,7 +14,7 @@ import {
   ReferenceLine,
 } from 'recharts';
 import { GenderToggle } from '@/components';
-import { getTeams, getStandings } from '@/lib/data';
+import { getTeams, getStandings, getTeamConference, getConferenceStandings } from '@/lib/data';
 import {
   Gender,
   Season,
@@ -29,12 +29,23 @@ import {
 // Seasons in chronological order for the chart
 const CHRONOLOGICAL_SEASONS: Season[] = [...AVAILABLE_SEASONS].reverse();
 
+interface TeamSeasonData {
+  pointsImpact: number | null;
+  offensive: number | null;
+  allowed: number | null;
+  confAvg: number | null;
+  confName: string | null;
+}
+
 interface TrendDataPoint {
   season: string;
+  seasonRaw: Season;
   team1Value: number | null;
   team2Value: number | null;
   team1Name: string;
   team2Name: string;
+  team1Data: TeamSeasonData;
+  team2Data: TeamSeasonData;
 }
 
 interface FactorTrendData {
@@ -91,27 +102,50 @@ function TrendlinePageContent() {
         const team1 = team1Id ? standings.find((s) => s.teamId === team1Id) : null;
         const team2 = team2Id ? standings.find((s) => s.teamId === team2Id) : null;
 
-        const getPointsImpact = (team: TeamStandings | null | undefined) => {
-          if (!team) return null;
-          const offKey = meta.key as keyof TeamStandings;
-          const defKey = `opp${meta.key.charAt(0).toUpperCase()}${meta.key.slice(1)}` as keyof TeamStandings;
-          return calculateCombinedPointsImpact(
-            meta.key,
-            team[offKey] as number,
-            team[defKey] as number,
-            averages
-          );
+        const offKey = meta.key as keyof TeamStandings;
+        const defKey = `opp${meta.key.charAt(0).toUpperCase()}${meta.key.slice(1)}` as keyof TeamStandings;
+
+        const getTeamSeasonData = (teamId: string | null, team: TeamStandings | null | undefined): TeamSeasonData => {
+          if (!team || !teamId) {
+            return { pointsImpact: null, offensive: null, allowed: null, confAvg: null, confName: null };
+          }
+
+          const offensive = team[offKey] as number;
+          const allowed = team[defKey] as number;
+          const pointsImpact = calculateCombinedPointsImpact(meta.key, offensive, allowed, averages);
+
+          // Get team's conference and calculate conference average
+          const teamConf = getTeamConference(gender, teamId, season);
+          let confAvg: number | null = null;
+          let confName: string | null = null;
+
+          if (teamConf) {
+            confName = teamConf.name;
+            const confStandings = getConferenceStandings(gender, teamConf.id, season);
+            if (confStandings.length > 0) {
+              const confSum = confStandings.reduce((sum, t) => sum + (t[offKey] as number), 0);
+              confAvg = confSum / confStandings.length;
+            }
+          }
+
+          return { pointsImpact, offensive, allowed, confAvg, confName };
         };
 
         const team1Info = team1Id ? teams.find((t) => t.id === team1Id) : null;
         const team2Info = team2Id ? teams.find((t) => t.id === team2Id) : null;
 
+        const team1Data = getTeamSeasonData(team1Id, team1);
+        const team2Data = getTeamSeasonData(team2Id, team2);
+
         return {
           season: season.replace('-', '\u2011'), // Non-breaking hyphen
-          team1Value: getPointsImpact(team1),
-          team2Value: getPointsImpact(team2),
+          seasonRaw: season,
+          team1Value: team1Data.pointsImpact,
+          team2Value: team2Data.pointsImpact,
           team1Name: team1Info?.abbreviation || 'Team 1',
           team2Name: team2Info?.abbreviation || 'Team 2',
+          team1Data,
+          team2Data,
         };
       });
 
@@ -132,24 +166,69 @@ function TrendlinePageContent() {
   const team1Color = team1Info?.color || '#00d4ff';
   const team2Color = team2Info?.color || '#ff3366';
 
-  // Custom tooltip component
-  const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number; dataKey: string; color: string }>; label?: string }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-[var(--background-secondary)] border border-[var(--border)] rounded-lg p-3 shadow-lg">
-          <p className="text-sm font-semibold text-[var(--foreground)] mb-2">{label}</p>
-          {payload.map((entry, index) => (
-            <p key={index} className="text-sm" style={{ color: entry.color }}>
-              {entry.dataKey === 'team1Value' ? team1Info?.abbreviation || 'Team 1' : team2Info?.abbreviation || 'Team 2'}:{' '}
-              <span className="stat-number">
-                {entry.value !== null ? (entry.value >= 0 ? '+' : '') + entry.value.toFixed(1) : 'N/A'}
-              </span>
+  // Custom tooltip component factory - creates tooltip for specific factor
+  const createCustomTooltip = (factorKey: keyof FourFactors, factorLabel: string) => {
+    const meta = FOUR_FACTORS_META.find(m => m.key === factorKey);
+    const formatValue = meta?.format || ((v: number) => v.toFixed(1));
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return function CustomTooltip(props: any) {
+      const { active, payload, label } = props;
+      if (active && payload && payload.length > 0) {
+        const dataPoint = payload[0].payload as TrendDataPoint;
+
+        const renderTeamStats = (
+          teamData: TeamSeasonData,
+          teamName: string,
+          teamColor: string,
+          isVisible: boolean
+        ) => {
+          if (!isVisible || teamData.pointsImpact === null) return null;
+
+          return (
+            <div className="mb-3 last:mb-0">
+              <p className="text-sm font-semibold mb-1" style={{ color: teamColor }}>
+                {teamName}
+              </p>
+              <div className="space-y-0.5 text-xs">
+                <div className="flex justify-between gap-4">
+                  <span className="text-[var(--foreground-muted)]">Points Impact:</span>
+                  <span className="stat-number font-semibold" style={{ color: teamData.pointsImpact >= 0 ? 'var(--chart-positive)' : 'var(--chart-negative)' }}>
+                    {teamData.pointsImpact >= 0 ? '+' : ''}{teamData.pointsImpact.toFixed(1)}
+                  </span>
+                </div>
+                <div className="flex justify-between gap-4">
+                  <span className="text-[var(--foreground-muted)]">Offensive:</span>
+                  <span className="stat-number">{formatValue(teamData.offensive!)}</span>
+                </div>
+                <div className="flex justify-between gap-4">
+                  <span className="text-[var(--foreground-muted)]">Allowed:</span>
+                  <span className="stat-number">{formatValue(teamData.allowed!)}</span>
+                </div>
+                {teamData.confAvg !== null && (
+                  <div className="flex justify-between gap-4 pt-1 border-t border-[var(--border)]">
+                    <span className="text-[var(--foreground-muted)]">{teamData.confName} Avg:</span>
+                    <span className="stat-number text-[var(--foreground-muted)]">{formatValue(teamData.confAvg)}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        };
+
+        return (
+          <div className="bg-[var(--background-secondary)] border border-[var(--border)] rounded-lg p-3 shadow-lg min-w-[180px]">
+            <p className="text-xs font-semibold text-[var(--foreground-muted)] mb-2 uppercase tracking-wide">
+              {label} &middot; {factorLabel}
             </p>
-          ))}
-        </div>
-      );
-    }
-    return null;
+            {renderTeamStats(dataPoint.team1Data, dataPoint.team1Name, team1Color, !!team1Id)}
+            {team1Id && team2Id && <div className="border-t border-[var(--border)] my-2" />}
+            {renderTeamStats(dataPoint.team2Data, dataPoint.team2Name, team2Color, !!team2Id)}
+          </div>
+        );
+      }
+      return null;
+    };
   };
 
   return (
@@ -336,7 +415,7 @@ function TrendlinePageContent() {
                       strokeDasharray="3 3"
                       strokeOpacity={0.5}
                     />
-                    <Tooltip content={<CustomTooltip />} />
+                    <Tooltip content={createCustomTooltip(factor.key, factor.shortLabel)} />
                     {team1Id && (
                       <Line
                         type="monotone"

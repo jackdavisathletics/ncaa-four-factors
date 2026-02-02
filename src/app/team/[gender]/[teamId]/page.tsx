@@ -21,7 +21,7 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
   const { gender: genderParam, teamId } = await params;
   const { season: seasonParam } = await searchParams;
   const gender = genderParam as Gender;
-  const season = (['2024-25', '2023-24', '2022-23'].includes(seasonParam || '') ? seasonParam : DEFAULT_SEASON) as Season;
+  const season = (['2024-25', '2023-24', '2022-23', '2021-22'].includes(seasonParam || '') ? seasonParam : DEFAULT_SEASON) as Season;
 
   if (gender !== 'mens' && gender !== 'womens') {
     notFound();

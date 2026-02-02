@@ -2,10 +2,10 @@
 export type Gender = 'mens' | 'womens';
 
 // Season type (format: YYYY-YY)
-export type Season = '2025-26' | '2024-25' | '2023-24' | '2022-23';
+export type Season = '2025-26' | '2024-25' | '2023-24' | '2022-23' | '2021-22';
 
 // Available seasons (most recent first)
-export const AVAILABLE_SEASONS: Season[] = ['2025-26', '2024-25', '2023-24', '2022-23'];
+export const AVAILABLE_SEASONS: Season[] = ['2025-26', '2024-25', '2023-24', '2022-23', '2021-22'];
 
 // Default season (current)
 export const DEFAULT_SEASON: Season = '2025-26';

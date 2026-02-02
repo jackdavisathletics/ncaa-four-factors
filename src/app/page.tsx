@@ -16,7 +16,7 @@ function HomePageContent() {
   });
   const [season, setSeason] = useState<Season>(() => {
     const s = searchParams.get('season');
-    return (['2024-25', '2023-24', '2022-23'].includes(s || '') ? s : DEFAULT_SEASON) as Season;
+    return (['2024-25', '2023-24', '2022-23', '2021-22'].includes(s || '') ? s : DEFAULT_SEASON) as Season;
   });
   const [selectedConference, setSelectedConference] = useState<string>(() => {
     return searchParams.get('conference') || 'all';

@@ -103,26 +103,26 @@ function getContrastColor(hexColor: string): string {
   return luminance > 0.4 ? '#1a1a1a' : '#ffffff';
 }
 
-function BoxScoreDetail({ label, home, away, higherBetter = true, isKeyMetric = false }: {
+function BoxScoreDetail({ label, left, right, higherBetter = true, isKeyMetric = false }: {
   label: string;
-  home: string | number;
-  away: string | number;
+  left: string | number;
+  right: string | number;
   higherBetter?: boolean;
   isKeyMetric?: boolean;
 }) {
-  const homeNum = typeof home === 'number' ? home : parseFloat(home);
-  const awayNum = typeof away === 'number' ? away : parseFloat(away);
-  const homeBetter = higherBetter ? homeNum > awayNum : homeNum < awayNum;
-  const awayBetter = higherBetter ? awayNum > homeNum : awayNum < homeNum;
+  const leftNum = typeof left === 'number' ? left : parseFloat(left);
+  const rightNum = typeof right === 'number' ? right : parseFloat(right);
+  const leftBetter = higherBetter ? leftNum > rightNum : leftNum < rightNum;
+  const rightBetter = higherBetter ? rightNum > leftNum : rightNum < leftNum;
 
   return (
     <div className={`flex items-center py-2 ${isKeyMetric ? 'border-y border-[var(--foreground)]' : 'border-b border-[var(--border)] last:border-0'}`}>
-      <span className={`w-12 sm:w-16 text-right stat-number text-sm sm:text-base ${homeBetter ? 'text-[var(--accent-success)] font-semibold' : 'text-[var(--foreground-muted)]'} ${isKeyMetric ? 'font-bold' : ''}`}>
-        {home}
+      <span className={`w-12 sm:w-16 text-right stat-number text-sm sm:text-base ${leftBetter ? 'text-[var(--accent-success)] font-semibold' : 'text-[var(--foreground-muted)]'} ${isKeyMetric ? 'font-bold' : ''}`}>
+        {left}
       </span>
       <span className={`flex-1 text-center text-xs sm:text-sm ${isKeyMetric ? 'text-[var(--foreground)] font-bold' : 'text-[var(--foreground-muted)]'}`}>{label}</span>
-      <span className={`w-12 sm:w-16 text-left stat-number text-sm sm:text-base ${awayBetter ? 'text-[var(--accent-success)] font-semibold' : 'text-[var(--foreground-muted)]'} ${isKeyMetric ? 'font-bold' : ''}`}>
-        {away}
+      <span className={`w-12 sm:w-16 text-left stat-number text-sm sm:text-base ${rightBetter ? 'text-[var(--accent-success)] font-semibold' : 'text-[var(--foreground-muted)]'} ${isKeyMetric ? 'font-bold' : ''}`}>
+        {right}
       </span>
     </div>
   );
@@ -190,17 +190,8 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
       <div className="card p-4 sm:p-8">
         <h2 className="text-xl sm:text-2xl text-center mb-4 sm:mb-6">Box Score Details</h2>
 
-        {/* Team labels for box score */}
+        {/* Team labels for box score - away on left, home on right to match header */}
         <div className="flex justify-between mb-4 px-2 sm:px-4">
-          <span
-            className="font-medium text-xs sm:text-sm px-2 py-1 rounded"
-            style={{
-              backgroundColor: game.homeTeam.teamColor,
-              color: getContrastColor(game.homeTeam.teamColor)
-            }}
-          >
-            {game.homeTeam.teamAbbreviation}
-          </span>
           <span
             className="font-medium text-xs sm:text-sm px-2 py-1 rounded"
             style={{
@@ -210,79 +201,88 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
           >
             {game.awayTeam.teamAbbreviation}
           </span>
+          <span
+            className="font-medium text-xs sm:text-sm px-2 py-1 rounded"
+            style={{
+              backgroundColor: game.homeTeam.teamColor,
+              color: getContrastColor(game.homeTeam.teamColor)
+            }}
+          >
+            {game.homeTeam.teamAbbreviation}
+          </span>
         </div>
 
         <div className="divide-y divide-[var(--border)]">
-          {/* 2P% */}
+          {/* 2P% - away on left, home on right to match header */}
           <BoxScoreDetail
             label="2P%"
-            home={(() => {
-              const fg2a = game.homeTeam.fga - game.homeTeam.fg3a;
-              const fg2m = game.homeTeam.fgm - game.homeTeam.fg3m;
-              return fg2a > 0 ? ((fg2m / fg2a) * 100).toFixed(1) : '0.0';
-            })()}
-            away={(() => {
+            left={(() => {
               const fg2a = game.awayTeam.fga - game.awayTeam.fg3a;
               const fg2m = game.awayTeam.fgm - game.awayTeam.fg3m;
+              return fg2a > 0 ? ((fg2m / fg2a) * 100).toFixed(1) : '0.0';
+            })()}
+            right={(() => {
+              const fg2a = game.homeTeam.fga - game.homeTeam.fg3a;
+              const fg2m = game.homeTeam.fgm - game.homeTeam.fg3m;
               return fg2a > 0 ? ((fg2m / fg2a) * 100).toFixed(1) : '0.0';
             })()}
           />
           {/* 3P% */}
           <BoxScoreDetail
             label="3P%"
-            home={game.homeTeam.fg3a > 0 ? ((game.homeTeam.fg3m / game.homeTeam.fg3a) * 100).toFixed(1) : '0.0'}
-            away={game.awayTeam.fg3a > 0 ? ((game.awayTeam.fg3m / game.awayTeam.fg3a) * 100).toFixed(1) : '0.0'}
+            left={game.awayTeam.fg3a > 0 ? ((game.awayTeam.fg3m / game.awayTeam.fg3a) * 100).toFixed(1) : '0.0'}
+            right={game.homeTeam.fg3a > 0 ? ((game.homeTeam.fg3m / game.homeTeam.fg3a) * 100).toFixed(1) : '0.0'}
           />
           {/* 3PR (3-Point Rate) */}
           <BoxScoreDetail
             label="3PR"
-            home={game.homeTeam.fga > 0 ? ((game.homeTeam.fg3a / game.homeTeam.fga) * 100).toFixed(1) : '0.0'}
-            away={game.awayTeam.fga > 0 ? ((game.awayTeam.fg3a / game.awayTeam.fga) * 100).toFixed(1) : '0.0'}
+            left={game.awayTeam.fga > 0 ? ((game.awayTeam.fg3a / game.awayTeam.fga) * 100).toFixed(1) : '0.0'}
+            right={game.homeTeam.fga > 0 ? ((game.homeTeam.fg3a / game.homeTeam.fga) * 100).toFixed(1) : '0.0'}
           />
           {/* EFG% (key metric) */}
           <BoxScoreDetail
             label="eFG%"
-            home={game.homeTeam.efg.toFixed(1)}
-            away={game.awayTeam.efg.toFixed(1)}
+            left={game.awayTeam.efg.toFixed(1)}
+            right={game.homeTeam.efg.toFixed(1)}
             isKeyMetric
           />
           {/* TOV% (lower is better) */}
           <BoxScoreDetail
             label="TOV%"
-            home={game.homeTeam.tov.toFixed(1)}
-            away={game.awayTeam.tov.toFixed(1)}
+            left={game.awayTeam.tov.toFixed(1)}
+            right={game.homeTeam.tov.toFixed(1)}
             higherBetter={false}
           />
           {/* ORB% */}
           <BoxScoreDetail
             label="ORB%"
-            home={game.homeTeam.orb.toFixed(1)}
-            away={game.awayTeam.orb.toFixed(1)}
+            left={game.awayTeam.orb.toFixed(1)}
+            right={game.homeTeam.orb.toFixed(1)}
           />
           {/* Total Possessions Gained (key metric) */}
           <BoxScoreDetail
             label="Poss. Gained"
-            home={game.homeTeam.oreb - game.homeTeam.turnovers - game.awayTeam.oreb + game.awayTeam.turnovers}
-            away={game.awayTeam.oreb - game.awayTeam.turnovers - game.homeTeam.oreb + game.homeTeam.turnovers}
+            left={game.awayTeam.oreb - game.awayTeam.turnovers - game.homeTeam.oreb + game.homeTeam.turnovers}
+            right={game.homeTeam.oreb - game.homeTeam.turnovers - game.awayTeam.oreb + game.awayTeam.turnovers}
             isKeyMetric
           />
           {/* FTR */}
           <BoxScoreDetail
             label="FTR"
-            home={game.homeTeam.ftr.toFixed(1)}
-            away={game.awayTeam.ftr.toFixed(1)}
+            left={game.awayTeam.ftr.toFixed(1)}
+            right={game.homeTeam.ftr.toFixed(1)}
           />
           {/* FT% */}
           <BoxScoreDetail
             label="FT%"
-            home={game.homeTeam.fta > 0 ? ((game.homeTeam.ftm / game.homeTeam.fta) * 100).toFixed(1) : '0.0'}
-            away={game.awayTeam.fta > 0 ? ((game.awayTeam.ftm / game.awayTeam.fta) * 100).toFixed(1) : '0.0'}
+            left={game.awayTeam.fta > 0 ? ((game.awayTeam.ftm / game.awayTeam.fta) * 100).toFixed(1) : '0.0'}
+            right={game.homeTeam.fta > 0 ? ((game.homeTeam.ftm / game.homeTeam.fta) * 100).toFixed(1) : '0.0'}
           />
           {/* FTM (key metric) */}
           <BoxScoreDetail
             label="FTM"
-            home={game.homeTeam.ftm}
-            away={game.awayTeam.ftm}
+            left={game.awayTeam.ftm}
+            right={game.homeTeam.ftm}
             isKeyMetric
           />
         </div>

@@ -9,6 +9,7 @@ const navItems = [
   { href: '/', label: 'Home' },
   { href: '/leaderboard', label: 'Leaderboard' },
   { href: '/trendline', label: 'Trendline' },
+  { href: '/about', label: 'About' },
 ];
 
 export function Navigation() {

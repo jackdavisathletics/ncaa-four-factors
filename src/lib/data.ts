@@ -197,3 +197,234 @@ export function getConferenceStandings(gender: Gender, conferenceId: string, sea
   // Filter standings to only include teams in this conference
   return standings.filter(s => conferenceTeamIds.has(s.teamId));
 }
+
+/**
+ * Get conference-only games for a team (games where opponent is in same conference)
+ */
+export function getTeamConferenceGames(gender: Gender, teamId: string, season: Season = DEFAULT_SEASON): Game[] {
+  const games = dataCache[season]?.[gender]?.games || [];
+  const teams = dataCache[season]?.[gender]?.teams || [];
+
+  // Find the team's conference
+  const team = teams.find(t => t.id === teamId);
+  if (!team) return [];
+
+  // Get all team IDs in this conference
+  const conferenceTeamIds = new Set(
+    teams.filter(t => t.conferenceId === team.conferenceId).map(t => t.id)
+  );
+
+  // Filter to games where both teams are in the conference
+  return games.filter(g => {
+    const isTeamInGame = g.homeTeam.teamId === teamId || g.awayTeam.teamId === teamId;
+    const opponentId = g.homeTeam.teamId === teamId ? g.awayTeam.teamId : g.homeTeam.teamId;
+    const isConferenceGame = conferenceTeamIds.has(opponentId);
+    return isTeamInGame && isConferenceGame && g.isComplete;
+  });
+}
+
+/**
+ * Calculate Four Factors stats for a team from a set of games
+ */
+export interface CalculatedStats {
+  gamesPlayed: number;
+  efg: number;
+  tov: number;
+  orb: number;
+  ftr: number;
+  oppEfg: number;
+  oppTov: number;
+  oppOrb: number;
+  oppFtr: number;
+}
+
+export function calculateStatsFromGames(games: Game[], teamId: string): CalculatedStats {
+  if (games.length === 0) {
+    return {
+      gamesPlayed: 0,
+      efg: 0, tov: 0, orb: 0, ftr: 0,
+      oppEfg: 0, oppTov: 0, oppOrb: 0, oppFtr: 0,
+    };
+  }
+
+  let efgSum = 0, tovSum = 0, orbSum = 0, ftrSum = 0;
+  let oppEfgSum = 0, oppTovSum = 0, oppOrbSum = 0, oppFtrSum = 0;
+
+  for (const game of games) {
+    const isHome = game.homeTeam.teamId === teamId;
+    const teamStats = isHome ? game.homeTeam : game.awayTeam;
+    const oppStats = isHome ? game.awayTeam : game.homeTeam;
+
+    efgSum += teamStats.efg;
+    tovSum += teamStats.tov;
+    orbSum += teamStats.orb;
+    ftrSum += teamStats.ftr;
+
+    oppEfgSum += oppStats.efg;
+    oppTovSum += oppStats.tov;
+    oppOrbSum += oppStats.orb;
+    oppFtrSum += oppStats.ftr;
+  }
+
+  const n = games.length;
+  return {
+    gamesPlayed: n,
+    efg: efgSum / n,
+    tov: tovSum / n,
+    orb: orbSum / n,
+    ftr: ftrSum / n,
+    oppEfg: oppEfgSum / n,
+    oppTov: oppTovSum / n,
+    oppOrb: oppOrbSum / n,
+    oppFtr: oppFtrSum / n,
+  };
+}
+
+/**
+ * Calculate conference averages from conference-only games
+ * Returns averages for all teams in the conference based on their conference games only
+ */
+export function getConferenceOnlyAverages(gender: Gender, conferenceId: string, season: Season = DEFAULT_SEASON): {
+  efg: number;
+  tov: number;
+  orb: number;
+  ftr: number;
+  oppEfg: number;
+  oppTov: number;
+  oppOrb: number;
+  oppFtr: number;
+} {
+  const teams = dataCache[season]?.[gender]?.teams || [];
+  const games = dataCache[season]?.[gender]?.games || [];
+
+  // Get all team IDs in this conference
+  const conferenceTeamIds = new Set(
+    teams.filter(t => t.conferenceId === conferenceId).map(t => t.id)
+  );
+
+  // Get all conference games (both teams in conference)
+  const conferenceGames = games.filter(g =>
+    g.isComplete &&
+    conferenceTeamIds.has(g.homeTeam.teamId) &&
+    conferenceTeamIds.has(g.awayTeam.teamId)
+  );
+
+  if (conferenceGames.length === 0) {
+    return {
+      efg: 50, tov: 18, orb: 28, ftr: 28,
+      oppEfg: 50, oppTov: 18, oppOrb: 28, oppFtr: 28,
+    };
+  }
+
+  // Calculate stats for each team from their conference games
+  const teamStats: CalculatedStats[] = [];
+  for (const teamId of conferenceTeamIds) {
+    const teamGames = conferenceGames.filter(g =>
+      g.homeTeam.teamId === teamId || g.awayTeam.teamId === teamId
+    );
+    if (teamGames.length > 0) {
+      teamStats.push(calculateStatsFromGames(teamGames, teamId));
+    }
+  }
+
+  if (teamStats.length === 0) {
+    return {
+      efg: 50, tov: 18, orb: 28, ftr: 28,
+      oppEfg: 50, oppTov: 18, oppOrb: 28, oppFtr: 28,
+    };
+  }
+
+  // Average across all teams
+  const n = teamStats.length;
+  return {
+    efg: teamStats.reduce((s, t) => s + t.efg, 0) / n,
+    tov: teamStats.reduce((s, t) => s + t.tov, 0) / n,
+    orb: teamStats.reduce((s, t) => s + t.orb, 0) / n,
+    ftr: teamStats.reduce((s, t) => s + t.ftr, 0) / n,
+    oppEfg: teamStats.reduce((s, t) => s + t.oppEfg, 0) / n,
+    oppTov: teamStats.reduce((s, t) => s + t.oppTov, 0) / n,
+    oppOrb: teamStats.reduce((s, t) => s + t.oppOrb, 0) / n,
+    oppFtr: teamStats.reduce((s, t) => s + t.oppFtr, 0) / n,
+  };
+}
+
+/**
+ * Helper to calculate a percentile from an array of numbers
+ */
+function calculatePercentile(values: number[], percentile: number): number {
+  if (values.length === 0) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const index = (percentile / 100) * (sorted.length - 1);
+  const lower = Math.floor(index);
+  const upper = Math.ceil(index);
+  if (lower === upper) return sorted[lower];
+  return sorted[lower] + (sorted[upper] - sorted[lower]) * (index - lower);
+}
+
+/**
+ * Calculate percentiles from conference-only games for all teams in the conference
+ */
+export function getConferenceOnlyPercentiles(gender: Gender, conferenceId: string, season: Season = DEFAULT_SEASON): {
+  efg: { p25: number; p75: number };
+  tov: { p25: number; p75: number };
+  orb: { p25: number; p75: number };
+  ftr: { p25: number; p75: number };
+  oppEfg: { p25: number; p75: number };
+  oppTov: { p25: number; p75: number };
+  oppOrb: { p25: number; p75: number };
+  oppFtr: { p25: number; p75: number };
+} {
+  const teams = dataCache[season]?.[gender]?.teams || [];
+  const games = dataCache[season]?.[gender]?.games || [];
+
+  // Get all team IDs in this conference
+  const conferenceTeamIds = new Set(
+    teams.filter(t => t.conferenceId === conferenceId).map(t => t.id)
+  );
+
+  // Get all conference games (both teams in conference)
+  const conferenceGames = games.filter(g =>
+    g.isComplete &&
+    conferenceTeamIds.has(g.homeTeam.teamId) &&
+    conferenceTeamIds.has(g.awayTeam.teamId)
+  );
+
+  // Calculate stats for each team from their conference games
+  const teamStatsList: CalculatedStats[] = [];
+  for (const teamId of conferenceTeamIds) {
+    const teamGames = conferenceGames.filter(g =>
+      g.homeTeam.teamId === teamId || g.awayTeam.teamId === teamId
+    );
+    if (teamGames.length > 0) {
+      teamStatsList.push(calculateStatsFromGames(teamGames, teamId));
+    }
+  }
+
+  if (teamStatsList.length === 0) {
+    const defaultThreshold = { p25: 0, p75: 100 };
+    return {
+      efg: defaultThreshold, tov: defaultThreshold, orb: defaultThreshold, ftr: defaultThreshold,
+      oppEfg: defaultThreshold, oppTov: defaultThreshold, oppOrb: defaultThreshold, oppFtr: defaultThreshold,
+    };
+  }
+
+  const efgValues = teamStatsList.map(t => t.efg);
+  const tovValues = teamStatsList.map(t => t.tov);
+  const orbValues = teamStatsList.map(t => t.orb);
+  const ftrValues = teamStatsList.map(t => t.ftr);
+  const oppEfgValues = teamStatsList.map(t => t.oppEfg);
+  const oppTovValues = teamStatsList.map(t => t.oppTov);
+  const oppOrbValues = teamStatsList.map(t => t.oppOrb);
+  const oppFtrValues = teamStatsList.map(t => t.oppFtr);
+
+  return {
+    efg: { p25: calculatePercentile(efgValues, 25), p75: calculatePercentile(efgValues, 75) },
+    tov: { p25: calculatePercentile(tovValues, 25), p75: calculatePercentile(tovValues, 75) },
+    orb: { p25: calculatePercentile(orbValues, 25), p75: calculatePercentile(orbValues, 75) },
+    ftr: { p25: calculatePercentile(ftrValues, 25), p75: calculatePercentile(ftrValues, 75) },
+    oppEfg: { p25: calculatePercentile(oppEfgValues, 25), p75: calculatePercentile(oppEfgValues, 75) },
+    oppTov: { p25: calculatePercentile(oppTovValues, 25), p75: calculatePercentile(oppTovValues, 75) },
+    oppOrb: { p25: calculatePercentile(oppOrbValues, 25), p75: calculatePercentile(oppOrbValues, 75) },
+    oppFtr: { p25: calculatePercentile(oppFtrValues, 25), p75: calculatePercentile(oppFtrValues, 75) },
+  };
+}

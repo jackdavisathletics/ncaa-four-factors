@@ -17,6 +17,7 @@ interface FactorBarProps {
   percentiles: PercentileThresholds;
   higherIsBetter: boolean;
   teamAbbreviation: string;
+  scopeLabel?: string; // e.g., "DI" or "Conference USA"
 }
 
 /**
@@ -53,6 +54,7 @@ export function FactorBar({
   percentiles,
   higherIsBetter,
   teamAbbreviation,
+  scopeLabel = 'Conference',
 }: FactorBarProps) {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -103,7 +105,7 @@ export function FactorBar({
         <div className="absolute left-0 right-0 top-full mt-2 z-20 animate-in fade-in slide-in-from-top-1 duration-150">
           <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg p-3">
             <div className="text-xs text-[var(--foreground-muted)] mb-2 font-medium">
-              vs Conference Average
+              vs {scopeLabel} Average
             </div>
 
             {/* Clustered bar chart */}

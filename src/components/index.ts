@@ -3,6 +3,7 @@ export { FactorBar } from './FactorBar';
 export { FourFactorsAccordion } from './FourFactorsAccordion';
 export { GamesCarousel } from './GamesCarousel';
 export { GenderToggle } from './GenderToggle';
+export { ScopeToggle, type StatsScope } from './ScopeToggle';
 export { SeasonSelector } from './SeasonSelector';
 export { TeamGenderToggle } from './TeamGenderToggle';
 export { TeamSearch } from './TeamSearch';

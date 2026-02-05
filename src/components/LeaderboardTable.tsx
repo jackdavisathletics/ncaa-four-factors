@@ -132,8 +132,8 @@ export function LeaderboardTable({ standings, gender, viewMode, selectedConferen
 
   // Get color for points impact value
   const getPointsImpactColor = (points: number): string => {
-    if (points > 0.1) return '#22c55e'; // green
-    if (points < -0.1) return '#ef4444'; // red
+    if (points > 0.4) return '#22c55e'; // green
+    if (points < -0.4) return '#ef4444'; // red
     return 'var(--foreground-muted)';
   };
 

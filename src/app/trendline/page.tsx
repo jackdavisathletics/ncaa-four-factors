@@ -536,55 +536,51 @@ function TrendlinePageContent() {
                       <>
                         {/* Custom fill between lines */}
                         <Customized
-                          component={(props: { xAxisMap?: Record<string, { scale: (v: string) => number; bandwidth?: () => number }>; yAxisMap?: Record<string, { scale: (v: number) => number }> }) => {
-                            const { xAxisMap, yAxisMap } = props;
-                            if (!xAxisMap || !yAxisMap) return null;
+                          component={(props: { formattedGraphicalItems?: Array<{ props?: { points?: Array<{ x: number; y: number; payload?: TrendDataPoint }> } }> }) => {
+                            const { formattedGraphicalItems } = props;
+                            if (!formattedGraphicalItems || formattedGraphicalItems.length < 2) return null;
 
-                            const xAxis = Object.values(xAxisMap)[0];
-                            const yAxis = Object.values(yAxisMap)[0];
-                            if (!xAxis || !yAxis) return null;
+                            // Get points from both Line components (offensive and allowed)
+                            const offensiveLine = formattedGraphicalItems[0]?.props?.points;
+                            const allowedLine = formattedGraphicalItems[1]?.props?.points;
 
-                            const offKey = valueMode === 'points-impact' ? 'teamOffensive' : 'teamOffPct';
-                            const allowedKey = valueMode === 'points-impact' ? 'teamAllowed' : 'teamAllowedPct';
+                            if (!offensiveLine || !allowedLine || offensiveLine.length !== allowedLine.length) return null;
 
-                            // Build path segments for good and bad regions
                             const goodPaths: string[] = [];
                             const badPaths: string[] = [];
 
-                            for (let i = 0; i < factor.data.length - 1; i++) {
-                              const curr = factor.data[i];
-                              const next = factor.data[i + 1];
+                            for (let i = 0; i < offensiveLine.length - 1; i++) {
+                              const currOff = offensiveLine[i];
+                              const nextOff = offensiveLine[i + 1];
+                              const currAllowed = allowedLine[i];
+                              const nextAllowed = allowedLine[i + 1];
 
-                              const currOff = curr[offKey as keyof TrendDataPoint] as number | null;
-                              const currAllowed = curr[allowedKey as keyof TrendDataPoint] as number | null;
-                              const nextOff = next[offKey as keyof TrendDataPoint] as number | null;
-                              const nextAllowed = next[allowedKey as keyof TrendDataPoint] as number | null;
+                              if (!currOff || !nextOff || !currAllowed || !nextAllowed) continue;
 
-                              if (currOff === null || currAllowed === null || nextOff === null || nextAllowed === null) continue;
+                              // Get the actual data values to determine good/bad
+                              const offKey = valueMode === 'points-impact' ? 'teamOffensive' : 'teamOffPct';
+                              const allowedKey = valueMode === 'points-impact' ? 'teamAllowed' : 'teamAllowedPct';
 
-                              const bandwidth = xAxis.bandwidth?.() || 0;
-                              const x1 = xAxis.scale(curr.season) + bandwidth / 2;
-                              const x2 = xAxis.scale(next.season) + bandwidth / 2;
-                              const y1Off = yAxis.scale(currOff);
-                              const y1Allowed = yAxis.scale(currAllowed);
-                              const y2Off = yAxis.scale(nextOff);
-                              const y2Allowed = yAxis.scale(nextAllowed);
+                              const currOffVal = currOff.payload?.[offKey as keyof TrendDataPoint] as number | null;
+                              const currAllowedVal = currOff.payload?.[allowedKey as keyof TrendDataPoint] as number | null;
+                              const nextOffVal = nextOff.payload?.[offKey as keyof TrendDataPoint] as number | null;
+                              const nextAllowedVal = nextOff.payload?.[allowedKey as keyof TrendDataPoint] as number | null;
 
-                              // Determine if this segment is good or bad based on the factor
-                              const currIsGood = factor.higherOffensiveIsBetter ? currOff >= currAllowed : currOff <= currAllowed;
-                              const nextIsGood = factor.higherOffensiveIsBetter ? nextOff >= nextAllowed : nextOff <= nextAllowed;
+                              if (currOffVal === null || currAllowedVal === null || nextOffVal === null || nextAllowedVal === null) continue;
 
-                              // Create polygon for this segment
-                              const path = `M${x1},${y1Off} L${x2},${y2Off} L${x2},${y2Allowed} L${x1},${y1Allowed} Z`;
+                              // Create polygon using pixel coordinates from the lines
+                              const path = `M${currOff.x},${currOff.y} L${nextOff.x},${nextOff.y} L${nextAllowed.x},${nextAllowed.y} L${currAllowed.x},${currAllowed.y} Z`;
 
-                              // If both points have same "goodness", use that color
-                              // If they differ, we'd need interpolation - for simplicity, use the start point's status
+                              // Determine if segment is good or bad
+                              const currIsGood = factor.higherOffensiveIsBetter ? currOffVal >= currAllowedVal : currOffVal <= currAllowedVal;
+                              const nextIsGood = factor.higherOffensiveIsBetter ? nextOffVal >= nextAllowedVal : nextOffVal <= nextAllowedVal;
+
                               if (currIsGood && nextIsGood) {
                                 goodPaths.push(path);
                               } else if (!currIsGood && !nextIsGood) {
                                 badPaths.push(path);
                               } else {
-                                // Mixed - split at intersection (simplified: use dominant)
+                                // Mixed - use start point's status
                                 if (currIsGood) goodPaths.push(path);
                                 else badPaths.push(path);
                               }

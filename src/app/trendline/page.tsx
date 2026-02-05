@@ -493,11 +493,11 @@ function TrendlinePageContent() {
                   if (validData.length < 2) return null;
 
                   // Chart dimensions (h-64 = 256px, with margins)
-                  // YAxis takes ~45px, XAxis takes ~20px
-                  const chartLeft = 45;
+                  // YAxis width varies by label width, XAxis height ~25px
+                  const chartLeft = 52;
                   const chartRight = 20; // right margin
                   const chartTop = 5;
-                  const chartBottom = 20; // XAxis height
+                  const chartBottom = 25; // XAxis height
 
                   // Get Y domain
                   const allYValues = validData.flatMap(d => [

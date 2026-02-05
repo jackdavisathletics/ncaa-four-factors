@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { TeamStandings, Gender, SortField, SortDirection, FOUR_FACTORS_META, calculateAveragesFromStandings, FourFactorsAverages } from '@/lib/types';
+import { type StatsScope } from './ScopeToggle';
 
 type ViewMode = 'percentages' | 'points-impact';
 
@@ -11,6 +12,7 @@ interface LeaderboardTableProps {
   gender: Gender;
   viewMode: ViewMode;
   selectedConference?: string;
+  scope?: StatsScope;
 }
 
 interface ColumnDef {
@@ -37,7 +39,7 @@ const columns: ColumnDef[] = [
   { key: 'oppFtr', label: 'Opp FTR', shortLabel: 'FTR', category: 'defensive', higherIsBetter: false, format: v => v.toFixed(1), factorKey: 'ftr' },
 ];
 
-export function LeaderboardTable({ standings, gender, viewMode, selectedConference = 'all' }: LeaderboardTableProps) {
+export function LeaderboardTable({ standings, gender, viewMode, selectedConference = 'all', scope = 'di' }: LeaderboardTableProps) {
   const [sortField, setSortField] = useState<SortField>(selectedConference !== 'all' ? 'confRecord' : 'record');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
@@ -302,7 +304,7 @@ export function LeaderboardTable({ standings, gender, viewMode, selectedConferen
                       <span
                         className="stat-number text-sm"
                         style={{ color }}
-                        title={`${col.format ? col.format(value) : value}%`}
+                        title={`${col.format ? col.format(value) : value}% (vs ${scope === 'di' ? 'DI' : 'conf'} avg)`}
                       >
                         {formatPointsImpact(pointsImpact)}
                       </span>

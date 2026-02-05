@@ -2,9 +2,9 @@
 
 import { useState, useMemo, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { GenderToggle, LeaderboardTable, SeasonSelector } from '@/components';
+import { GenderToggle, LeaderboardTable, SeasonSelector, ScopeToggle, type StatsScope } from '@/components';
 import { Gender, Season, DEFAULT_SEASON } from '@/lib/types';
-import { getStandings, getConferences, getTeamConference } from '@/lib/data';
+import { getStandings, getConferences, getTeamConference, getConferenceOnlyStandings } from '@/lib/data';
 
 export type ViewMode = 'percentages' | 'points-impact';
 
@@ -27,6 +27,10 @@ function LeaderboardPageContent() {
     const v = searchParams.get('view');
     return v === 'points-impact' ? 'points-impact' : 'percentages';
   });
+  const [scope, setScope] = useState<StatsScope>(() => {
+    const s = searchParams.get('scope');
+    return s === 'conference' ? 'conference' : 'di';
+  });
   const [filtersExpanded, setFiltersExpanded] = useState(false);
 
   // Update URL when filters change
@@ -36,28 +40,39 @@ function LeaderboardPageContent() {
     if (season !== DEFAULT_SEASON) params.set('season', season);
     if (selectedConference !== 'all') params.set('conference', selectedConference);
     if (viewMode !== 'percentages') params.set('view', viewMode);
+    if (scope !== 'di') params.set('scope', scope);
 
     const queryString = params.toString();
     const newUrl = queryString ? `/leaderboard?${queryString}` : '/leaderboard';
     router.replace(newUrl, { scroll: false });
-  }, [gender, season, selectedConference, viewMode, router]);
+  }, [gender, season, selectedConference, viewMode, scope, router]);
 
   const conferences = getConferences(gender, season);
-  const allStandings = getStandings(gender, season);
 
+  // Get standings based on scope
   const standings = useMemo(() => {
-    if (selectedConference === 'all') {
-      return allStandings;
+    if (scope === 'conference') {
+      // Conference mode: stats from conference games only
+      const confStandings = getConferenceOnlyStandings(gender, season, selectedConference);
+      return confStandings;
+    } else {
+      // DI mode: stats from all DI games
+      const allStandings = getStandings(gender, season);
+      if (selectedConference === 'all') {
+        return allStandings;
+      }
+      return allStandings.filter(team => {
+        const conference = getTeamConference(gender, team.teamId, season);
+        return conference?.id === selectedConference;
+      });
     }
-    return allStandings.filter(team => {
-      const conference = getTeamConference(gender, team.teamId, season);
-      return conference?.id === selectedConference;
-    });
-  }, [allStandings, selectedConference, gender, season]);
+  }, [gender, season, selectedConference, scope]);
 
   const currentConferenceName = selectedConference === 'all'
     ? 'All Conferences'
     : conferences.find(c => c.id === selectedConference)?.name || 'All Conferences';
+
+  const scopeLabel = scope === 'di' ? 'all DI games' : 'conference games only';
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
@@ -68,6 +83,7 @@ function LeaderboardPageContent() {
             <h1 className="text-3xl sm:text-4xl mb-1 sm:mb-2">Leaderboard</h1>
             <p className="text-sm sm:text-base text-[var(--foreground-muted)]">
               {currentConferenceName} {gender === 'mens' ? "Men's" : "Women's"} Basketball
+              <span className="text-xs ml-2">({scopeLabel})</span>
             </p>
           </div>
 
@@ -126,6 +142,7 @@ function LeaderboardPageContent() {
               ))}
             </select>
             <GenderToggle value={gender} onChange={setGender} />
+            <ScopeToggle value={scope} onChange={setScope} conferenceName="Conf" />
           </div>
         </div>
 
@@ -191,6 +208,12 @@ function LeaderboardPageContent() {
               <label className="block text-xs text-[var(--foreground-muted)] mb-2 uppercase tracking-wide">Gender</label>
               <GenderToggle value={gender} onChange={setGender} />
             </div>
+
+            {/* Scope */}
+            <div>
+              <label className="block text-xs text-[var(--foreground-muted)] mb-2 uppercase tracking-wide">Stats From</label>
+              <ScopeToggle value={scope} onChange={setScope} conferenceName="Conf" />
+            </div>
           </div>
         </div>
       </div>
@@ -198,7 +221,7 @@ function LeaderboardPageContent() {
       {/* Table */}
       <div className="card overflow-hidden">
         {standings.length > 0 ? (
-          <LeaderboardTable standings={standings} gender={gender} viewMode={viewMode} selectedConference={selectedConference} />
+          <LeaderboardTable standings={standings} gender={gender} viewMode={viewMode} selectedConference={selectedConference} scope={scope} />
         ) : (
           <div className="p-8 sm:p-12 text-center">
             <p className="text-[var(--foreground-muted)]">

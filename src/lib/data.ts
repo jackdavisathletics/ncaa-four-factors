@@ -362,6 +362,91 @@ function calculatePercentile(values: number[], percentile: number): number {
 }
 
 /**
+ * Get standings calculated from conference-only games for all teams
+ * Each team's stats are based on their conference games only
+ * @param conferenceId - If provided, only returns teams in that conference. If 'all', returns all teams.
+ */
+export function getConferenceOnlyStandings(gender: Gender, season: Season = DEFAULT_SEASON, conferenceId: string = 'all'): TeamStandings[] {
+  const teams = dataCache[season]?.[gender]?.teams || [];
+  const games = dataCache[season]?.[gender]?.games || [];
+  const allStandings = dataCache[season]?.[gender]?.standings || [];
+
+  // Determine which teams to include
+  const teamsToInclude = conferenceId === 'all'
+    ? teams
+    : teams.filter(t => t.conferenceId === conferenceId);
+
+  const results: TeamStandings[] = [];
+
+  for (const team of teamsToInclude) {
+    // Get conference team IDs for this team's conference
+    const conferenceTeamIds = new Set(
+      teams.filter(t => t.conferenceId === team.conferenceId).map(t => t.id)
+    );
+
+    // Get this team's conference games
+    const teamConfGames = games.filter(g =>
+      g.isComplete &&
+      (g.homeTeam.teamId === team.id || g.awayTeam.teamId === team.id) &&
+      conferenceTeamIds.has(g.homeTeam.teamId) &&
+      conferenceTeamIds.has(g.awayTeam.teamId)
+    );
+
+    if (teamConfGames.length === 0) continue;
+
+    // Calculate stats from conference games
+    const stats = calculateStatsFromGames(teamConfGames, team.id);
+
+    // Calculate wins/losses from conference games
+    let confWins = 0, confLosses = 0;
+    for (const game of teamConfGames) {
+      const isHome = game.homeTeam.teamId === team.id;
+      const teamScore = isHome ? game.homeTeam.score : game.awayTeam.score;
+      const oppScore = isHome ? game.awayTeam.score : game.homeTeam.score;
+      if (teamScore > oppScore) confWins++;
+      else confLosses++;
+    }
+
+    // Get original standings for metadata (logo, color, etc.) and overall record
+    const original = allStandings.find(s => s.teamId === team.id);
+    if (!original) continue;
+
+    // Calculate PPG from conference games
+    let totalPoints = 0, totalOppPoints = 0;
+    for (const game of teamConfGames) {
+      const isHome = game.homeTeam.teamId === team.id;
+      totalPoints += isHome ? game.homeTeam.score : game.awayTeam.score;
+      totalOppPoints += isHome ? game.awayTeam.score : game.homeTeam.score;
+    }
+
+    results.push({
+      teamId: team.id,
+      teamName: original.teamName,
+      teamAbbreviation: original.teamAbbreviation,
+      teamLogo: original.teamLogo,
+      teamColor: original.teamColor,
+      gamesPlayed: stats.gamesPlayed,
+      wins: original.wins,
+      losses: original.losses,
+      confWins,
+      confLosses,
+      efg: stats.efg,
+      tov: stats.tov,
+      orb: stats.orb,
+      ftr: stats.ftr,
+      oppEfg: stats.oppEfg,
+      oppTov: stats.oppTov,
+      oppOrb: stats.oppOrb,
+      oppFtr: stats.oppFtr,
+      ppg: totalPoints / stats.gamesPlayed,
+      oppPpg: totalOppPoints / stats.gamesPlayed,
+    });
+  }
+
+  return results;
+}
+
+/**
  * Calculate percentiles from conference-only games for all teams in the conference
  */
 export function getConferenceOnlyPercentiles(gender: Gender, conferenceId: string, season: Season = DEFAULT_SEASON): {

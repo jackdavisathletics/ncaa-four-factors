@@ -13,8 +13,8 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from 'recharts';
-import { GenderToggle } from '@/components';
-import { getTeams, getStandings, getTeamConference, getConferenceStandings } from '@/lib/data';
+import { GenderToggle, ScopeToggle, type StatsScope } from '@/components';
+import { getTeams, getStandings, getTeamConference, getConferenceStandings, getTeamConferenceGames, calculateStatsFromGames, getConferenceOnlyAverages } from '@/lib/data';
 import {
   Gender,
   Season,
@@ -73,6 +73,11 @@ function TrendlinePageContent() {
     return searchParams.get('team2') || '';
   });
 
+  const [scope, setScope] = useState<StatsScope>(() => {
+    const s = searchParams.get('scope');
+    return s === 'conference' ? 'conference' : 'di';
+  });
+
   // Get teams list from the most recent season that has data
   const teams = useMemo(() => {
     // Try to get teams from most recent season first
@@ -97,45 +102,74 @@ function TrendlinePageContent() {
     return FOUR_FACTORS_META.map((meta, index) => {
       const data: TrendDataPoint[] = CHRONOLOGICAL_SEASONS.map((season) => {
         const standings = getStandings(gender, season);
-        const averages = calculateAveragesFromStandings(standings);
-
-        const team1 = team1Id ? standings.find((s) => s.teamId === team1Id) : null;
-        const team2 = team2Id ? standings.find((s) => s.teamId === team2Id) : null;
+        const diAverages = calculateAveragesFromStandings(standings);
 
         const offKey = meta.key as keyof TeamStandings;
         const defKey = `opp${meta.key.charAt(0).toUpperCase()}${meta.key.slice(1)}` as keyof TeamStandings;
 
-        const getTeamSeasonData = (teamId: string | null, team: TeamStandings | null | undefined): TeamSeasonData => {
-          if (!team || !teamId) {
+        const getTeamSeasonData = (teamId: string | null): TeamSeasonData => {
+          if (!teamId) {
             return { pointsImpact: null, offensive: null, allowed: null, confAvg: null, confName: null };
           }
 
-          const offensive = team[offKey] as number;
-          const allowed = team[defKey] as number;
-          const pointsImpact = calculateCombinedPointsImpact(meta.key, offensive, allowed, averages);
-
-          // Get team's conference and calculate conference average
+          // Get team's conference info
           const teamConf = getTeamConference(gender, teamId, season);
-          let confAvg: number | null = null;
-          let confName: string | null = null;
+          let confName: string | null = teamConf?.name || null;
 
-          if (teamConf) {
-            confName = teamConf.name;
-            const confStandings = getConferenceStandings(gender, teamConf.id, season);
-            if (confStandings.length > 0) {
-              const confSum = confStandings.reduce((sum, t) => sum + (t[offKey] as number), 0);
-              confAvg = confSum / confStandings.length;
+          let offensive: number | null = null;
+          let allowed: number | null = null;
+          let averages = diAverages;
+          let confAvg: number | null = null;
+
+          if (scope === 'conference' && teamConf) {
+            // Conference mode: use conference-only stats and averages
+            const confGames = getTeamConferenceGames(gender, teamId, season);
+            if (confGames.length > 0) {
+              const confStats = calculateStatsFromGames(confGames, teamId);
+              offensive = confStats[meta.key as keyof typeof confStats] as number;
+              allowed = confStats[defKey.replace('opp', '').toLowerCase().replace(/^(.)/, (m) => 'opp' + m.charAt(0).toUpperCase() + m.slice(1)) as keyof typeof confStats] as number;
+              // Fix: get oppXxx from confStats correctly
+              const oppKey = `opp${meta.key.charAt(0).toUpperCase()}${meta.key.slice(1)}` as keyof typeof confStats;
+              allowed = confStats[oppKey] as number;
+
+              // Use conference-only averages
+              const confOnlyAvg = getConferenceOnlyAverages(gender, teamConf.id, season);
+              averages = { ...diAverages, ...confOnlyAvg };
+
+              // Conference average for display
+              confAvg = confOnlyAvg[meta.key as keyof typeof confOnlyAvg] as number;
+            }
+          } else {
+            // DI mode: use all-games stats
+            const team = standings.find((s) => s.teamId === teamId);
+            if (team) {
+              offensive = team[offKey] as number;
+              allowed = team[defKey] as number;
+
+              // Conference average for tooltip display
+              if (teamConf) {
+                const confStandings = getConferenceStandings(gender, teamConf.id, season);
+                if (confStandings.length > 0) {
+                  const confSum = confStandings.reduce((sum, t) => sum + (t[offKey] as number), 0);
+                  confAvg = confSum / confStandings.length;
+                }
+              }
             }
           }
 
+          if (offensive === null || allowed === null) {
+            return { pointsImpact: null, offensive: null, allowed: null, confAvg, confName };
+          }
+
+          const pointsImpact = calculateCombinedPointsImpact(meta.key, offensive, allowed, averages);
           return { pointsImpact, offensive, allowed, confAvg, confName };
         };
 
         const team1Info = team1Id ? teams.find((t) => t.id === team1Id) : null;
         const team2Info = team2Id ? teams.find((t) => t.id === team2Id) : null;
 
-        const team1Data = getTeamSeasonData(team1Id, team1);
-        const team2Data = getTeamSeasonData(team2Id, team2);
+        const team1Data = getTeamSeasonData(team1Id);
+        const team2Data = getTeamSeasonData(team2Id);
 
         return {
           season: season.replace('-', '\u2011'), // Non-breaking hyphen
@@ -157,7 +191,7 @@ function TrendlinePageContent() {
         color: factorColors[index],
       };
     });
-  }, [gender, team1Id, team2Id, teams]);
+  }, [gender, team1Id, team2Id, teams, scope]);
 
   // Get selected team info for colors
   const team1Info = teams.find((t) => t.id === team1Id);
@@ -192,7 +226,7 @@ function TrendlinePageContent() {
               </p>
               <div className="space-y-0.5 text-xs">
                 <div className="flex justify-between gap-4">
-                  <span className="text-[var(--foreground-muted)]">Points Impact:</span>
+                  <span className="text-[var(--foreground-muted)]">Points Impact (vs {scope === 'di' ? 'DI' : 'conf'}):</span>
                   <span className="stat-number font-semibold" style={{ color: teamData.pointsImpact >= 0 ? 'var(--chart-positive)' : 'var(--chart-negative)' }}>
                     {teamData.pointsImpact >= 0 ? '+' : ''}{teamData.pointsImpact.toFixed(1)}
                   </span>
@@ -240,16 +274,20 @@ function TrendlinePageContent() {
             <h1 className="text-3xl sm:text-4xl mb-1 sm:mb-2">Trendline</h1>
             <p className="text-sm sm:text-base text-[var(--foreground-muted)]">
               Compare Four Factors performance across seasons
+              <span className="text-xs ml-2">({scope === 'di' ? 'all DI games' : 'conference games only'})</span>
             </p>
           </div>
-          <GenderToggle
-            value={gender}
-            onChange={(g) => {
-              setGender(g);
-              setTeam1Id('');
-              setTeam2Id('');
-            }}
-          />
+          <div className="flex items-center gap-4">
+            <GenderToggle
+              value={gender}
+              onChange={(g) => {
+                setGender(g);
+                setTeam1Id('');
+                setTeam2Id('');
+              }}
+            />
+            <ScopeToggle value={scope} onChange={setScope} conferenceName="Conf" />
+          </div>
         </div>
       </div>
 

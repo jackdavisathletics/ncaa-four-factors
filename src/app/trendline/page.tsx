@@ -479,7 +479,102 @@ function TrendlinePageContent() {
                 )}
               </div>
 
-              <div className="h-64">
+              <div className="h-64 relative">
+                {/* SVG Overlay for fill between lines */}
+                {effectiveViewMode === 'split' && (() => {
+                  const offKey = valueMode === 'points-impact' ? 'teamOffensive' : 'teamOffPct';
+                  const allowedKey = valueMode === 'points-impact' ? 'teamAllowed' : 'teamAllowedPct';
+
+                  const validData = factor.data.filter(d =>
+                    d[offKey as keyof TrendDataPoint] !== null &&
+                    d[allowedKey as keyof TrendDataPoint] !== null
+                  );
+
+                  if (validData.length < 2) return null;
+
+                  // Chart dimensions (h-64 = 256px, with margins)
+                  // YAxis takes ~45px, XAxis takes ~20px
+                  const chartLeft = 45;
+                  const chartRight = 20; // right margin
+                  const chartTop = 5;
+                  const chartBottom = 20; // XAxis height
+
+                  // Get Y domain
+                  const allYValues = validData.flatMap(d => [
+                    d[offKey as keyof TrendDataPoint] as number,
+                    d[allowedKey as keyof TrendDataPoint] as number
+                  ]);
+                  const yMin = Math.min(...allYValues);
+                  const yMax = Math.max(...allYValues);
+                  const yPadding = (yMax - yMin) * 0.1;
+                  const yMinPadded = yMin - yPadding;
+                  const yMaxPadded = yMax + yPadding;
+                  const yRange = yMaxPadded - yMinPadded || 1;
+
+                  // Build paths
+                  const goodPaths: string[] = [];
+                  const badPaths: string[] = [];
+
+                  for (let i = 0; i < validData.length - 1; i++) {
+                    const curr = validData[i];
+                    const next = validData[i + 1];
+
+                    const currOff = curr[offKey as keyof TrendDataPoint] as number;
+                    const currAllowed = curr[allowedKey as keyof TrendDataPoint] as number;
+                    const nextOff = next[offKey as keyof TrendDataPoint] as number;
+                    const nextAllowed = next[allowedKey as keyof TrendDataPoint] as number;
+
+                    // X positions as percentages (will use calc in viewBox)
+                    const x1Pct = i / (validData.length - 1);
+                    const x2Pct = (i + 1) / (validData.length - 1);
+
+                    // Y positions (inverted because SVG y=0 is top)
+                    const y1OffPct = 1 - (currOff - yMinPadded) / yRange;
+                    const y1AllowedPct = 1 - (currAllowed - yMinPadded) / yRange;
+                    const y2OffPct = 1 - (nextOff - yMinPadded) / yRange;
+                    const y2AllowedPct = 1 - (nextAllowed - yMinPadded) / yRange;
+
+                    const path = `M${x1Pct},${y1OffPct} L${x2Pct},${y2OffPct} L${x2Pct},${y2AllowedPct} L${x1Pct},${y1AllowedPct} Z`;
+
+                    const currIsGood = factor.higherOffensiveIsBetter
+                      ? currOff >= currAllowed
+                      : currOff <= currAllowed;
+                    const nextIsGood = factor.higherOffensiveIsBetter
+                      ? nextOff >= nextAllowed
+                      : nextOff <= nextAllowed;
+
+                    if (currIsGood && nextIsGood) {
+                      goodPaths.push(path);
+                    } else if (!currIsGood && !nextIsGood) {
+                      badPaths.push(path);
+                    } else {
+                      if (currIsGood) goodPaths.push(path);
+                      else badPaths.push(path);
+                    }
+                  }
+
+                  return (
+                    <svg
+                      className="absolute pointer-events-none"
+                      style={{
+                        left: chartLeft,
+                        top: chartTop,
+                        width: `calc(100% - ${chartLeft + chartRight}px)`,
+                        height: `calc(100% - ${chartTop + chartBottom}px)`,
+                      }}
+                      viewBox="0 0 1 1"
+                      preserveAspectRatio="none"
+                    >
+                      {goodPaths.map((d, i) => (
+                        <path key={`good-${i}`} d={d} fill="rgba(34, 197, 94, 0.3)" />
+                      ))}
+                      {badPaths.map((d, i) => (
+                        <path key={`bad-${i}`} d={d} fill="rgba(239, 68, 68, 0.3)" />
+                      ))}
+                    </svg>
+                  );
+                })()}
+
                 <ResponsiveContainer width="100%" height="100%">
                   <ComposedChart
                     data={factor.data}
@@ -530,12 +625,9 @@ function TrendlinePageContent() {
                       />
                     )}
 
-                    {/* Split mode: lines only (fill via CSS overlay) */}
+                    {/* Split mode: two lines */}
                     {effectiveViewMode === 'split' && (
                       <>
-                        {/* Raw SVG test */}
-                        <rect x={50} y={20} width={80} height={25} fill="red" />
-
                         {/* Offensive line (solid) */}
                         <Line
                           type="monotone"

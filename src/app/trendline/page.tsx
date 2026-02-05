@@ -5,13 +5,13 @@ import { useSearchParams } from 'next/navigation';
 import {
   LineChart,
   Line,
-  Area,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
   ReferenceLine,
+  Customized,
 } from 'recharts';
 import { GenderToggle, ScopeToggle, type StatsScope } from '@/components';
 import { getTeams, getStandings, getTeamConference, getConferenceStandings, getTeamConferenceGames, calculateStatsFromGames, getConferenceOnlyAverages } from '@/lib/data';
@@ -534,40 +534,73 @@ function TrendlinePageContent() {
                     {/* Split mode: area fills and lines */}
                     {effectiveViewMode === 'split' && (
                       <>
-                        {/* Good area fill (green) */}
-                        <Area
-                          type="monotone"
-                          dataKey="goodTop"
-                          stroke="none"
-                          fill="rgba(34, 197, 94, 0.3)"
-                          connectNulls={false}
-                          isAnimationActive={false}
-                        />
-                        <Area
-                          type="monotone"
-                          dataKey="goodBottom"
-                          stroke="none"
-                          fill="var(--background)"
-                          connectNulls={false}
-                          isAnimationActive={false}
-                        />
+                        {/* Custom fill between lines */}
+                        <Customized
+                          component={(props: { xAxisMap?: Record<string, { scale: (v: string) => number; bandwidth?: () => number }>; yAxisMap?: Record<string, { scale: (v: number) => number }> }) => {
+                            const { xAxisMap, yAxisMap } = props;
+                            if (!xAxisMap || !yAxisMap) return null;
 
-                        {/* Bad area fill (red) */}
-                        <Area
-                          type="monotone"
-                          dataKey="badTop"
-                          stroke="none"
-                          fill="rgba(239, 68, 68, 0.3)"
-                          connectNulls={false}
-                          isAnimationActive={false}
-                        />
-                        <Area
-                          type="monotone"
-                          dataKey="badBottom"
-                          stroke="none"
-                          fill="var(--background)"
-                          connectNulls={false}
-                          isAnimationActive={false}
+                            const xAxis = Object.values(xAxisMap)[0];
+                            const yAxis = Object.values(yAxisMap)[0];
+                            if (!xAxis || !yAxis) return null;
+
+                            const offKey = valueMode === 'points-impact' ? 'teamOffensive' : 'teamOffPct';
+                            const allowedKey = valueMode === 'points-impact' ? 'teamAllowed' : 'teamAllowedPct';
+
+                            // Build path segments for good and bad regions
+                            const goodPaths: string[] = [];
+                            const badPaths: string[] = [];
+
+                            for (let i = 0; i < factor.data.length - 1; i++) {
+                              const curr = factor.data[i];
+                              const next = factor.data[i + 1];
+
+                              const currOff = curr[offKey as keyof TrendDataPoint] as number | null;
+                              const currAllowed = curr[allowedKey as keyof TrendDataPoint] as number | null;
+                              const nextOff = next[offKey as keyof TrendDataPoint] as number | null;
+                              const nextAllowed = next[allowedKey as keyof TrendDataPoint] as number | null;
+
+                              if (currOff === null || currAllowed === null || nextOff === null || nextAllowed === null) continue;
+
+                              const bandwidth = xAxis.bandwidth?.() || 0;
+                              const x1 = xAxis.scale(curr.season) + bandwidth / 2;
+                              const x2 = xAxis.scale(next.season) + bandwidth / 2;
+                              const y1Off = yAxis.scale(currOff);
+                              const y1Allowed = yAxis.scale(currAllowed);
+                              const y2Off = yAxis.scale(nextOff);
+                              const y2Allowed = yAxis.scale(nextAllowed);
+
+                              // Determine if this segment is good or bad based on the factor
+                              const currIsGood = factor.higherOffensiveIsBetter ? currOff >= currAllowed : currOff <= currAllowed;
+                              const nextIsGood = factor.higherOffensiveIsBetter ? nextOff >= nextAllowed : nextOff <= nextAllowed;
+
+                              // Create polygon for this segment
+                              const path = `M${x1},${y1Off} L${x2},${y2Off} L${x2},${y2Allowed} L${x1},${y1Allowed} Z`;
+
+                              // If both points have same "goodness", use that color
+                              // If they differ, we'd need interpolation - for simplicity, use the start point's status
+                              if (currIsGood && nextIsGood) {
+                                goodPaths.push(path);
+                              } else if (!currIsGood && !nextIsGood) {
+                                badPaths.push(path);
+                              } else {
+                                // Mixed - split at intersection (simplified: use dominant)
+                                if (currIsGood) goodPaths.push(path);
+                                else badPaths.push(path);
+                              }
+                            }
+
+                            return (
+                              <g>
+                                {goodPaths.map((d, i) => (
+                                  <path key={`good-${i}`} d={d} fill="rgba(34, 197, 94, 0.25)" stroke="none" />
+                                ))}
+                                {badPaths.map((d, i) => (
+                                  <path key={`bad-${i}`} d={d} fill="rgba(239, 68, 68, 0.25)" stroke="none" />
+                                ))}
+                              </g>
+                            );
+                          }}
                         />
 
                         {/* Offensive line (solid) */}

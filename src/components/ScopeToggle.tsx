@@ -12,7 +12,7 @@ export function ScopeToggle({ value, onChange, conferenceName }: ScopeToggleProp
   return (
     <div className="inline-flex rounded-lg p-1 bg-[var(--background-tertiary)] border border-[var(--border)]">
       <button
-        onClick={() => onChange('di')}
+        onClick={() => onChange(value === 'di' ? 'conference' : 'di')}
         className={`
           relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
           transition-all duration-200
@@ -28,7 +28,7 @@ export function ScopeToggle({ value, onChange, conferenceName }: ScopeToggleProp
         )}
       </button>
       <button
-        onClick={() => onChange('conference')}
+        onClick={() => onChange(value === 'conference' ? 'di' : 'conference')}
         className={`
           relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
           transition-all duration-200

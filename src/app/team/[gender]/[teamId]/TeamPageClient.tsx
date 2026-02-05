@@ -116,14 +116,6 @@ export function TeamPageClient({
         </div>
       </div>
 
-      {/* Conference games notice */}
-      {scope === 'conference' && (
-        <div className="mb-4 text-sm text-[var(--foreground-muted)] text-center">
-          Showing stats from {conferenceStats.gamesPlayed} conference game{conferenceStats.gamesPlayed !== 1 ? 's' : ''}
-          {conferenceStats.gamesPlayed === 0 && ' (no conference games played yet)'}
-        </div>
-      )}
-
       {/* Four Factors Summary */}
       {stats && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">

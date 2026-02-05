@@ -1,6 +1,6 @@
 'use client';
 
-import { GameTeamStats, LEAGUE_EFFICIENCY, LEAGUE_OREB_PCT } from '@/lib/types';
+import { GameTeamStats } from '@/lib/types';
 import { WaterfallChart } from './WaterfallChart';
 
 interface FourFactorsSectionProps {
@@ -18,8 +18,7 @@ export function FourFactorsSection({ homeTeam, awayTeam }: FourFactorsSectionPro
 
       {/* Info tooltip for points mode */}
       <p className="mt-4 text-xs text-[var(--foreground-muted)] text-center">
-        Point contributions calculated using Dean Oliver&apos;s Four Factors formulas
-        (LgEffic={LEAGUE_EFFICIENCY}, LgOR%={Math.round(LEAGUE_OREB_PCT * 100)}%).
+        Point impact estimated per 1% difference: eFG% ±1.77, TOV% ±1.34, ORB% ±0.62, FTR ±0.25 pts/100 poss.
       </p>
     </div>
   );

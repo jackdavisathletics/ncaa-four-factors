@@ -1,30 +1,27 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { GameTeamStats, calculateAllContributions } from '@/lib/types';
+import { GameTeamStats, calculatePointsImpact, calculatePossessions, FourFactors } from '@/lib/types';
 
 interface WaterfallChartProps {
   homeTeam: GameTeamStats;
   awayTeam: GameTeamStats;
 }
 
-// Factor keys for Dean Oliver's formulas
-type ContributionKey = 'shooting' | 'turnovers' | 'rebounding' | 'freeThrows';
+// Factor keys matching the Four Factors
+type FactorKey = keyof FourFactors;
 
 interface FactorDisplay {
-  key: ContributionKey;
+  key: FactorKey;
   label: string;
   shortLabel: string;
-  // Keys for the percentage values to show on hover
-  homeStatKey: 'efg' | 'tov' | 'orb' | 'ftr';
-  awayStatKey: 'efg' | 'tov' | 'orb' | 'ftr';
 }
 
 const FACTOR_DISPLAY: FactorDisplay[] = [
-  { key: 'shooting', label: 'Shooting', shortLabel: 'eFG%', homeStatKey: 'efg', awayStatKey: 'efg' },
-  { key: 'turnovers', label: 'Turnovers', shortLabel: 'TOV%', homeStatKey: 'tov', awayStatKey: 'tov' },
-  { key: 'rebounding', label: 'Rebounding', shortLabel: 'ORB%', homeStatKey: 'orb', awayStatKey: 'orb' },
-  { key: 'freeThrows', label: 'Free Throws', shortLabel: 'FTR', homeStatKey: 'ftr', awayStatKey: 'ftr' },
+  { key: 'efg', label: 'Shooting', shortLabel: 'eFG%' },
+  { key: 'tov', label: 'Turnovers', shortLabel: 'TOV%' },
+  { key: 'orb', label: 'Rebounding', shortLabel: 'ORB%' },
+  { key: 'ftr', label: 'Free Throws', shortLabel: 'FTR' },
 ];
 
 // Parse hex color to RGB
@@ -82,7 +79,7 @@ function isColorTooLight(hex: string): boolean {
 const FALLBACK_DARK_COLOR = '#374151'; // A neutral dark gray
 
 interface WaterfallBar {
-  key: ContributionKey;
+  key: FactorKey;
   label: string;
   value: number; // Points impact from home team's perspective (positive = home advantage)
   runningTotal: number;
@@ -96,7 +93,7 @@ interface WaterfallBar {
 }
 
 export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
-  const [hoveredBar, setHoveredBar] = useState<ContributionKey | null>(null);
+  const [hoveredBar, setHoveredBar] = useState<FactorKey | null>(null);
 
   // Determine display colors, avoiding colors that are too similar or too light
   const { awayDisplayColor, homeDisplayColor } = useMemo(() => {
@@ -135,18 +132,21 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
   }, [awayTeam.teamColor, awayTeam.teamAlternateColor, homeTeam.teamColor, homeTeam.teamAlternateColor]);
 
   const data = useMemo(() => {
-    // Calculate point contributions using Dean Oliver's formulas
-    // Always from home team's perspective (positive = home advantage, negative = away advantage)
-    const homeContribs = calculateAllContributions(homeTeam, awayTeam.dreb);
-    const awayContribs = calculateAllContributions(awayTeam, homeTeam.dreb);
+    // Calculate actual possessions from box scores (average of both teams)
+    const homePoss = calculatePossessions(homeTeam);
+    const awayPoss = calculatePossessions(awayTeam);
+    const avgPossessions = (homePoss + awayPoss) / 2;
 
-    // Build bars for each factor
+    // Build bars for each factor using simple linear coefficients
     // Positive values = home advantage (goes right)
     // Negative values = away advantage (goes left)
     let runningTotal = 0;
     const bars: WaterfallBar[] = FACTOR_DISPLAY.map(factor => {
       // Differential from home team's perspective
-      const pointsImpact = homeContribs[factor.key] - awayContribs[factor.key];
+      const differential = homeTeam[factor.key] - awayTeam[factor.key];
+
+      // Calculate points impact using simple linear coefficient
+      const pointsImpact = calculatePointsImpact(factor.key, differential, avgPossessions);
 
       const previousTotal = runningTotal;
       runningTotal += pointsImpact;
@@ -166,8 +166,8 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
         advantageTeamColor: advantageColor,
         advantageTeamLogo: advantageTeam.teamLogo,
         advantageTeamAbbr: advantageTeam.teamAbbreviation,
-        homeValue: homeTeam[factor.homeStatKey],
-        awayValue: awayTeam[factor.awayStatKey],
+        homeValue: homeTeam[factor.key],
+        awayValue: awayTeam[factor.key],
       };
     });
 

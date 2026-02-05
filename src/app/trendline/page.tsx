@@ -492,26 +492,29 @@ function TrendlinePageContent() {
 
                   if (validData.length < 2) return null;
 
-                  // Chart dimensions (h-64 = 256px, with margins)
-                  // YAxis width varies by label width, XAxis height ~25px
-                  const chartLeft = 52;
-                  const chartRight = 20; // right margin
+                  // Chart dimensions - adjusted to match Recharts rendering
+                  const chartLeft = 50;
+                  const chartRight = 20;
                   const chartTop = 5;
-                  const chartBottom = 25; // XAxis height
+                  const chartBottom = 22;
 
-                  // Get Y domain
+                  // Get Y domain with same padding as Recharts
                   const allYValues = validData.flatMap(d => [
                     d[offKey as keyof TrendDataPoint] as number,
                     d[allowedKey as keyof TrendDataPoint] as number
                   ]);
                   const yMin = Math.min(...allYValues);
                   const yMax = Math.max(...allYValues);
-                  const yPadding = (yMax - yMin) * 0.1;
+                  // Recharts auto domain typically adds ~5% padding
+                  const yPadding = (yMax - yMin) * 0.05;
                   const yMinPadded = yMin - yPadding;
                   const yMaxPadded = yMax + yPadding;
                   const yRange = yMaxPadded - yMinPadded || 1;
 
-                  // Build paths
+                  // Helper to convert data value to Y percentage
+                  const toYPct = (val: number) => 1 - (val - yMinPadded) / yRange;
+
+                  // Build paths with intersection handling
                   const goodPaths: string[] = [];
                   const badPaths: string[] = [];
 
@@ -524,17 +527,8 @@ function TrendlinePageContent() {
                     const nextOff = next[offKey as keyof TrendDataPoint] as number;
                     const nextAllowed = next[allowedKey as keyof TrendDataPoint] as number;
 
-                    // X positions as percentages (will use calc in viewBox)
-                    const x1Pct = i / (validData.length - 1);
-                    const x2Pct = (i + 1) / (validData.length - 1);
-
-                    // Y positions (inverted because SVG y=0 is top)
-                    const y1OffPct = 1 - (currOff - yMinPadded) / yRange;
-                    const y1AllowedPct = 1 - (currAllowed - yMinPadded) / yRange;
-                    const y2OffPct = 1 - (nextOff - yMinPadded) / yRange;
-                    const y2AllowedPct = 1 - (nextAllowed - yMinPadded) / yRange;
-
-                    const path = `M${x1Pct},${y1OffPct} L${x2Pct},${y2OffPct} L${x2Pct},${y2AllowedPct} L${x1Pct},${y1AllowedPct} Z`;
+                    const x1 = i / (validData.length - 1);
+                    const x2 = (i + 1) / (validData.length - 1);
 
                     const currIsGood = factor.higherOffensiveIsBetter
                       ? currOff >= currAllowed
@@ -543,11 +537,32 @@ function TrendlinePageContent() {
                       ? nextOff >= nextAllowed
                       : nextOff <= nextAllowed;
 
-                    if (currIsGood && nextIsGood) {
-                      goodPaths.push(path);
-                    } else if (!currIsGood && !nextIsGood) {
-                      badPaths.push(path);
+                    // Check if lines cross (different states at start and end)
+                    if (currIsGood !== nextIsGood) {
+                      // Calculate intersection point
+                      // Lines: off(t) = currOff + t*(nextOff-currOff)
+                      //        allowed(t) = currAllowed + t*(nextAllowed-currAllowed)
+                      // Intersection when off(t) = allowed(t)
+                      const dOff = nextOff - currOff;
+                      const dAllowed = nextAllowed - currAllowed;
+                      const t = (currAllowed - currOff) / (dOff - dAllowed);
+
+                      const xInt = x1 + t * (x2 - x1);
+                      const yInt = currOff + t * dOff;
+                      const yIntPct = toYPct(yInt);
+
+                      // First segment (from start to intersection)
+                      const path1 = `M${x1},${toYPct(currOff)} L${xInt},${yIntPct} L${xInt},${yIntPct} L${x1},${toYPct(currAllowed)} Z`;
+                      if (currIsGood) goodPaths.push(path1);
+                      else badPaths.push(path1);
+
+                      // Second segment (from intersection to end)
+                      const path2 = `M${xInt},${yIntPct} L${x2},${toYPct(nextOff)} L${x2},${toYPct(nextAllowed)} L${xInt},${yIntPct} Z`;
+                      if (nextIsGood) goodPaths.push(path2);
+                      else badPaths.push(path2);
                     } else {
+                      // No crossing - single polygon
+                      const path = `M${x1},${toYPct(currOff)} L${x2},${toYPct(nextOff)} L${x2},${toYPct(nextAllowed)} L${x1},${toYPct(currAllowed)} Z`;
                       if (currIsGood) goodPaths.push(path);
                       else badPaths.push(path);
                     }

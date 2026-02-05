@@ -68,11 +68,7 @@ function LeaderboardPageContent() {
     }
   }, [gender, season, selectedConference, scope]);
 
-  const currentConferenceName = selectedConference === 'all'
-    ? 'All Conferences'
-    : conferences.find(c => c.id === selectedConference)?.name || 'All Conferences';
-
-  const scopeLabel = scope === 'di' ? 'all DI games' : 'conference games only';
+  const scopeLabel = scope === 'di' ? 'All DI Games' : 'Conference Games Only';
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
@@ -82,8 +78,7 @@ function LeaderboardPageContent() {
           <div>
             <h1 className="text-3xl sm:text-4xl mb-1 sm:mb-2">Leaderboard</h1>
             <p className="text-sm sm:text-base text-[var(--foreground-muted)]">
-              {currentConferenceName} {gender === 'mens' ? "Men's" : "Women's"} Basketball
-              <span className="text-xs ml-2">({scopeLabel})</span>
+              {scopeLabel}
             </p>
           </div>
 

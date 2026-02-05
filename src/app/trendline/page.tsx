@@ -492,11 +492,11 @@ function TrendlinePageContent() {
 
                   if (validData.length < 2) return null;
 
-                  // Chart dimensions - adjusted to match Recharts rendering
-                  const chartLeft = 50;
+                  // Chart dimensions - measured from actual Recharts rendering
+                  const chartLeft = 60;
                   const chartRight = 20;
                   const chartTop = 5;
-                  const chartBottom = 22;
+                  const chartBottom = 35;
 
                   // Get Y domain with same padding as Recharts
                   const allYValues = validData.flatMap(d => [
@@ -629,7 +629,7 @@ function TrendlinePageContent() {
                     {/* Cumulative mode: single line */}
                     {effectiveViewMode === 'cumulative' && (
                       <Line
-                        type="monotone"
+                        type="linear"
                         dataKey={valueMode === 'points-impact' ? 'teamValue' : 'teamOffPct'}
                         stroke={teamColor}
                         strokeWidth={3}
@@ -640,12 +640,12 @@ function TrendlinePageContent() {
                       />
                     )}
 
-                    {/* Split mode: two lines */}
+                    {/* Split mode: two lines - using linear type for exact polygon fill alignment */}
                     {effectiveViewMode === 'split' && (
                       <>
                         {/* Offensive line (solid) */}
                         <Line
-                          type="monotone"
+                          type="linear"
                           dataKey={valueMode === 'points-impact' ? 'teamOffensive' : 'teamOffPct'}
                           stroke={teamColor}
                           strokeWidth={3}
@@ -657,7 +657,7 @@ function TrendlinePageContent() {
 
                         {/* Allowed line (dashed) */}
                         <Line
-                          type="monotone"
+                          type="linear"
                           dataKey={valueMode === 'points-impact' ? 'teamAllowed' : 'teamAllowedPct'}
                           stroke={teamColor}
                           strokeWidth={3}

@@ -200,10 +200,10 @@ function FactorChart({ factor, valueMode, effectiveViewMode, teamColor, teamInfo
           )
         ) : (
           <>
-            {factor.key === 'efg' && 'Solid: shooting efficiency | Dashed: opponent shooting allowed'}
-            {factor.key === 'tov' && 'Solid: turnover rate | Dashed: turnovers forced'}
-            {factor.key === 'orb' && 'Solid: offensive rebounding | Dashed: opponent offensive rebounds allowed'}
-            {factor.key === 'ftr' && 'Solid: free throw rate | Dashed: opponent free throw rate allowed'}
+            {factor.key === 'efg' && 'Solid: Offensive eFG% | Dashed: eFG% Allowed'}
+            {factor.key === 'tov' && 'Solid: Offensive Turnover Rate | Dashed: Opponent Turnover Rate'}
+            {factor.key === 'orb' && 'Solid: Offensive Rebound % | Dashed: Offensive Rebound % Allowed'}
+            {factor.key === 'ftr' && 'Solid: Offensive Free Throw Rate | Dashed: Free Throw Rate Allowed'}
           </>
         )}
       </p>
@@ -444,87 +444,91 @@ function TrendlinePageContent() {
               <span className="text-xs ml-2">({scope === 'di' ? 'all DI games' : 'conference games only'})</span>
             </p>
           </div>
-          <div className="flex items-center gap-4 flex-wrap">
-            <GenderToggle
-              value={gender}
-              onChange={(g) => {
-                setGender(g);
-                setTeamId('');
-              }}
-            />
-            <ScopeToggle value={scope} onChange={setScope} conferenceName="Conf" />
-            {/* % / Points Impact Toggle */}
-            <div className="inline-flex rounded-lg p-1 bg-[var(--background-tertiary)] border border-[var(--border)]">
-              <button
-                onClick={() => setValueMode('percentages')}
-                className={`
-                  relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
-                  transition-all duration-200
-                  ${valueMode === 'percentages'
-                    ? 'bg-[var(--accent-primary)] text-[var(--background)] shadow-lg'
-                    : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
-                  }
-                `}
-              >
-                <span className="relative z-10">%</span>
-                {valueMode === 'percentages' && (
-                  <div className="absolute inset-0 rounded-md bg-[var(--accent-primary)] opacity-20 blur-md" />
-                )}
-              </button>
-              <button
-                onClick={() => setValueMode('points-impact')}
-                className={`
-                  relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
-                  transition-all duration-200
-                  ${valueMode === 'points-impact'
-                    ? 'bg-[var(--accent-primary)] text-[var(--background)] shadow-lg'
-                    : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
-                  }
-                `}
-                title="Points Impact"
-              >
-                <span className="relative z-10">Pts</span>
-                {valueMode === 'points-impact' && (
-                  <div className="absolute inset-0 rounded-md bg-[var(--accent-primary)] opacity-20 blur-md" />
-                )}
-              </button>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-4 flex-wrap">
+              <GenderToggle
+                value={gender}
+                onChange={(g) => {
+                  setGender(g);
+                  setTeamId('');
+                }}
+              />
+              <ScopeToggle value={scope} onChange={setScope} conferenceName="Conf" />
+              {/* % / Points Impact Toggle */}
+              <div className="inline-flex rounded-lg p-1 bg-[var(--background-tertiary)] border border-[var(--border)]">
+                <button
+                  onClick={() => setValueMode('percentages')}
+                  className={`
+                    relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
+                    transition-all duration-200
+                    ${valueMode === 'percentages'
+                      ? 'bg-[var(--accent-primary)] text-[var(--background)] shadow-lg'
+                      : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
+                    }
+                  `}
+                >
+                  <span className="relative z-10">%</span>
+                  {valueMode === 'percentages' && (
+                    <div className="absolute inset-0 rounded-md bg-[var(--accent-primary)] opacity-20 blur-md" />
+                  )}
+                </button>
+                <button
+                  onClick={() => setValueMode('points-impact')}
+                  className={`
+                    relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
+                    transition-all duration-200
+                    ${valueMode === 'points-impact'
+                      ? 'bg-[var(--accent-primary)] text-[var(--background)] shadow-lg'
+                      : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
+                    }
+                  `}
+                  title="Points Impact"
+                >
+                  <span className="relative z-10">Pts</span>
+                  {valueMode === 'points-impact' && (
+                    <div className="absolute inset-0 rounded-md bg-[var(--accent-primary)] opacity-20 blur-md" />
+                  )}
+                </button>
+              </div>
             </div>
             {/* Cumulative/Split Toggle - only shown for Points Impact mode */}
             {valueMode === 'points-impact' && (
-              <div className="inline-flex rounded-lg p-1 bg-[var(--background-tertiary)] border border-[var(--border)]">
-                <button
-                  onClick={() => setViewMode('split')}
-                  className={`
-                    relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
-                    transition-all duration-200
-                    ${viewMode === 'split'
-                      ? 'bg-[var(--accent-primary)] text-[var(--background)] shadow-lg'
-                      : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
-                    }
-                  `}
-                  title="Show offensive and allowed stats as separate lines"
-                >
-                  <span className="relative z-10">Split</span>
-                  {viewMode === 'split' && (
-                    <div className="absolute inset-0 rounded-md bg-[var(--accent-primary)] opacity-20 blur-md" />
-                  )}
-                </button>
-                <button
-                  onClick={() => setViewMode('cumulative')}
-                  className={`
-                    relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
-                    transition-all duration-200
-                    ${viewMode === 'cumulative'
-                      ? 'bg-[var(--accent-primary)] text-[var(--background)] shadow-lg'
-                      : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
-                    }
-                  `}
-                >
-                  <span className="relative z-10">Cumulative</span>
-                  {viewMode === 'cumulative' && (
-                    <div className="absolute inset-0 rounded-md bg-[var(--accent-primary)] opacity-20 blur-md" />
-                  )}
-                </button>
+              <div className="flex justify-end">
+                <div className="inline-flex rounded-lg p-1 bg-[var(--background-tertiary)] border border-[var(--border)]">
+                  <button
+                    onClick={() => setViewMode('split')}
+                    className={`
+                      relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
+                      transition-all duration-200
+                      ${viewMode === 'split'
+                        ? 'bg-[var(--accent-primary)] text-[var(--background)] shadow-lg'
+                        : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
+                      }
+                    `}
+                    title="Show offensive and allowed stats as separate lines"
+                  >
+                    <span className="relative z-10">Split</span>
+                    {viewMode === 'split' && (
+                      <div className="absolute inset-0 rounded-md bg-[var(--accent-primary)] opacity-20 blur-md" />
+                    )}
+                  </button>
+                  <button
+                    onClick={() => setViewMode('cumulative')}
+                    className={`
+                      relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
+                      transition-all duration-200
+                      ${viewMode === 'cumulative'
+                        ? 'bg-[var(--accent-primary)] text-[var(--background)] shadow-lg'
+                        : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
+                      }
+                    `}
+                  >
+                    <span className="relative z-10">Cumulative</span>
+                    {viewMode === 'cumulative' && (
+                      <div className="absolute inset-0 rounded-md bg-[var(--accent-primary)] opacity-20 blur-md" />
+                    )}
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -634,43 +638,6 @@ function TrendlinePageContent() {
         </div>
       )}
 
-      {/* Info Section */}
-      <div className="mt-8 card p-4 sm:p-6">
-        <h3 className="text-lg font-semibold mb-3">Understanding the Charts</h3>
-        <p className="text-sm text-[var(--foreground-muted)] mb-4">
-          The solid line shows the team&apos;s offensive performance, while the dashed line shows what they allow defensively.
-          When the solid line is above the dashed line (for most factors), the team has an advantage.
-        </p>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {FOUR_FACTORS_META.map((factor) => (
-            <div key={factor.key} className="text-center">
-              <div
-                className="w-8 h-8 rounded-full mx-auto mb-2 flex items-center justify-center"
-                style={{
-                  backgroundColor: `var(--factor-${factor.key})`,
-                  opacity: 0.2,
-                }}
-              >
-                <span
-                  className="text-xs font-bold"
-                  style={{ color: `var(--factor-${factor.key})` }}
-                >
-                  {factor.shortLabel.slice(0, 2)}
-                </span>
-              </div>
-              <p className="text-xs font-medium" style={{ color: `var(--factor-${factor.key})` }}>
-                {factor.shortLabel}
-              </p>
-              <p className="text-xs text-[var(--foreground-muted)] mt-1">
-                {factor.key === 'efg' && 'Shooting'}
-                {factor.key === 'tov' && 'Ball Security'}
-                {factor.key === 'orb' && 'Rebounding'}
-                {factor.key === 'ftr' && 'Free Throws'}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

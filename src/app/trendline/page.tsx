@@ -520,16 +520,23 @@ function TrendlinePageContent() {
                     {effectiveViewMode === 'split' && (
                       <Customized
                         component={(props: Record<string, unknown>) => {
+                          // Debug: log all props to see structure
+                          console.log('Customized props keys:', Object.keys(props));
+
                           const { xAxisMap, yAxisMap } = props as {
                             xAxisMap?: Record<string, { scale: (v: string) => number; bandwidth?: () => number }>;
                             yAxisMap?: Record<string, { scale: (v: number) => number }>;
                           };
+
+                          console.log('xAxisMap:', xAxisMap, 'yAxisMap:', yAxisMap);
 
                           if (!xAxisMap || !yAxisMap) return null;
 
                           // Access scales using Object.values since keys aren't numeric
                           const xAxis = Object.values(xAxisMap)[0];
                           const yAxis = Object.values(yAxisMap)[0];
+
+                          console.log('xAxis:', xAxis, 'yAxis:', yAxis);
 
                           if (!xAxis?.scale || !yAxis?.scale) return null;
 

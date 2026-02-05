@@ -530,6 +530,12 @@ function calculateStandings(teams: Team[], games: Game[]): TeamStandings[] {
   for (const game of games) {
     if (!game.isComplete) continue;
 
+    // Only include D1 vs D1 games - skip games against non-D1 opponents
+    // This ensures averages are balanced (avg eFG% should equal avg oppEfg%)
+    const homeIsD1 = standingsMap.has(game.homeTeam.teamId);
+    const awayIsD1 = standingsMap.has(game.awayTeam.teamId);
+    if (!homeIsD1 || !awayIsD1) continue;
+
     const processTeam = (ownStats: GameTeamStats, oppStats: GameTeamStats) => {
       const stats = teamStats.get(ownStats.teamId);
       if (!stats) return;
@@ -556,15 +562,9 @@ function calculateStandings(teams: Team[], games: Game[]): TeamStandings[] {
       stats.oppPointsSum += oppStats.score;
     };
 
-    // Process home team if it's a CUSA team
-    if (standingsMap.has(game.homeTeam.teamId)) {
-      processTeam(game.homeTeam, game.awayTeam);
-    }
-
-    // Process away team if it's a CUSA team
-    if (standingsMap.has(game.awayTeam.teamId)) {
-      processTeam(game.awayTeam, game.homeTeam);
-    }
+    // Process both teams (both are D1)
+    processTeam(game.homeTeam, game.awayTeam);
+    processTeam(game.awayTeam, game.homeTeam);
   }
 
   // Calculate averages
@@ -650,10 +650,18 @@ async function fetchGenderData(gender: Gender, seasonYear: number) {
   // Sort games by date (most recent first)
   games.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-  // Calculate standings
-  const standings = calculateStandings(teams, games);
+  // Filter to only D1 vs D1 games
+  const d1TeamIds = new Set(teams.map(t => t.id));
+  const d1Games = games.filter(g => d1TeamIds.has(g.homeTeam.teamId) && d1TeamIds.has(g.awayTeam.teamId));
+  const nonD1Games = games.length - d1Games.length;
+  if (nonD1Games > 0) {
+    console.log(`Filtered out ${nonD1Games} games against non-D1 opponents (keeping ${d1Games.length} D1 vs D1 games)`);
+  }
 
-  return { teams, games, standings };
+  // Calculate standings (using D1-only games)
+  const standings = calculateStandings(teams, d1Games);
+
+  return { teams, games: d1Games, standings };
 }
 
 async function main() {

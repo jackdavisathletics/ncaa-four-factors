@@ -11,6 +11,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   ReferenceLine,
+  Customized,
 } from 'recharts';
 import { GenderToggle, ScopeToggle, type StatsScope } from '@/components';
 import { getTeams, getStandings, getTeamConference, getConferenceStandings, getTeamConferenceGames, calculateStatsFromGames, getConferenceOnlyAverages } from '@/lib/data';
@@ -479,117 +480,7 @@ function TrendlinePageContent() {
                 )}
               </div>
 
-              <div className="h-64 relative">
-                {/* SVG Overlay for fill between lines */}
-                {effectiveViewMode === 'split' && (() => {
-                  const offKey = valueMode === 'points-impact' ? 'teamOffensive' : 'teamOffPct';
-                  const allowedKey = valueMode === 'points-impact' ? 'teamAllowed' : 'teamAllowedPct';
-
-                  const validData = factor.data.filter(d =>
-                    d[offKey as keyof TrendDataPoint] !== null &&
-                    d[allowedKey as keyof TrendDataPoint] !== null
-                  );
-
-                  if (validData.length < 2) return null;
-
-                  // Chart dimensions - measured from actual Recharts rendering
-                  const chartLeft = 60;
-                  const chartRight = 20;
-                  const chartTop = 5;
-                  const chartBottom = 35;
-
-                  // Get Y domain with same padding as Recharts
-                  const allYValues = validData.flatMap(d => [
-                    d[offKey as keyof TrendDataPoint] as number,
-                    d[allowedKey as keyof TrendDataPoint] as number
-                  ]);
-                  const yMin = Math.min(...allYValues);
-                  const yMax = Math.max(...allYValues);
-                  // Recharts auto domain typically adds ~5% padding
-                  const yPadding = (yMax - yMin) * 0.05;
-                  const yMinPadded = yMin - yPadding;
-                  const yMaxPadded = yMax + yPadding;
-                  const yRange = yMaxPadded - yMinPadded || 1;
-
-                  // Helper to convert data value to Y percentage
-                  const toYPct = (val: number) => 1 - (val - yMinPadded) / yRange;
-
-                  // Build paths with intersection handling
-                  const goodPaths: string[] = [];
-                  const badPaths: string[] = [];
-
-                  for (let i = 0; i < validData.length - 1; i++) {
-                    const curr = validData[i];
-                    const next = validData[i + 1];
-
-                    const currOff = curr[offKey as keyof TrendDataPoint] as number;
-                    const currAllowed = curr[allowedKey as keyof TrendDataPoint] as number;
-                    const nextOff = next[offKey as keyof TrendDataPoint] as number;
-                    const nextAllowed = next[allowedKey as keyof TrendDataPoint] as number;
-
-                    const x1 = i / (validData.length - 1);
-                    const x2 = (i + 1) / (validData.length - 1);
-
-                    const currIsGood = factor.higherOffensiveIsBetter
-                      ? currOff >= currAllowed
-                      : currOff <= currAllowed;
-                    const nextIsGood = factor.higherOffensiveIsBetter
-                      ? nextOff >= nextAllowed
-                      : nextOff <= nextAllowed;
-
-                    // Check if lines cross (different states at start and end)
-                    if (currIsGood !== nextIsGood) {
-                      // Calculate intersection point
-                      // Lines: off(t) = currOff + t*(nextOff-currOff)
-                      //        allowed(t) = currAllowed + t*(nextAllowed-currAllowed)
-                      // Intersection when off(t) = allowed(t)
-                      const dOff = nextOff - currOff;
-                      const dAllowed = nextAllowed - currAllowed;
-                      const t = (currAllowed - currOff) / (dOff - dAllowed);
-
-                      const xInt = x1 + t * (x2 - x1);
-                      const yInt = currOff + t * dOff;
-                      const yIntPct = toYPct(yInt);
-
-                      // First segment (from start to intersection)
-                      const path1 = `M${x1},${toYPct(currOff)} L${xInt},${yIntPct} L${xInt},${yIntPct} L${x1},${toYPct(currAllowed)} Z`;
-                      if (currIsGood) goodPaths.push(path1);
-                      else badPaths.push(path1);
-
-                      // Second segment (from intersection to end)
-                      const path2 = `M${xInt},${yIntPct} L${x2},${toYPct(nextOff)} L${x2},${toYPct(nextAllowed)} L${xInt},${yIntPct} Z`;
-                      if (nextIsGood) goodPaths.push(path2);
-                      else badPaths.push(path2);
-                    } else {
-                      // No crossing - single polygon
-                      const path = `M${x1},${toYPct(currOff)} L${x2},${toYPct(nextOff)} L${x2},${toYPct(nextAllowed)} L${x1},${toYPct(currAllowed)} Z`;
-                      if (currIsGood) goodPaths.push(path);
-                      else badPaths.push(path);
-                    }
-                  }
-
-                  return (
-                    <svg
-                      className="absolute pointer-events-none"
-                      style={{
-                        left: chartLeft,
-                        top: chartTop,
-                        width: `calc(100% - ${chartLeft + chartRight}px)`,
-                        height: `calc(100% - ${chartTop + chartBottom}px)`,
-                      }}
-                      viewBox="0 0 1 1"
-                      preserveAspectRatio="none"
-                    >
-                      {goodPaths.map((d, i) => (
-                        <path key={`good-${i}`} d={d} fill="rgba(34, 197, 94, 0.3)" />
-                      ))}
-                      {badPaths.map((d, i) => (
-                        <path key={`bad-${i}`} d={d} fill="rgba(239, 68, 68, 0.3)" />
-                      ))}
-                    </svg>
-                  );
-                })()}
-
+              <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <ComposedChart
                     data={factor.data}
@@ -624,6 +515,98 @@ function TrendlinePageContent() {
                         strokeOpacity={0.5}
                       />
                     )}
+
+                    {/* Custom fill between lines using actual Recharts scales */}
+                    {effectiveViewMode === 'split' && (
+                      <Customized
+                        component={(props: Record<string, unknown>) => {
+                          const { xAxisMap, yAxisMap, offset } = props as {
+                            xAxisMap?: Record<string, { scale: (v: string) => number; bandwidth?: () => number }>;
+                            yAxisMap?: Record<string, { scale: (v: number) => number }>;
+                            offset?: { left: number; top: number; width: number; height: number };
+                          };
+
+                          if (!xAxisMap || !yAxisMap || !offset) return null;
+
+                          const xScale = xAxisMap[0]?.scale;
+                          const yScale = yAxisMap[0]?.scale;
+                          const bandwidth = xAxisMap[0]?.bandwidth?.() || 0;
+
+                          if (!xScale || !yScale) return null;
+
+                          const offKey = valueMode === 'points-impact' ? 'teamOffensive' : 'teamOffPct';
+                          const allowedKey = valueMode === 'points-impact' ? 'teamAllowed' : 'teamAllowedPct';
+
+                          const validData = factor.data.filter(d =>
+                            d[offKey as keyof TrendDataPoint] !== null &&
+                            d[allowedKey as keyof TrendDataPoint] !== null
+                          );
+
+                          if (validData.length < 2) return null;
+
+                          // Build SVG paths using actual scales
+                          const goodPaths: string[] = [];
+                          const badPaths: string[] = [];
+
+                          for (let i = 0; i < validData.length - 1; i++) {
+                            const curr = validData[i];
+                            const next = validData[i + 1];
+
+                            const currOff = curr[offKey as keyof TrendDataPoint] as number;
+                            const currAllowed = curr[allowedKey as keyof TrendDataPoint] as number;
+                            const nextOff = next[offKey as keyof TrendDataPoint] as number;
+                            const nextAllowed = next[allowedKey as keyof TrendDataPoint] as number;
+
+                            // Get actual pixel positions from scales
+                            const x1 = xScale(curr.season) + bandwidth / 2;
+                            const x2 = xScale(next.season) + bandwidth / 2;
+
+                            const currIsGood = factor.higherOffensiveIsBetter
+                              ? currOff >= currAllowed
+                              : currOff <= currAllowed;
+                            const nextIsGood = factor.higherOffensiveIsBetter
+                              ? nextOff >= nextAllowed
+                              : nextOff <= nextAllowed;
+
+                            // Check if lines cross
+                            if (currIsGood !== nextIsGood) {
+                              const dOff = nextOff - currOff;
+                              const dAllowed = nextAllowed - currAllowed;
+                              const t = (currAllowed - currOff) / (dOff - dAllowed);
+
+                              const xInt = x1 + t * (x2 - x1);
+                              const yInt = currOff + t * dOff;
+
+                              // First segment
+                              const path1 = `M${x1},${yScale(currOff)} L${xInt},${yScale(yInt)} L${xInt},${yScale(yInt)} L${x1},${yScale(currAllowed)} Z`;
+                              if (currIsGood) goodPaths.push(path1);
+                              else badPaths.push(path1);
+
+                              // Second segment
+                              const path2 = `M${xInt},${yScale(yInt)} L${x2},${yScale(nextOff)} L${x2},${yScale(nextAllowed)} L${xInt},${yScale(yInt)} Z`;
+                              if (nextIsGood) goodPaths.push(path2);
+                              else badPaths.push(path2);
+                            } else {
+                              const path = `M${x1},${yScale(currOff)} L${x2},${yScale(nextOff)} L${x2},${yScale(nextAllowed)} L${x1},${yScale(currAllowed)} Z`;
+                              if (currIsGood) goodPaths.push(path);
+                              else badPaths.push(path);
+                            }
+                          }
+
+                          return (
+                            <g>
+                              {goodPaths.map((d, i) => (
+                                <path key={`good-${i}`} d={d} fill="rgba(34, 197, 94, 0.3)" />
+                              ))}
+                              {badPaths.map((d, i) => (
+                                <path key={`bad-${i}`} d={d} fill="rgba(239, 68, 68, 0.3)" />
+                              ))}
+                            </g>
+                          );
+                        }}
+                      />
+                    )}
+
                     <Tooltip content={createCustomTooltip(factor.key, factor.shortLabel)} />
 
                     {/* Cumulative mode: single line */}

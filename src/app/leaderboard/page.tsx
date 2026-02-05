@@ -105,29 +105,6 @@ function LeaderboardPageContent() {
 
           {/* Desktop: Always visible filters */}
           <div className="hidden sm:flex items-center gap-4">
-            {/* View Mode Toggle */}
-            <div className="flex rounded-lg overflow-hidden border border-[var(--border)]">
-              <button
-                onClick={() => setViewMode('percentages')}
-                className={`px-3 py-2 text-sm transition-colors ${
-                  viewMode === 'percentages'
-                    ? 'bg-[var(--accent-primary)] text-white'
-                    : 'bg-[var(--surface)] text-[var(--foreground-muted)] hover:bg-[var(--surface-hover)]'
-                }`}
-              >
-                Percentages
-              </button>
-              <button
-                onClick={() => setViewMode('points-impact')}
-                className={`px-3 py-2 text-sm transition-colors ${
-                  viewMode === 'points-impact'
-                    ? 'bg-[var(--accent-primary)] text-white'
-                    : 'bg-[var(--surface)] text-[var(--foreground-muted)] hover:bg-[var(--surface-hover)]'
-                }`}
-              >
-                Points Impact
-              </button>
-            </div>
             <SeasonSelector value={season} onChange={setSeason} />
             <select
               value={selectedConference}
@@ -143,6 +120,42 @@ function LeaderboardPageContent() {
             </select>
             <GenderToggle value={gender} onChange={setGender} />
             <ScopeToggle value={scope} onChange={setScope} conferenceName="Conf" />
+            {/* View Mode Toggle */}
+            <div className="inline-flex rounded-lg p-1 bg-[var(--background-tertiary)] border border-[var(--border)]">
+              <button
+                onClick={() => setViewMode(viewMode === 'percentages' ? 'points-impact' : 'percentages')}
+                className={`
+                  relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
+                  transition-all duration-200
+                  ${viewMode === 'percentages'
+                    ? 'bg-[var(--accent-primary)] text-[var(--background)] shadow-lg'
+                    : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
+                  }
+                `}
+              >
+                <span className="relative z-10">%</span>
+                {viewMode === 'percentages' && (
+                  <div className="absolute inset-0 rounded-md bg-[var(--accent-primary)] opacity-20 blur-md" />
+                )}
+              </button>
+              <button
+                onClick={() => setViewMode(viewMode === 'points-impact' ? 'percentages' : 'points-impact')}
+                className={`
+                  relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
+                  transition-all duration-200
+                  ${viewMode === 'points-impact'
+                    ? 'bg-[var(--accent-primary)] text-[var(--background)] shadow-lg'
+                    : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
+                  }
+                `}
+                title="Points Impact"
+              >
+                <span className="relative z-10">Pts</span>
+                {viewMode === 'points-impact' && (
+                  <div className="absolute inset-0 rounded-md bg-[var(--accent-primary)] opacity-20 blur-md" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -156,26 +169,38 @@ function LeaderboardPageContent() {
             {/* View Mode */}
             <div>
               <label className="block text-xs text-[var(--foreground-muted)] mb-2 uppercase tracking-wide">View Mode</label>
-              <div className="flex rounded-lg overflow-hidden border border-[var(--border)]">
+              <div className="inline-flex rounded-lg p-1 bg-[var(--background-tertiary)] border border-[var(--border)]">
                 <button
-                  onClick={() => setViewMode('percentages')}
-                  className={`flex-1 px-3 py-2 text-sm transition-colors ${
-                    viewMode === 'percentages'
-                      ? 'bg-[var(--accent-primary)] text-white'
-                      : 'bg-[var(--surface)] text-[var(--foreground-muted)]'
-                  }`}
+                  onClick={() => setViewMode(viewMode === 'percentages' ? 'points-impact' : 'percentages')}
+                  className={`
+                    relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
+                    transition-all duration-200
+                    ${viewMode === 'percentages'
+                      ? 'bg-[var(--accent-primary)] text-[var(--background)] shadow-lg'
+                      : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
+                    }
+                  `}
                 >
-                  Percentages
+                  <span className="relative z-10">Percentages</span>
+                  {viewMode === 'percentages' && (
+                    <div className="absolute inset-0 rounded-md bg-[var(--accent-primary)] opacity-20 blur-md" />
+                  )}
                 </button>
                 <button
-                  onClick={() => setViewMode('points-impact')}
-                  className={`flex-1 px-3 py-2 text-sm transition-colors ${
-                    viewMode === 'points-impact'
-                      ? 'bg-[var(--accent-primary)] text-white'
-                      : 'bg-[var(--surface)] text-[var(--foreground-muted)]'
-                  }`}
+                  onClick={() => setViewMode(viewMode === 'points-impact' ? 'percentages' : 'points-impact')}
+                  className={`
+                    relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
+                    transition-all duration-200
+                    ${viewMode === 'points-impact'
+                      ? 'bg-[var(--accent-primary)] text-[var(--background)] shadow-lg'
+                      : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
+                    }
+                  `}
                 >
-                  Points Impact
+                  <span className="relative z-10">Points Impact</span>
+                  {viewMode === 'points-impact' && (
+                    <div className="absolute inset-0 rounded-md bg-[var(--accent-primary)] opacity-20 blur-md" />
+                  )}
                 </button>
               </div>
             </div>

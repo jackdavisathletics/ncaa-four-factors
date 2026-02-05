@@ -304,7 +304,7 @@ export function LeaderboardTable({ standings, gender, viewMode, selectedConferen
                       <span
                         className="stat-number text-sm"
                         style={{ color }}
-                        title={`${col.format ? col.format(value) : value}% (vs ${scope === 'di' ? 'DI' : 'conf'} avg)`}
+                        title={`${col.format ? col.format(value) : value}% (${scope === 'di' ? 'DI' : 'Conf'} avg: ${col.format ? col.format(datasetAverages[col.key as keyof FourFactorsAverages]) : datasetAverages[col.key as keyof FourFactorsAverages]}%)`}
                       >
                         {formatPointsImpact(pointsImpact)}
                       </span>

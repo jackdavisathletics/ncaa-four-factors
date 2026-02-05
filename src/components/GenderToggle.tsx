@@ -8,10 +8,12 @@ interface GenderToggleProps {
 }
 
 export function GenderToggle({ value, onChange }: GenderToggleProps) {
+  const toggle = () => onChange(value === 'mens' ? 'womens' : 'mens');
+
   return (
     <div className="inline-flex rounded-lg p-1 bg-[var(--background-tertiary)] border border-[var(--border)]">
       <button
-        onClick={() => onChange('mens')}
+        onClick={toggle}
         className={`
           relative px-5 py-2 rounded-md text-sm font-semibold uppercase tracking-wider
           transition-all duration-200
@@ -27,7 +29,7 @@ export function GenderToggle({ value, onChange }: GenderToggleProps) {
         )}
       </button>
       <button
-        onClick={() => onChange('womens')}
+        onClick={toggle}
         className={`
           relative px-5 py-2 rounded-md text-sm font-semibold uppercase tracking-wider
           transition-all duration-200

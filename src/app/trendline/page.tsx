@@ -27,6 +27,7 @@ import {
 } from '@/lib/types';
 
 type ViewMode = 'cumulative' | 'split';
+type ValueMode = 'percentages' | 'points-impact';
 
 // Seasons in chronological order for the chart
 const CHRONOLOGICAL_SEASONS: Season[] = [...AVAILABLE_SEASONS].reverse();
@@ -306,7 +307,7 @@ function TrendlinePageContent() {
             {/* Cumulative/Split Toggle */}
             <div className="inline-flex rounded-lg p-1 bg-[var(--background-tertiary)] border border-[var(--border)]">
               <button
-                onClick={() => setViewMode('cumulative')}
+                onClick={() => setViewMode(viewMode === 'cumulative' ? 'split' : 'cumulative')}
                 className={`
                   relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
                   transition-all duration-200
@@ -322,7 +323,7 @@ function TrendlinePageContent() {
                 )}
               </button>
               <button
-                onClick={() => setViewMode('split')}
+                onClick={() => setViewMode(viewMode === 'split' ? 'cumulative' : 'split')}
                 className={`
                   relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
                   transition-all duration-200

@@ -534,53 +534,79 @@ function TrendlinePageContent() {
                     {/* Split mode: area fills and lines */}
                     {effectiveViewMode === 'split' && (
                       <>
-                        {/* Custom fill between lines */}
+                        {/* Custom fill between lines - compute positions from chart dimensions */}
                         <Customized
-                          component={(props: { formattedGraphicalItems?: Array<{ props?: { points?: Array<{ x: number; y: number; payload?: TrendDataPoint }> } }> }) => {
-                            const { formattedGraphicalItems } = props;
-                            if (!formattedGraphicalItems || formattedGraphicalItems.length < 2) return null;
+                          component={(props: { width?: number; height?: number; offset?: { top?: number; right?: number; bottom?: number; left?: number } }) => {
+                            const { width, height, offset } = props;
+                            if (!width || !height || !offset) return null;
 
-                            // Get points from both Line components (offensive and allowed)
-                            const offensiveLine = formattedGraphicalItems[0]?.props?.points;
-                            const allowedLine = formattedGraphicalItems[1]?.props?.points;
+                            const chartLeft = offset.left ?? 0;
+                            const chartRight = width - (offset.right ?? 0);
+                            const chartTop = offset.top ?? 0;
+                            const chartBottom = height - (offset.bottom ?? 0);
+                            const chartWidth = chartRight - chartLeft;
+                            const chartHeight = chartBottom - chartTop;
 
-                            if (!offensiveLine || !allowedLine || offensiveLine.length !== allowedLine.length) return null;
+                            if (chartWidth <= 0 || chartHeight <= 0) return null;
 
+                            const offKey = valueMode === 'points-impact' ? 'teamOffensive' : 'teamOffPct';
+                            const allowedKey = valueMode === 'points-impact' ? 'teamAllowed' : 'teamAllowedPct';
+
+                            // Filter to valid data points
+                            const validData = factor.data.filter(d =>
+                              d[offKey as keyof TrendDataPoint] !== null &&
+                              d[allowedKey as keyof TrendDataPoint] !== null
+                            );
+
+                            if (validData.length < 2) return null;
+
+                            // Calculate Y domain from all values
+                            const allYValues = validData.flatMap(d => [
+                              d[offKey as keyof TrendDataPoint] as number,
+                              d[allowedKey as keyof TrendDataPoint] as number
+                            ]);
+                            const yMin = Math.min(...allYValues);
+                            const yMax = Math.max(...allYValues);
+                            const yRange = yMax - yMin || 1;
+
+                            // Add padding similar to Recharts auto domain
+                            const yPadding = yRange * 0.1;
+                            const yMinPadded = yMin - yPadding;
+                            const yMaxPadded = yMax + yPadding;
+                            const yRangePadded = yMaxPadded - yMinPadded;
+
+                            // Calculate pixel positions for each point
+                            const points = validData.map((d, i) => {
+                              const x = chartLeft + (i / (validData.length - 1)) * chartWidth;
+                              const offVal = d[offKey as keyof TrendDataPoint] as number;
+                              const allowedVal = d[allowedKey as keyof TrendDataPoint] as number;
+                              const yOff = chartTop + (1 - (offVal - yMinPadded) / yRangePadded) * chartHeight;
+                              const yAllowed = chartTop + (1 - (allowedVal - yMinPadded) / yRangePadded) * chartHeight;
+                              return { x, yOff, yAllowed, offVal, allowedVal };
+                            });
+
+                            // Build path segments
                             const goodPaths: string[] = [];
                             const badPaths: string[] = [];
 
-                            for (let i = 0; i < offensiveLine.length - 1; i++) {
-                              const currOff = offensiveLine[i];
-                              const nextOff = offensiveLine[i + 1];
-                              const currAllowed = allowedLine[i];
-                              const nextAllowed = allowedLine[i + 1];
+                            for (let i = 0; i < points.length - 1; i++) {
+                              const curr = points[i];
+                              const next = points[i + 1];
 
-                              if (!currOff || !nextOff || !currAllowed || !nextAllowed) continue;
+                              const path = `M${curr.x},${curr.yOff} L${next.x},${next.yOff} L${next.x},${next.yAllowed} L${curr.x},${curr.yAllowed} Z`;
 
-                              // Get the actual data values to determine good/bad
-                              const offKey = valueMode === 'points-impact' ? 'teamOffensive' : 'teamOffPct';
-                              const allowedKey = valueMode === 'points-impact' ? 'teamAllowed' : 'teamAllowedPct';
-
-                              const currOffVal = currOff.payload?.[offKey as keyof TrendDataPoint] as number | null;
-                              const currAllowedVal = currOff.payload?.[allowedKey as keyof TrendDataPoint] as number | null;
-                              const nextOffVal = nextOff.payload?.[offKey as keyof TrendDataPoint] as number | null;
-                              const nextAllowedVal = nextOff.payload?.[allowedKey as keyof TrendDataPoint] as number | null;
-
-                              if (currOffVal === null || currAllowedVal === null || nextOffVal === null || nextAllowedVal === null) continue;
-
-                              // Create polygon using pixel coordinates from the lines
-                              const path = `M${currOff.x},${currOff.y} L${nextOff.x},${nextOff.y} L${nextAllowed.x},${nextAllowed.y} L${currAllowed.x},${currAllowed.y} Z`;
-
-                              // Determine if segment is good or bad
-                              const currIsGood = factor.higherOffensiveIsBetter ? currOffVal >= currAllowedVal : currOffVal <= currAllowedVal;
-                              const nextIsGood = factor.higherOffensiveIsBetter ? nextOffVal >= nextAllowedVal : nextOffVal <= nextAllowedVal;
+                              const currIsGood = factor.higherOffensiveIsBetter
+                                ? curr.offVal >= curr.allowedVal
+                                : curr.offVal <= curr.allowedVal;
+                              const nextIsGood = factor.higherOffensiveIsBetter
+                                ? next.offVal >= next.allowedVal
+                                : next.offVal <= next.allowedVal;
 
                               if (currIsGood && nextIsGood) {
                                 goodPaths.push(path);
                               } else if (!currIsGood && !nextIsGood) {
                                 badPaths.push(path);
                               } else {
-                                // Mixed - use start point's status
                                 if (currIsGood) goodPaths.push(path);
                                 else badPaths.push(path);
                               }
@@ -589,10 +615,10 @@ function TrendlinePageContent() {
                             return (
                               <g>
                                 {goodPaths.map((d, i) => (
-                                  <path key={`good-${i}`} d={d} fill="rgba(34, 197, 94, 0.25)" stroke="none" />
+                                  <path key={`good-${i}`} d={d} fill="rgba(34, 197, 94, 0.3)" stroke="none" />
                                 ))}
                                 {badPaths.map((d, i) => (
-                                  <path key={`bad-${i}`} d={d} fill="rgba(239, 68, 68, 0.25)" stroke="none" />
+                                  <path key={`bad-${i}`} d={d} fill="rgba(239, 68, 68, 0.3)" stroke="none" />
                                 ))}
                               </g>
                             );

@@ -101,18 +101,9 @@ export default function AboutPage() {
           </div>
           <div className="space-y-6 text-[var(--foreground-muted)] leading-relaxed">
             <p>
-              In 2004, Dean Oliver published <em className="text-[var(--foreground)]">&ldquo;Basketball on Paper: Rules and Tools for Performance Analysis&rdquo;</em>—a
-              groundbreaking work that transformed how we understand basketball success.
-            </p>
-            <p>
-              Through rigorous statistical analysis, Oliver identified four factors that capture the essence of
-              basketball efficiency. These factors are independent of pace and tempo, making them ideal for
-              comparing teams across different styles of play.
-            </p>
-            <p>
-              The four factors apply to both offense and defense: a team wants to maximize their own efficiency
-              while minimizing their opponent&apos;s. This dual nature makes the framework comprehensive—it
-              captures the full picture of a team&apos;s performance.
+              Dean Oliver&apos;s 2004 book <em className="text-[var(--foreground)]">&ldquo;Basketball on Paper&rdquo;</em> identified
+              four pace-independent factors that explain ~90% of winning. They work for both offense and defense:
+              maximize your own efficiency, minimize your opponent&apos;s.
             </p>
           </div>
         </div>

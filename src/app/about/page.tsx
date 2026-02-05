@@ -10,7 +10,7 @@ const factors = [
     weight: 40,
     formula: '(FGM + 0.5 × 3PM) / FGA × 100',
     pointsImpact: '+1.77',
-    description: 'Shooting efficiency adjusted for three-pointers being worth 50% more than two-pointers. This is the most important factor because scoring efficiently is the primary objective.',
+    description: 'Shooting efficiency adjusted for three-pointers being worth 50% more than two-pointers.',
     higherBetter: true,
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-8 h-8">

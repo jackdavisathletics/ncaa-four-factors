@@ -614,6 +614,8 @@ function TrendlinePageContent() {
 
                             return (
                               <g>
+                                {/* Test rectangle - should be visible if Customized works */}
+                                <rect x={chartLeft} y={chartTop} width={50} height={20} fill="red" />
                                 {goodPaths.map((d, i) => (
                                   <path key={`good-${i}`} d={d} fill="rgba(34, 197, 94, 0.3)" stroke="none" />
                                 ))}

@@ -1,15 +1,15 @@
 'use client';
 
 import { useState, useMemo, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import {
   LineChart,
   Line,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
   ReferenceLine,
 } from 'recharts';
@@ -45,21 +45,18 @@ interface TeamSeasonData {
 interface TrendDataPoint {
   season: string;
   seasonRaw: Season;
-  team1Value: number | null;
-  team2Value: number | null;
-  team1Offensive: number | null;
-  team1Allowed: number | null;
-  team2Offensive: number | null;
-  team2Allowed: number | null;
-  // Raw percentage values for % mode
-  team1OffPct: number | null;
-  team1AllowedPct: number | null;
-  team2OffPct: number | null;
-  team2AllowedPct: number | null;
-  team1Name: string;
-  team2Name: string;
-  team1Data: TeamSeasonData;
-  team2Data: TeamSeasonData;
+  teamValue: number | null;
+  teamOffensive: number | null;
+  teamAllowed: number | null;
+  teamOffPct: number | null;
+  teamAllowedPct: number | null;
+  teamName: string;
+  teamData: TeamSeasonData;
+  // For area fills - computed based on which is "good"
+  goodTop: number | null;
+  goodBottom: number | null;
+  badTop: number | null;
+  badBottom: number | null;
 }
 
 interface FactorTrendData {
@@ -68,23 +65,19 @@ interface FactorTrendData {
   shortLabel: string;
   data: TrendDataPoint[];
   color: string;
+  higherOffensiveIsBetter: boolean;
 }
 
 function TrendlinePageContent() {
   const searchParams = useSearchParams();
-  const router = useRouter();
 
   const [gender, setGender] = useState<Gender>(() => {
     const g = searchParams.get('gender');
     return g === 'womens' ? 'womens' : 'mens';
   });
 
-  const [team1Id, setTeam1Id] = useState<string>(() => {
-    return searchParams.get('team1') || '';
-  });
-
-  const [team2Id, setTeam2Id] = useState<string>(() => {
-    return searchParams.get('team2') || '';
+  const [teamId, setTeamId] = useState<string>(() => {
+    return searchParams.get('team') || searchParams.get('team1') || '';
   });
 
   const [scope, setScope] = useState<StatsScope>(() => {
@@ -92,12 +85,14 @@ function TrendlinePageContent() {
     return s === 'conference' ? 'conference' : 'di';
   });
 
-  const [viewMode, setViewMode] = useState<ViewMode>('cumulative');
+  const [viewMode, setViewMode] = useState<ViewMode>('split');
   const [valueMode, setValueMode] = useState<ValueMode>('percentages');
+
+  // Effective view mode - always 'split' when in percentage mode
+  const effectiveViewMode = valueMode === 'percentages' ? 'split' : viewMode;
 
   // Get teams list from the most recent season that has data
   const teams = useMemo(() => {
-    // Try to get teams from most recent season first
     for (const season of AVAILABLE_SEASONS) {
       const seasonTeams = getTeams(gender, season);
       if (seasonTeams.length > 0) {
@@ -117,6 +112,10 @@ function TrendlinePageContent() {
     ];
 
     return FOUR_FACTORS_META.map((meta, index) => {
+      // For TOV%, lower offensive is better (fewer turnovers)
+      // For all others, higher offensive is better
+      const higherOffensiveIsBetter = meta.key !== 'tov';
+
       const data: TrendDataPoint[] = CHRONOLOGICAL_SEASONS.map((season) => {
         const standings = getStandings(gender, season);
         const diAverages = calculateAveragesFromStandings(standings);
@@ -124,14 +123,13 @@ function TrendlinePageContent() {
         const offKey = meta.key as keyof TeamStandings;
         const defKey = `opp${meta.key.charAt(0).toUpperCase()}${meta.key.slice(1)}` as keyof TeamStandings;
 
-        const getTeamSeasonData = (teamId: string | null): TeamSeasonData => {
-          if (!teamId) {
+        const getTeamSeasonData = (tid: string | null): TeamSeasonData => {
+          if (!tid) {
             return { pointsImpact: null, offensiveImpact: null, allowedImpact: null, offensive: null, allowed: null, confAvg: null, confName: null };
           }
 
-          // Get team's conference info
-          const teamConf = getTeamConference(gender, teamId, season);
-          let confName: string | null = teamConf?.name || null;
+          const teamConf = getTeamConference(gender, tid, season);
+          const confName: string | null = teamConf?.name || null;
 
           let offensive: number | null = null;
           let allowed: number | null = null;
@@ -139,31 +137,23 @@ function TrendlinePageContent() {
           let confAvg: number | null = null;
 
           if (scope === 'conference' && teamConf) {
-            // Conference mode: use conference-only stats and averages
-            const confGames = getTeamConferenceGames(gender, teamId, season);
+            const confGames = getTeamConferenceGames(gender, tid, season);
             if (confGames.length > 0) {
-              const confStats = calculateStatsFromGames(confGames, teamId);
+              const confStats = calculateStatsFromGames(confGames, tid);
               offensive = confStats[meta.key as keyof typeof confStats] as number;
-              allowed = confStats[defKey.replace('opp', '').toLowerCase().replace(/^(.)/, (m) => 'opp' + m.charAt(0).toUpperCase() + m.slice(1)) as keyof typeof confStats] as number;
-              // Fix: get oppXxx from confStats correctly
               const oppKey = `opp${meta.key.charAt(0).toUpperCase()}${meta.key.slice(1)}` as keyof typeof confStats;
               allowed = confStats[oppKey] as number;
 
-              // Use conference-only averages
               const confOnlyAvg = getConferenceOnlyAverages(gender, teamConf.id, season);
               averages = { ...diAverages, ...confOnlyAvg };
-
-              // Conference average for display
               confAvg = confOnlyAvg[meta.key as keyof typeof confOnlyAvg] as number;
             }
           } else {
-            // DI mode: use all-games stats
-            const team = standings.find((s) => s.teamId === teamId);
+            const team = standings.find((s) => s.teamId === tid);
             if (team) {
               offensive = team[offKey] as number;
               allowed = team[defKey] as number;
 
-              // Conference average for tooltip display
               if (teamConf) {
                 const confStandings = getConferenceStandings(gender, teamConf.id, season);
                 if (confStandings.length > 0) {
@@ -184,30 +174,51 @@ function TrendlinePageContent() {
           return { pointsImpact, offensiveImpact, allowedImpact, offensive, allowed, confAvg, confName };
         };
 
-        const team1Info = team1Id ? teams.find((t) => t.id === team1Id) : null;
-        const team2Info = team2Id ? teams.find((t) => t.id === team2Id) : null;
+        const teamInfo = teamId ? teams.find((t) => t.id === teamId) : null;
+        const teamData = getTeamSeasonData(teamId);
 
-        const team1Data = getTeamSeasonData(team1Id);
-        const team2Data = getTeamSeasonData(team2Id);
+        // Calculate fill regions based on which value represents "good" performance
+        let goodTop: number | null = null;
+        let goodBottom: number | null = null;
+        let badTop: number | null = null;
+        let badBottom: number | null = null;
+
+        if (teamData.offensive !== null && teamData.allowed !== null) {
+          const off = teamData.offensive;
+          const allowed = teamData.allowed;
+
+          // Determine if this is a "good" situation
+          // For most factors: higher offensive than allowed is good
+          // For TOV%: lower offensive than allowed is good (we turn the ball over less than we force turnovers)
+          const isGood = higherOffensiveIsBetter ? off >= allowed : off <= allowed;
+
+          if (isGood) {
+            goodTop = Math.max(off, allowed);
+            goodBottom = Math.min(off, allowed);
+            badTop = null;
+            badBottom = null;
+          } else {
+            badTop = Math.max(off, allowed);
+            badBottom = Math.min(off, allowed);
+            goodTop = null;
+            goodBottom = null;
+          }
+        }
 
         return {
-          season: season.replace('-', '\u2011'), // Non-breaking hyphen
+          season: season.replace('-', '\u2011'),
           seasonRaw: season,
-          team1Value: team1Data.pointsImpact,
-          team2Value: team2Data.pointsImpact,
-          team1Offensive: team1Data.offensiveImpact,
-          team1Allowed: team1Data.allowedImpact,
-          team2Offensive: team2Data.offensiveImpact,
-          team2Allowed: team2Data.allowedImpact,
-          // Raw percentage values for % mode
-          team1OffPct: team1Data.offensive,
-          team1AllowedPct: team1Data.allowed,
-          team2OffPct: team2Data.offensive,
-          team2AllowedPct: team2Data.allowed,
-          team1Name: team1Info?.abbreviation || 'Team 1',
-          team2Name: team2Info?.abbreviation || 'Team 2',
-          team1Data,
-          team2Data,
+          teamValue: teamData.pointsImpact,
+          teamOffensive: teamData.offensiveImpact,
+          teamAllowed: teamData.allowedImpact,
+          teamOffPct: teamData.offensive,
+          teamAllowedPct: teamData.allowed,
+          teamName: teamInfo?.abbreviation || 'Team',
+          teamData,
+          goodTop,
+          goodBottom,
+          badTop,
+          badBottom,
         };
       });
 
@@ -217,18 +228,15 @@ function TrendlinePageContent() {
         shortLabel: meta.shortLabel,
         data,
         color: factorColors[index],
+        higherOffensiveIsBetter,
       };
     });
-  }, [gender, team1Id, team2Id, teams, scope]);
+  }, [gender, teamId, teams, scope]);
 
-  // Get selected team info for colors
-  const team1Info = teams.find((t) => t.id === team1Id);
-  const team2Info = teams.find((t) => t.id === team2Id);
+  const teamInfo = teams.find((t) => t.id === teamId);
+  const teamColor = teamInfo?.color || '#00d4ff';
 
-  const team1Color = team1Info?.color || '#00d4ff';
-  const team2Color = team2Info?.color || '#ff3366';
-
-  // Custom tooltip component factory - creates tooltip for specific factor
+  // Custom tooltip
   const createCustomTooltip = (factorKey: keyof FourFactors, factorLabel: string) => {
     const meta = FOUR_FACTORS_META.find(m => m.key === factorKey);
     const formatValue = meta?.format || ((v: number) => v.toFixed(1));
@@ -238,19 +246,18 @@ function TrendlinePageContent() {
       const { active, payload, label } = props;
       if (active && payload && payload.length > 0) {
         const dataPoint = payload[0].payload as TrendDataPoint;
+        const teamData = dataPoint.teamData;
 
-        const renderTeamStats = (
-          teamData: TeamSeasonData,
-          teamName: string,
-          teamColor: string,
-          isVisible: boolean
-        ) => {
-          if (!isVisible || teamData.pointsImpact === null) return null;
+        if (!teamData || teamData.pointsImpact === null) return null;
 
-          return (
-            <div className="mb-3 last:mb-0">
+        return (
+          <div className="bg-[var(--background-secondary)] border border-[var(--border)] rounded-lg p-3 shadow-lg min-w-[180px]">
+            <p className="text-xs font-semibold text-[var(--foreground-muted)] mb-2 uppercase tracking-wide">
+              {label} &middot; {factorLabel}
+            </p>
+            <div className="mb-3">
               <p className="text-sm font-semibold mb-1" style={{ color: teamColor }}>
-                {teamName}
+                {dataPoint.teamName}
               </p>
               <div className="space-y-0.5 text-xs">
                 <div className="flex justify-between gap-4">
@@ -275,17 +282,6 @@ function TrendlinePageContent() {
                 )}
               </div>
             </div>
-          );
-        };
-
-        return (
-          <div className="bg-[var(--background-secondary)] border border-[var(--border)] rounded-lg p-3 shadow-lg min-w-[180px]">
-            <p className="text-xs font-semibold text-[var(--foreground-muted)] mb-2 uppercase tracking-wide">
-              {label} &middot; {factorLabel}
-            </p>
-            {renderTeamStats(dataPoint.team1Data, dataPoint.team1Name, team1Color, !!team1Id)}
-            {team1Id && team2Id && <div className="border-t border-[var(--border)] my-2" />}
-            {renderTeamStats(dataPoint.team2Data, dataPoint.team2Name, team2Color, !!team2Id)}
           </div>
         );
       }
@@ -301,7 +297,7 @@ function TrendlinePageContent() {
           <div>
             <h1 className="text-3xl sm:text-4xl mb-1 sm:mb-2">Trendline</h1>
             <p className="text-sm sm:text-base text-[var(--foreground-muted)]">
-              Compare Four Factors performance across seasons
+              Four Factors performance across seasons
               <span className="text-xs ml-2">({scope === 'di' ? 'all DI games' : 'conference games only'})</span>
             </p>
           </div>
@@ -310,8 +306,7 @@ function TrendlinePageContent() {
               value={gender}
               onChange={(g) => {
                 setGender(g);
-                setTeam1Id('');
-                setTeam2Id('');
+                setTeamId('');
               }}
             />
             <ScopeToggle value={scope} onChange={setScope} conferenceName="Conf" />
@@ -351,213 +346,122 @@ function TrendlinePageContent() {
                 )}
               </button>
             </div>
-            {/* Cumulative/Split Toggle */}
-            <div className="inline-flex rounded-lg p-1 bg-[var(--background-tertiary)] border border-[var(--border)]">
-              <button
-                onClick={() => setViewMode(viewMode === 'cumulative' ? 'split' : 'cumulative')}
-                className={`
-                  relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
-                  transition-all duration-200
-                  ${viewMode === 'cumulative'
-                    ? 'bg-[var(--accent-primary)] text-[var(--background)] shadow-lg'
-                    : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
-                  }
-                `}
-              >
-                <span className="relative z-10">Cumulative</span>
-                {viewMode === 'cumulative' && (
-                  <div className="absolute inset-0 rounded-md bg-[var(--accent-primary)] opacity-20 blur-md" />
-                )}
-              </button>
-              <button
-                onClick={() => setViewMode(viewMode === 'split' ? 'cumulative' : 'split')}
-                className={`
-                  relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
-                  transition-all duration-200
-                  ${viewMode === 'split'
-                    ? 'bg-[var(--accent-primary)] text-[var(--background)] shadow-lg'
-                    : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
-                  }
-                `}
-                title="Show offensive and allowed stats as separate lines"
-              >
-                <span className="relative z-10">Split</span>
-                {viewMode === 'split' && (
-                  <div className="absolute inset-0 rounded-md bg-[var(--accent-primary)] opacity-20 blur-md" />
-                )}
-              </button>
-            </div>
+            {/* Cumulative/Split Toggle - only shown for Points Impact mode */}
+            {valueMode === 'points-impact' && (
+              <div className="inline-flex rounded-lg p-1 bg-[var(--background-tertiary)] border border-[var(--border)]">
+                <button
+                  onClick={() => setViewMode('split')}
+                  className={`
+                    relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
+                    transition-all duration-200
+                    ${viewMode === 'split'
+                      ? 'bg-[var(--accent-primary)] text-[var(--background)] shadow-lg'
+                      : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
+                    }
+                  `}
+                  title="Show offensive and allowed stats as separate lines"
+                >
+                  <span className="relative z-10">Split</span>
+                  {viewMode === 'split' && (
+                    <div className="absolute inset-0 rounded-md bg-[var(--accent-primary)] opacity-20 blur-md" />
+                  )}
+                </button>
+                <button
+                  onClick={() => setViewMode('cumulative')}
+                  className={`
+                    relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
+                    transition-all duration-200
+                    ${viewMode === 'cumulative'
+                      ? 'bg-[var(--accent-primary)] text-[var(--background)] shadow-lg'
+                      : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
+                    }
+                  `}
+                >
+                  <span className="relative z-10">Cumulative</span>
+                  {viewMode === 'cumulative' && (
+                    <div className="absolute inset-0 rounded-md bg-[var(--accent-primary)] opacity-20 blur-md" />
+                  )}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       {/* Team Selection */}
       <div className="card p-4 sm:p-6 mb-8">
-        <h2 className="text-lg sm:text-xl mb-4">Select Teams to Compare</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Team 1 Selector */}
-          <div>
-            <label className="block text-xs text-[var(--foreground-muted)] mb-2 uppercase tracking-wide">
-              Team 1
-            </label>
-            <div className="relative">
-              <select
-                value={team1Id}
-                onChange={(e) => setTeam1Id(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg bg-[var(--background-tertiary)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] cursor-pointer appearance-none"
-                style={{
-                  borderColor: team1Id ? team1Color : undefined,
-                  borderWidth: team1Id ? '2px' : undefined,
-                }}
-              >
-                <option value="">Select a team...</option>
-                {teams.map((team) => (
-                  <option key={team.id} value={team.id}>
-                    {team.displayName}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <svg className="w-5 h-5 text-[var(--foreground-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </div>
+        <h2 className="text-lg sm:text-xl mb-4">Select Team</h2>
+        <div className="max-w-md">
+          <div className="relative">
+            <select
+              value={teamId}
+              onChange={(e) => setTeamId(e.target.value)}
+              className="w-full px-4 py-3 rounded-lg bg-[var(--background-tertiary)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] cursor-pointer appearance-none"
+              style={{
+                borderColor: teamId ? teamColor : undefined,
+                borderWidth: teamId ? '2px' : undefined,
+              }}
+            >
+              <option value="">Select a team...</option>
+              {teams.map((team) => (
+                <option key={team.id} value={team.id}>
+                  {team.displayName}
+                </option>
+              ))}
+            </select>
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <svg className="w-5 h-5 text-[var(--foreground-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
             </div>
-            {team1Info && (
-              <div className="mt-2 flex items-center gap-2">
-                {team1Info.logo && (
-                  <img src={team1Info.logo} alt={team1Info.displayName} className="w-6 h-6 object-contain" />
-                )}
-                <span className="text-sm" style={{ color: team1Color }}>
-                  {team1Info.abbreviation}
-                </span>
-              </div>
-            )}
           </div>
-
-          {/* Team 2 Selector */}
-          <div>
-            <label className="block text-xs text-[var(--foreground-muted)] mb-2 uppercase tracking-wide">
-              Team 2
-            </label>
-            <div className="relative">
-              <select
-                value={team2Id}
-                onChange={(e) => setTeam2Id(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg bg-[var(--background-tertiary)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent-secondary)] cursor-pointer appearance-none"
-                style={{
-                  borderColor: team2Id ? team2Color : undefined,
-                  borderWidth: team2Id ? '2px' : undefined,
-                }}
-              >
-                <option value="">Select a team...</option>
-                {teams.map((team) => (
-                  <option key={team.id} value={team.id}>
-                    {team.displayName}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <svg className="w-5 h-5 text-[var(--foreground-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </div>
+          {teamInfo && (
+            <div className="mt-2 flex items-center gap-2">
+              {teamInfo.logo && (
+                <img src={teamInfo.logo} alt={teamInfo.displayName} className="w-6 h-6 object-contain" />
+              )}
+              <span className="text-sm" style={{ color: teamColor }}>
+                {teamInfo.displayName}
+              </span>
             </div>
-            {team2Info && (
-              <div className="mt-2 flex items-center gap-2">
-                {team2Info.logo && (
-                  <img src={team2Info.logo} alt={team2Info.displayName} className="w-6 h-6 object-contain" />
-                )}
-                <span className="text-sm" style={{ color: team2Color }}>
-                  {team2Info.abbreviation}
-                </span>
-              </div>
-            )}
-          </div>
+          )}
         </div>
 
         {/* Legend */}
-        {(team1Id || team2Id) && (
+        {teamId && effectiveViewMode === 'split' && (
           <div className="mt-4 pt-4 border-t border-[var(--border)] flex flex-wrap gap-4">
-            {viewMode === 'cumulative' ? (
-              <>
-                {team1Id && team1Info && (
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="w-4 h-1 rounded"
-                      style={{ backgroundColor: team1Color }}
-                    />
-                    <span className="text-sm text-[var(--foreground-muted)]">
-                      {team1Info.displayName}
-                    </span>
-                  </div>
-                )}
-                {team2Id && team2Info && (
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="w-4 h-1 rounded"
-                      style={{ backgroundColor: team2Color }}
-                    />
-                    <span className="text-sm text-[var(--foreground-muted)]">
-                      {team2Info.displayName}
-                    </span>
-                  </div>
-                )}
-              </>
-            ) : (
-              <>
-                {team1Id && team1Info && (
-                  <>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="w-4 h-1 rounded"
-                        style={{ backgroundColor: team1Color }}
-                      />
-                      <span className="text-sm text-[var(--foreground-muted)]">
-                        {team1Info.abbreviation} Offensive
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="w-4 h-0 border-t-2 border-dashed"
-                        style={{ borderColor: team1Color }}
-                      />
-                      <span className="text-sm text-[var(--foreground-muted)]">
-                        {team1Info.abbreviation} Allowed
-                      </span>
-                    </div>
-                  </>
-                )}
-                {team2Id && team2Info && (
-                  <>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="w-4 h-1 rounded"
-                        style={{ backgroundColor: team2Color }}
-                      />
-                      <span className="text-sm text-[var(--foreground-muted)]">
-                        {team2Info.abbreviation} Offensive
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="w-4 h-0 border-t-2 border-dashed"
-                        style={{ borderColor: team2Color }}
-                      />
-                      <span className="text-sm text-[var(--foreground-muted)]">
-                        {team2Info.abbreviation} Allowed
-                      </span>
-                    </div>
-                  </>
-                )}
-              </>
-            )}
+            <div className="flex items-center gap-2">
+              <div
+                className="w-4 h-1 rounded"
+                style={{ backgroundColor: teamColor }}
+              />
+              <span className="text-sm text-[var(--foreground-muted)]">
+                Offensive
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div
+                className="w-4 h-0 border-t-2 border-dashed"
+                style={{ borderColor: teamColor }}
+              />
+              <span className="text-sm text-[var(--foreground-muted)]">
+                Allowed
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-3 rounded" style={{ backgroundColor: 'rgba(34, 197, 94, 0.3)' }} />
+              <span className="text-sm text-[var(--foreground-muted)]">Good</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-3 rounded" style={{ backgroundColor: 'rgba(239, 68, 68, 0.3)' }} />
+              <span className="text-sm text-[var(--foreground-muted)]">Bad</span>
+            </div>
           </div>
         )}
       </div>
 
       {/* Charts */}
-      {(team1Id || team2Id) ? (
+      {teamId ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {factorTrends.map((factor) => (
             <div key={factor.key} className="card p-4 sm:p-6">
@@ -612,79 +516,83 @@ function TrendlinePageContent() {
                       />
                     )}
                     <Tooltip content={createCustomTooltip(factor.key, factor.shortLabel)} />
-                    {/* Cumulative mode: single line per team */}
-                    {viewMode === 'cumulative' && team1Id && (
+
+                    {/* Cumulative mode: single line */}
+                    {effectiveViewMode === 'cumulative' && (
                       <Line
                         type="monotone"
-                        dataKey={valueMode === 'points-impact' ? 'team1Value' : 'team1OffPct'}
-                        stroke={team1Color}
+                        dataKey={valueMode === 'points-impact' ? 'teamValue' : 'teamOffPct'}
+                        stroke={teamColor}
                         strokeWidth={3}
-                        dot={{ fill: team1Color, strokeWidth: 0, r: 4 }}
-                        activeDot={{ r: 6, fill: team1Color }}
+                        dot={{ fill: teamColor, strokeWidth: 0, r: 4 }}
+                        activeDot={{ r: 6, fill: teamColor }}
                         connectNulls={false}
-                        name={team1Info?.abbreviation || 'Team 1'}
+                        name={teamInfo?.abbreviation || 'Team'}
                       />
                     )}
-                    {viewMode === 'cumulative' && team2Id && (
-                      <Line
-                        type="monotone"
-                        dataKey={valueMode === 'points-impact' ? 'team2Value' : 'team2OffPct'}
-                        stroke={team2Color}
-                        strokeWidth={3}
-                        dot={{ fill: team2Color, strokeWidth: 0, r: 4 }}
-                        activeDot={{ r: 6, fill: team2Color }}
-                        connectNulls={false}
-                        name={team2Info?.abbreviation || 'Team 2'}
-                      />
-                    )}
-                    {/* Split mode: separate offensive and allowed lines per team */}
-                    {viewMode === 'split' && team1Id && (
+
+                    {/* Split mode: area fills and lines */}
+                    {effectiveViewMode === 'split' && (
                       <>
-                        <Line
+                        {/* Good area fill (green) */}
+                        <Area
                           type="monotone"
-                          dataKey={valueMode === 'points-impact' ? 'team1Offensive' : 'team1OffPct'}
-                          stroke={team1Color}
-                          strokeWidth={3}
-                          dot={{ fill: team1Color, strokeWidth: 0, r: 4 }}
-                          activeDot={{ r: 6, fill: team1Color }}
+                          dataKey="goodTop"
+                          stroke="none"
+                          fill="rgba(34, 197, 94, 0.3)"
                           connectNulls={false}
-                          name={`${team1Info?.abbreviation || 'Team 1'} Off`}
+                          isAnimationActive={false}
                         />
+                        <Area
+                          type="monotone"
+                          dataKey="goodBottom"
+                          stroke="none"
+                          fill="var(--background)"
+                          connectNulls={false}
+                          isAnimationActive={false}
+                        />
+
+                        {/* Bad area fill (red) */}
+                        <Area
+                          type="monotone"
+                          dataKey="badTop"
+                          stroke="none"
+                          fill="rgba(239, 68, 68, 0.3)"
+                          connectNulls={false}
+                          isAnimationActive={false}
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="badBottom"
+                          stroke="none"
+                          fill="var(--background)"
+                          connectNulls={false}
+                          isAnimationActive={false}
+                        />
+
+                        {/* Offensive line (solid) */}
                         <Line
                           type="monotone"
-                          dataKey={valueMode === 'points-impact' ? 'team1Allowed' : 'team1AllowedPct'}
-                          stroke={team1Color}
+                          dataKey={valueMode === 'points-impact' ? 'teamOffensive' : 'teamOffPct'}
+                          stroke={teamColor}
+                          strokeWidth={3}
+                          dot={{ fill: teamColor, strokeWidth: 0, r: 4 }}
+                          activeDot={{ r: 6, fill: teamColor }}
+                          connectNulls={false}
+                          name="Offensive"
+                        />
+
+                        {/* Allowed line (dashed) */}
+                        <Line
+                          type="monotone"
+                          dataKey={valueMode === 'points-impact' ? 'teamAllowed' : 'teamAllowedPct'}
+                          stroke={teamColor}
                           strokeWidth={3}
                           strokeDasharray="5 5"
-                          dot={{ fill: team1Color, strokeWidth: 0, r: 4 }}
-                          activeDot={{ r: 6, fill: team1Color }}
+                          dot={{ fill: teamColor, strokeWidth: 0, r: 4 }}
+                          activeDot={{ r: 6, fill: teamColor }}
                           connectNulls={false}
-                          name={`${team1Info?.abbreviation || 'Team 1'} Def`}
-                        />
-                      </>
-                    )}
-                    {viewMode === 'split' && team2Id && (
-                      <>
-                        <Line
-                          type="monotone"
-                          dataKey={valueMode === 'points-impact' ? 'team2Offensive' : 'team2OffPct'}
-                          stroke={team2Color}
-                          strokeWidth={3}
-                          dot={{ fill: team2Color, strokeWidth: 0, r: 4 }}
-                          activeDot={{ r: 6, fill: team2Color }}
-                          connectNulls={false}
-                          name={`${team2Info?.abbreviation || 'Team 2'} Off`}
-                        />
-                        <Line
-                          type="monotone"
-                          dataKey={valueMode === 'points-impact' ? 'team2Allowed' : 'team2AllowedPct'}
-                          stroke={team2Color}
-                          strokeWidth={3}
-                          strokeDasharray="5 5"
-                          dot={{ fill: team2Color, strokeWidth: 0, r: 4 }}
-                          activeDot={{ r: 6, fill: team2Color }}
-                          connectNulls={false}
-                          name={`${team2Info?.abbreviation || 'Team 2'} Def`}
+                          name="Allowed"
                         />
                       </>
                     )}
@@ -693,7 +601,7 @@ function TrendlinePageContent() {
               </div>
 
               <p className="text-xs text-[var(--foreground-muted)] mt-3">
-                {viewMode === 'cumulative' ? (
+                {effectiveViewMode === 'cumulative' ? (
                   valueMode === 'points-impact' ? (
                     <>
                       {factor.key === 'efg' && 'Shooting efficiency impact (offense + defense combined)'}
@@ -710,21 +618,12 @@ function TrendlinePageContent() {
                     </>
                   )
                 ) : (
-                  valueMode === 'points-impact' ? (
-                    <>
-                      {factor.key === 'efg' && 'Solid: Offensive Shooting Efficiency | Dashed: Shooting Efficiency Allowed'}
-                      {factor.key === 'tov' && 'Solid: Offensive Turnover Rate | Dashed: Turnover Rate Forced'}
-                      {factor.key === 'orb' && 'Solid: Offensive Rebounding | Dashed: Offensive Rebounds Allowed'}
-                      {factor.key === 'ftr' && 'Solid: Offensive Free Throw Rate | Dashed: Free Throw Rate Allowed'}
-                    </>
-                  ) : (
-                    <>
-                      {factor.key === 'efg' && 'Solid: Offensive Shooting Efficiency | Dashed: Shooting Efficiency Allowed'}
-                      {factor.key === 'tov' && 'Solid: Offensive Turnover Rate | Dashed: Turnover Rate Forced'}
-                      {factor.key === 'orb' && 'Solid: Offensive Rebounding | Dashed: Offensive Rebounds Allowed'}
-                      {factor.key === 'ftr' && 'Solid: Offensive Free Throw Rate | Dashed: Free Throw Rate Allowed'}
-                    </>
-                  )
+                  <>
+                    {factor.key === 'efg' && 'Green: shooting better than allowing | Red: allowing better shots'}
+                    {factor.key === 'tov' && 'Green: forcing more turnovers than committing | Red: turning it over more'}
+                    {factor.key === 'orb' && 'Green: getting more offensive boards | Red: giving up more'}
+                    {factor.key === 'ftr' && 'Green: getting to the line more | Red: fouling more'}
+                  </>
                 )}
               </p>
             </div>
@@ -746,9 +645,9 @@ function TrendlinePageContent() {
                 d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"
               />
             </svg>
-            <h3 className="text-xl mb-2">Select Teams to Compare</h3>
+            <h3 className="text-xl mb-2">Select a Team</h3>
             <p className="text-[var(--foreground-muted)]">
-              Choose one or two teams above to see their Four Factors performance trends across the last five seasons.
+              Choose a team above to see their Four Factors performance trends across the last five seasons.
             </p>
           </div>
         </div>
@@ -756,13 +655,13 @@ function TrendlinePageContent() {
 
       {/* Info Section */}
       <div className="mt-8 card p-4 sm:p-6">
-        <h3 className="text-lg font-semibold mb-3">Understanding Points Impact</h3>
+        <h3 className="text-lg font-semibold mb-3">Understanding the Charts</h3>
         <p className="text-sm text-[var(--foreground-muted)] mb-4">
-          Points Impact measures how much better or worse a team performs in each Four Factor compared to the league average,
-          converted to estimated points per game. A positive value means the team gains an advantage in that factor.
+          In split view, green areas show where the team has an advantage (outperforming opponents),
+          while red areas show disadvantages. The solid line is offensive performance, dashed is what they allow.
         </p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {FOUR_FACTORS_META.map((factor, index) => (
+          {FOUR_FACTORS_META.map((factor) => (
             <div key={factor.key} className="text-center">
               <div
                 className="w-8 h-8 rounded-full mx-auto mb-2 flex items-center justify-center"

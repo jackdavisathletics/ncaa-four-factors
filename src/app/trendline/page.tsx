@@ -520,19 +520,22 @@ function TrendlinePageContent() {
                     {effectiveViewMode === 'split' && (
                       <Customized
                         component={(props: Record<string, unknown>) => {
-                          const { xAxisMap, yAxisMap, offset } = props as {
+                          const { xAxisMap, yAxisMap } = props as {
                             xAxisMap?: Record<string, { scale: (v: string) => number; bandwidth?: () => number }>;
                             yAxisMap?: Record<string, { scale: (v: number) => number }>;
-                            offset?: { left: number; top: number; width: number; height: number };
                           };
 
-                          if (!xAxisMap || !yAxisMap || !offset) return null;
+                          if (!xAxisMap || !yAxisMap) return null;
 
-                          const xScale = xAxisMap[0]?.scale;
-                          const yScale = yAxisMap[0]?.scale;
-                          const bandwidth = xAxisMap[0]?.bandwidth?.() || 0;
+                          // Access scales using Object.values since keys aren't numeric
+                          const xAxis = Object.values(xAxisMap)[0];
+                          const yAxis = Object.values(yAxisMap)[0];
 
-                          if (!xScale || !yScale) return null;
+                          if (!xAxis?.scale || !yAxis?.scale) return null;
+
+                          const xScale = xAxis.scale;
+                          const yScale = yAxis.scale;
+                          const bandwidth = xAxis.bandwidth?.() || 0;
 
                           const offKey = valueMode === 'points-impact' ? 'teamOffensive' : 'teamOffPct';
                           const allowedKey = valueMode === 'points-impact' ? 'teamAllowed' : 'teamAllowedPct';

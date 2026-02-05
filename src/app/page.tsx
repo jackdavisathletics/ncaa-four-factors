@@ -63,7 +63,6 @@ function HomePageContent() {
         </h1>
         <p className="text-base sm:text-xl text-[var(--foreground-muted)] max-w-2xl mx-auto mb-6 sm:mb-8 px-2">
           Understand college basketball through the lens of Dean Oliver&apos;s Four Factors.
-          <span className="hidden sm:inline"> Every game, every team, every stat that matters.</span>
         </p>
 
         {/* Gender Toggle and Season Selector - Stack on mobile */}

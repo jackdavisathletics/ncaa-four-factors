@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, Suspense } from 'react';
+import { useState, useMemo, Suspense, useRef, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   ComposedChart,
@@ -11,7 +11,6 @@ import {
   Tooltip,
   ResponsiveContainer,
   ReferenceLine,
-  Customized,
 } from 'recharts';
 import { GenderToggle, ScopeToggle, type StatsScope } from '@/components';
 import { getTeams, getStandings, getTeamConference, getConferenceStandings, getTeamConferenceGames, calculateStatsFromGames, getConferenceOnlyAverages } from '@/lib/data';
@@ -66,6 +65,311 @@ interface FactorTrendData {
   data: TrendDataPoint[];
   color: string;
   higherOffensiveIsBetter: boolean;
+}
+
+// Component for rendering fill between offensive/allowed lines
+interface FillBetweenLinesProps {
+  data: TrendDataPoint[];
+  higherOffensiveIsBetter: boolean;
+  valueMode: ValueMode;
+  containerRef: React.RefObject<HTMLDivElement | null>;
+}
+
+function FillBetweenLines({ data, higherOffensiveIsBetter, valueMode, containerRef }: FillBetweenLinesProps) {
+  const [paths, setPaths] = useState<{ good: string[]; bad: string[] }>({ good: [], bad: [] });
+
+  const calculatePaths = useCallback(() => {
+    if (!containerRef.current) return;
+
+    // Find the SVG element inside the Recharts container
+    const svg = containerRef.current.querySelector('svg.recharts-surface');
+    if (!svg) return;
+
+    // Find the chart area (clipPath rect gives us the actual plot area)
+    const chartArea = svg.querySelector('.recharts-cartesian-grid rect');
+    if (!chartArea) return;
+
+    const chartRect = chartArea.getBoundingClientRect();
+    const svgRect = svg.getBoundingClientRect();
+
+    // Chart dimensions relative to SVG
+    const chartLeft = chartRect.left - svgRect.left;
+    const chartTop = chartRect.top - svgRect.top;
+    const chartWidth = chartRect.width;
+    const chartHeight = chartRect.height;
+
+    const offKey = valueMode === 'points-impact' ? 'teamOffensive' : 'teamOffPct';
+    const allowedKey = valueMode === 'points-impact' ? 'teamAllowed' : 'teamAllowedPct';
+
+    const validData = data.filter(d =>
+      d[offKey as keyof TrendDataPoint] !== null &&
+      d[allowedKey as keyof TrendDataPoint] !== null
+    );
+
+    if (validData.length < 2) {
+      setPaths({ good: [], bad: [] });
+      return;
+    }
+
+    // Calculate Y domain from data
+    const allValues: number[] = [];
+    validData.forEach(d => {
+      allValues.push(d[offKey as keyof TrendDataPoint] as number);
+      allValues.push(d[allowedKey as keyof TrendDataPoint] as number);
+    });
+    const dataMin = Math.min(...allValues);
+    const dataMax = Math.max(...allValues);
+
+    // Recharts uses "nice" domain - approximate it
+    const range = dataMax - dataMin;
+    const padding = range * 0.1;
+    const yMin = dataMin - padding;
+    const yMax = dataMax + padding;
+
+    // Scale functions
+    const xScale = (index: number) => chartLeft + (index / (validData.length - 1)) * chartWidth;
+    const yScale = (value: number) => chartTop + chartHeight - ((value - yMin) / (yMax - yMin)) * chartHeight;
+
+    const goodPaths: string[] = [];
+    const badPaths: string[] = [];
+
+    for (let i = 0; i < validData.length - 1; i++) {
+      const curr = validData[i];
+      const next = validData[i + 1];
+
+      const currOff = curr[offKey as keyof TrendDataPoint] as number;
+      const currAllowed = curr[allowedKey as keyof TrendDataPoint] as number;
+      const nextOff = next[offKey as keyof TrendDataPoint] as number;
+      const nextAllowed = next[allowedKey as keyof TrendDataPoint] as number;
+
+      const x1 = xScale(i);
+      const x2 = xScale(i + 1);
+
+      const currIsGood = higherOffensiveIsBetter
+        ? currOff >= currAllowed
+        : currOff <= currAllowed;
+      const nextIsGood = higherOffensiveIsBetter
+        ? nextOff >= nextAllowed
+        : nextOff <= nextAllowed;
+
+      // Check if lines cross
+      if (currIsGood !== nextIsGood) {
+        const dOff = nextOff - currOff;
+        const dAllowed = nextAllowed - currAllowed;
+        const t = (currAllowed - currOff) / (dOff - dAllowed);
+
+        const xInt = x1 + t * (x2 - x1);
+        const yInt = currOff + t * dOff;
+
+        // First segment
+        const path1 = `M${x1},${yScale(currOff)} L${xInt},${yScale(yInt)} L${xInt},${yScale(yInt)} L${x1},${yScale(currAllowed)} Z`;
+        if (currIsGood) goodPaths.push(path1);
+        else badPaths.push(path1);
+
+        // Second segment
+        const path2 = `M${xInt},${yScale(yInt)} L${x2},${yScale(nextOff)} L${x2},${yScale(nextAllowed)} L${xInt},${yScale(yInt)} Z`;
+        if (nextIsGood) goodPaths.push(path2);
+        else badPaths.push(path2);
+      } else {
+        const path = `M${x1},${yScale(currOff)} L${x2},${yScale(nextOff)} L${x2},${yScale(nextAllowed)} L${x1},${yScale(currAllowed)} Z`;
+        if (currIsGood) goodPaths.push(path);
+        else badPaths.push(path);
+      }
+    }
+
+    setPaths({ good: goodPaths, bad: badPaths });
+  }, [data, higherOffensiveIsBetter, valueMode, containerRef]);
+
+  useEffect(() => {
+    // Initial calculation after render
+    const timer = setTimeout(calculatePaths, 100);
+
+    // Recalculate on resize
+    const resizeObserver = new ResizeObserver(() => {
+      calculatePaths();
+    });
+
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
+    return () => {
+      clearTimeout(timer);
+      resizeObserver.disconnect();
+    };
+  }, [calculatePaths, containerRef]);
+
+  if (paths.good.length === 0 && paths.bad.length === 0) return null;
+
+  return (
+    <svg
+      className="absolute inset-0 pointer-events-none"
+      style={{ width: '100%', height: '100%' }}
+    >
+      {paths.good.map((d, i) => (
+        <path key={`good-${i}`} d={d} fill="rgba(34, 197, 94, 0.3)" />
+      ))}
+      {paths.bad.map((d, i) => (
+        <path key={`bad-${i}`} d={d} fill="rgba(239, 68, 68, 0.3)" />
+      ))}
+    </svg>
+  );
+}
+
+// Individual factor chart component with its own ref for fill overlay
+interface FactorChartProps {
+  factor: FactorTrendData;
+  valueMode: ValueMode;
+  effectiveViewMode: ViewMode;
+  teamColor: string;
+  teamInfo?: { id: string; displayName: string; abbreviation: string; logo?: string; color?: string };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  createCustomTooltip: (factorKey: keyof FourFactors, factorLabel: string) => (props: any) => React.ReactNode;
+}
+
+function FactorChart({ factor, valueMode, effectiveViewMode, teamColor, teamInfo, createCustomTooltip }: FactorChartProps) {
+  const chartRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <div key={factor.key} className="card p-4 sm:p-6">
+      <div className="flex items-center gap-2 mb-4">
+        <div
+          className="w-3 h-3 rounded-full"
+          style={{ backgroundColor: factor.color }}
+        />
+        <h3 className="text-lg font-semibold" style={{ color: factor.color }}>
+          {factor.shortLabel}
+        </h3>
+        {valueMode === 'points-impact' && (
+          <span className="text-sm text-[var(--foreground-muted)]">
+            Points Impact
+          </span>
+        )}
+      </div>
+
+      <div className="h-64 relative" ref={chartRef}>
+        {/* Fill overlay */}
+        {effectiveViewMode === 'split' && (
+          <FillBetweenLines
+            data={factor.data}
+            higherOffensiveIsBetter={factor.higherOffensiveIsBetter}
+            valueMode={valueMode}
+            containerRef={chartRef}
+          />
+        )}
+
+        <ResponsiveContainer width="100%" height="100%">
+          <ComposedChart
+            data={factor.data}
+            margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
+          >
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="var(--border)"
+              vertical={false}
+            />
+            <XAxis
+              dataKey="season"
+              tick={{ fill: 'var(--foreground-muted)', fontSize: 12 }}
+              axisLine={{ stroke: 'var(--border)' }}
+              tickLine={{ stroke: 'var(--border)' }}
+            />
+            <YAxis
+              tick={{ fill: 'var(--foreground-muted)', fontSize: 12 }}
+              axisLine={{ stroke: 'var(--border)' }}
+              tickLine={{ stroke: 'var(--border)' }}
+              tickFormatter={(value) => valueMode === 'points-impact'
+                ? (value >= 0 ? '+' : '') + value.toFixed(1)
+                : value.toFixed(1) + '%'
+              }
+              domain={['auto', 'auto']}
+            />
+            {valueMode === 'points-impact' && (
+              <ReferenceLine
+                y={0}
+                stroke="var(--foreground-muted)"
+                strokeDasharray="3 3"
+                strokeOpacity={0.5}
+              />
+            )}
+
+            <Tooltip content={createCustomTooltip(factor.key, factor.shortLabel)} />
+
+            {/* Cumulative mode: single line */}
+            {effectiveViewMode === 'cumulative' && (
+              <Line
+                type="linear"
+                dataKey={valueMode === 'points-impact' ? 'teamValue' : 'teamOffPct'}
+                stroke={teamColor}
+                strokeWidth={3}
+                dot={{ fill: teamColor, strokeWidth: 0, r: 4 }}
+                activeDot={{ r: 6, fill: teamColor }}
+                connectNulls={false}
+                name={teamInfo?.abbreviation || 'Team'}
+              />
+            )}
+
+            {/* Split mode: two lines - using linear type for exact polygon fill alignment */}
+            {effectiveViewMode === 'split' && (
+              <>
+                {/* Offensive line (solid) */}
+                <Line
+                  type="linear"
+                  dataKey={valueMode === 'points-impact' ? 'teamOffensive' : 'teamOffPct'}
+                  stroke={teamColor}
+                  strokeWidth={3}
+                  dot={{ fill: teamColor, strokeWidth: 0, r: 4 }}
+                  activeDot={{ r: 6, fill: teamColor }}
+                  connectNulls={false}
+                  name="Offensive"
+                />
+
+                {/* Allowed line (dashed) */}
+                <Line
+                  type="linear"
+                  dataKey={valueMode === 'points-impact' ? 'teamAllowed' : 'teamAllowedPct'}
+                  stroke={teamColor}
+                  strokeWidth={3}
+                  strokeDasharray="5 5"
+                  dot={{ fill: teamColor, strokeWidth: 0, r: 4 }}
+                  activeDot={{ r: 6, fill: teamColor }}
+                  connectNulls={false}
+                  name="Allowed"
+                />
+              </>
+            )}
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
+
+      <p className="text-xs text-[var(--foreground-muted)] mt-3">
+        {effectiveViewMode === 'cumulative' ? (
+          valueMode === 'points-impact' ? (
+            <>
+              {factor.key === 'efg' && 'Shooting efficiency impact (offense + defense combined)'}
+              {factor.key === 'tov' && 'Ball security impact (offense + defense combined)'}
+              {factor.key === 'orb' && 'Rebounding impact (offense + defense combined)'}
+              {factor.key === 'ftr' && 'Free throw generation impact (offense + defense combined)'}
+            </>
+          ) : (
+            <>
+              {factor.key === 'efg' && 'Offensive shooting efficiency (eFG%)'}
+              {factor.key === 'tov' && 'Offensive turnover rate (TOV%)'}
+              {factor.key === 'orb' && 'Offensive rebounding rate (ORB%)'}
+              {factor.key === 'ftr' && 'Offensive free throw rate (FTR)'}
+            </>
+          )
+        ) : (
+          <>
+            {factor.key === 'efg' && 'Green: shooting better than allowing | Red: allowing better shots'}
+            {factor.key === 'tov' && 'Green: forcing more turnovers than committing | Red: turning it over more'}
+            {factor.key === 'orb' && 'Green: getting more offensive boards | Red: giving up more'}
+            {factor.key === 'ftr' && 'Green: getting to the line more | Red: fouling more'}
+          </>
+        )}
+      </p>
+    </div>
+  );
 }
 
 function TrendlinePageContent() {
@@ -464,235 +768,15 @@ function TrendlinePageContent() {
       {teamId ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {factorTrends.map((factor) => (
-            <div key={factor.key} className="card p-4 sm:p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <div
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: factor.color }}
-                />
-                <h3 className="text-lg font-semibold" style={{ color: factor.color }}>
-                  {factor.shortLabel}
-                </h3>
-                {valueMode === 'points-impact' && (
-                  <span className="text-sm text-[var(--foreground-muted)]">
-                    Points Impact
-                  </span>
-                )}
-              </div>
-
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <ComposedChart
-                    data={factor.data}
-                    margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
-                  >
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      stroke="var(--border)"
-                      vertical={false}
-                    />
-                    <XAxis
-                      dataKey="season"
-                      tick={{ fill: 'var(--foreground-muted)', fontSize: 12 }}
-                      axisLine={{ stroke: 'var(--border)' }}
-                      tickLine={{ stroke: 'var(--border)' }}
-                    />
-                    <YAxis
-                      tick={{ fill: 'var(--foreground-muted)', fontSize: 12 }}
-                      axisLine={{ stroke: 'var(--border)' }}
-                      tickLine={{ stroke: 'var(--border)' }}
-                      tickFormatter={(value) => valueMode === 'points-impact'
-                        ? (value >= 0 ? '+' : '') + value.toFixed(1)
-                        : value.toFixed(1) + '%'
-                      }
-                      domain={['auto', 'auto']}
-                    />
-                    {valueMode === 'points-impact' && (
-                      <ReferenceLine
-                        y={0}
-                        stroke="var(--foreground-muted)"
-                        strokeDasharray="3 3"
-                        strokeOpacity={0.5}
-                      />
-                    )}
-
-                    {/* Custom fill between lines using actual Recharts scales */}
-                    {effectiveViewMode === 'split' && (
-                      <Customized
-                        component={(props: Record<string, unknown>) => {
-                          // Debug: log all props to see structure
-                          console.log('Customized props keys:', Object.keys(props));
-
-                          const { xAxisMap, yAxisMap } = props as {
-                            xAxisMap?: Record<string, { scale: (v: string) => number; bandwidth?: () => number }>;
-                            yAxisMap?: Record<string, { scale: (v: number) => number }>;
-                          };
-
-                          console.log('xAxisMap:', xAxisMap, 'yAxisMap:', yAxisMap);
-
-                          if (!xAxisMap || !yAxisMap) return null;
-
-                          // Access scales using Object.values since keys aren't numeric
-                          const xAxis = Object.values(xAxisMap)[0];
-                          const yAxis = Object.values(yAxisMap)[0];
-
-                          console.log('xAxis:', xAxis, 'yAxis:', yAxis);
-
-                          if (!xAxis?.scale || !yAxis?.scale) return null;
-
-                          const xScale = xAxis.scale;
-                          const yScale = yAxis.scale;
-                          const bandwidth = xAxis.bandwidth?.() || 0;
-
-                          const offKey = valueMode === 'points-impact' ? 'teamOffensive' : 'teamOffPct';
-                          const allowedKey = valueMode === 'points-impact' ? 'teamAllowed' : 'teamAllowedPct';
-
-                          const validData = factor.data.filter(d =>
-                            d[offKey as keyof TrendDataPoint] !== null &&
-                            d[allowedKey as keyof TrendDataPoint] !== null
-                          );
-
-                          if (validData.length < 2) return null;
-
-                          // Build SVG paths using actual scales
-                          const goodPaths: string[] = [];
-                          const badPaths: string[] = [];
-
-                          for (let i = 0; i < validData.length - 1; i++) {
-                            const curr = validData[i];
-                            const next = validData[i + 1];
-
-                            const currOff = curr[offKey as keyof TrendDataPoint] as number;
-                            const currAllowed = curr[allowedKey as keyof TrendDataPoint] as number;
-                            const nextOff = next[offKey as keyof TrendDataPoint] as number;
-                            const nextAllowed = next[allowedKey as keyof TrendDataPoint] as number;
-
-                            // Get actual pixel positions from scales
-                            const x1 = xScale(curr.season) + bandwidth / 2;
-                            const x2 = xScale(next.season) + bandwidth / 2;
-
-                            const currIsGood = factor.higherOffensiveIsBetter
-                              ? currOff >= currAllowed
-                              : currOff <= currAllowed;
-                            const nextIsGood = factor.higherOffensiveIsBetter
-                              ? nextOff >= nextAllowed
-                              : nextOff <= nextAllowed;
-
-                            // Check if lines cross
-                            if (currIsGood !== nextIsGood) {
-                              const dOff = nextOff - currOff;
-                              const dAllowed = nextAllowed - currAllowed;
-                              const t = (currAllowed - currOff) / (dOff - dAllowed);
-
-                              const xInt = x1 + t * (x2 - x1);
-                              const yInt = currOff + t * dOff;
-
-                              // First segment
-                              const path1 = `M${x1},${yScale(currOff)} L${xInt},${yScale(yInt)} L${xInt},${yScale(yInt)} L${x1},${yScale(currAllowed)} Z`;
-                              if (currIsGood) goodPaths.push(path1);
-                              else badPaths.push(path1);
-
-                              // Second segment
-                              const path2 = `M${xInt},${yScale(yInt)} L${x2},${yScale(nextOff)} L${x2},${yScale(nextAllowed)} L${xInt},${yScale(yInt)} Z`;
-                              if (nextIsGood) goodPaths.push(path2);
-                              else badPaths.push(path2);
-                            } else {
-                              const path = `M${x1},${yScale(currOff)} L${x2},${yScale(nextOff)} L${x2},${yScale(nextAllowed)} L${x1},${yScale(currAllowed)} Z`;
-                              if (currIsGood) goodPaths.push(path);
-                              else badPaths.push(path);
-                            }
-                          }
-
-                          return (
-                            <g>
-                              {goodPaths.map((d, i) => (
-                                <path key={`good-${i}`} d={d} fill="rgba(34, 197, 94, 0.3)" />
-                              ))}
-                              {badPaths.map((d, i) => (
-                                <path key={`bad-${i}`} d={d} fill="rgba(239, 68, 68, 0.3)" />
-                              ))}
-                            </g>
-                          );
-                        }}
-                      />
-                    )}
-
-                    <Tooltip content={createCustomTooltip(factor.key, factor.shortLabel)} />
-
-                    {/* Cumulative mode: single line */}
-                    {effectiveViewMode === 'cumulative' && (
-                      <Line
-                        type="linear"
-                        dataKey={valueMode === 'points-impact' ? 'teamValue' : 'teamOffPct'}
-                        stroke={teamColor}
-                        strokeWidth={3}
-                        dot={{ fill: teamColor, strokeWidth: 0, r: 4 }}
-                        activeDot={{ r: 6, fill: teamColor }}
-                        connectNulls={false}
-                        name={teamInfo?.abbreviation || 'Team'}
-                      />
-                    )}
-
-                    {/* Split mode: two lines - using linear type for exact polygon fill alignment */}
-                    {effectiveViewMode === 'split' && (
-                      <>
-                        {/* Offensive line (solid) */}
-                        <Line
-                          type="linear"
-                          dataKey={valueMode === 'points-impact' ? 'teamOffensive' : 'teamOffPct'}
-                          stroke={teamColor}
-                          strokeWidth={3}
-                          dot={{ fill: teamColor, strokeWidth: 0, r: 4 }}
-                          activeDot={{ r: 6, fill: teamColor }}
-                          connectNulls={false}
-                          name="Offensive"
-                        />
-
-                        {/* Allowed line (dashed) */}
-                        <Line
-                          type="linear"
-                          dataKey={valueMode === 'points-impact' ? 'teamAllowed' : 'teamAllowedPct'}
-                          stroke={teamColor}
-                          strokeWidth={3}
-                          strokeDasharray="5 5"
-                          dot={{ fill: teamColor, strokeWidth: 0, r: 4 }}
-                          activeDot={{ r: 6, fill: teamColor }}
-                          connectNulls={false}
-                          name="Allowed"
-                        />
-                      </>
-                    )}
-                  </ComposedChart>
-                </ResponsiveContainer>
-              </div>
-
-              <p className="text-xs text-[var(--foreground-muted)] mt-3">
-                {effectiveViewMode === 'cumulative' ? (
-                  valueMode === 'points-impact' ? (
-                    <>
-                      {factor.key === 'efg' && 'Shooting efficiency impact (offense + defense combined)'}
-                      {factor.key === 'tov' && 'Ball security impact (offense + defense combined)'}
-                      {factor.key === 'orb' && 'Rebounding impact (offense + defense combined)'}
-                      {factor.key === 'ftr' && 'Free throw generation impact (offense + defense combined)'}
-                    </>
-                  ) : (
-                    <>
-                      {factor.key === 'efg' && 'Offensive shooting efficiency (eFG%)'}
-                      {factor.key === 'tov' && 'Offensive turnover rate (TOV%)'}
-                      {factor.key === 'orb' && 'Offensive rebounding rate (ORB%)'}
-                      {factor.key === 'ftr' && 'Offensive free throw rate (FTR)'}
-                    </>
-                  )
-                ) : (
-                  <>
-                    {factor.key === 'efg' && 'Green: shooting better than allowing | Red: allowing better shots'}
-                    {factor.key === 'tov' && 'Green: forcing more turnovers than committing | Red: turning it over more'}
-                    {factor.key === 'orb' && 'Green: getting more offensive boards | Red: giving up more'}
-                    {factor.key === 'ftr' && 'Green: getting to the line more | Red: fouling more'}
-                  </>
-                )}
-              </p>
-            </div>
+            <FactorChart
+              key={factor.key}
+              factor={factor}
+              valueMode={valueMode}
+              effectiveViewMode={effectiveViewMode}
+              teamColor={teamColor}
+              teamInfo={teamInfo}
+              createCustomTooltip={createCustomTooltip}
+            />
           ))}
         </div>
       ) : (

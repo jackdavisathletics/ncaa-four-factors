@@ -276,13 +276,14 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
                     />
                   )}
 
-                  {/* Team logo on the appropriate side of the bar */}
+                  {/* Team logo just outside the bar */}
                   {bar.advantageTeamLogo && (
                     <div
-                      className="absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded flex items-center justify-center z-20"
+                      className={`absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded flex items-center justify-center z-20 ${
+                        logoOnRight ? '' : '-translate-x-full'
+                      }`}
                       style={{
-                        [logoOnRight ? 'left' : 'right']: `${logoOnRight ? Math.min(startPercent, endPercent) + width : 100 - Math.max(startPercent, endPercent)}%`,
-                        [logoOnRight ? 'marginLeft' : 'marginRight']: '4px',
+                        left: logoOnRight ? `calc(${left + width}% + 4px)` : `calc(${left}% - 4px)`,
                         backgroundColor: bar.advantageTeamColor + '30',
                       }}
                     >

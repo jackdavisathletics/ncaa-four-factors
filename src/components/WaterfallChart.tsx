@@ -60,6 +60,27 @@ function getColorDistance(color1: string, color2: string): number {
 // Threshold for considering colors too similar (lower = more strict)
 const COLOR_SIMILARITY_THRESHOLD = 120;
 
+// Calculate relative luminance (0 = black, 1 = white)
+function getLuminance(hex: string): number {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return 1;
+
+  const toLinear = (c: number) => {
+    const srgb = c / 255;
+    return srgb <= 0.03928 ? srgb / 12.92 : Math.pow((srgb + 0.055) / 1.055, 2.4);
+  };
+
+  return 0.2126 * toLinear(rgb.r) + 0.7152 * toLinear(rgb.g) + 0.0722 * toLinear(rgb.b);
+}
+
+// Check if a color is too light to be visible on a light background
+function isColorTooLight(hex: string): boolean {
+  return getLuminance(hex) > 0.7; // Colors with luminance > 0.7 are too light
+}
+
+// Fallback color for teams with light colors
+const FALLBACK_DARK_COLOR = '#374151'; // A neutral dark gray
+
 interface WaterfallBar {
   key: ContributionKey;
   label: string;
@@ -77,24 +98,40 @@ interface WaterfallBar {
 export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
   const [hoveredBar, setHoveredBar] = useState<ContributionKey | null>(null);
 
-  // Determine if we need to use alternate colors due to similarity
+  // Determine display colors, avoiding colors that are too similar or too light
   const { awayDisplayColor, homeDisplayColor } = useMemo(() => {
-    const primaryDistance = getColorDistance(awayTeam.teamColor, homeTeam.teamColor);
+    // Helper to get a usable color (not too light)
+    const getUsableColor = (primary: string, alternate: string): string => {
+      if (!isColorTooLight(primary)) return primary;
+      if (!isColorTooLight(alternate)) return alternate;
+      return FALLBACK_DARK_COLOR;
+    };
 
-    if (primaryDistance < COLOR_SIMILARITY_THRESHOLD) {
-      // Colors are too similar, try alternate colors
-      const awayAltDistance = getColorDistance(awayTeam.teamAlternateColor, homeTeam.teamColor);
-      const homeAltDistance = getColorDistance(awayTeam.teamColor, homeTeam.teamAlternateColor);
+    let awayColor = getUsableColor(awayTeam.teamColor, awayTeam.teamAlternateColor);
+    let homeColor = getUsableColor(homeTeam.teamColor, homeTeam.teamAlternateColor);
 
-      // Use whichever alternate provides better contrast
-      if (awayAltDistance > homeAltDistance && awayAltDistance > primaryDistance) {
-        return { awayDisplayColor: awayTeam.teamAlternateColor, homeDisplayColor: homeTeam.teamColor };
-      } else if (homeAltDistance > primaryDistance) {
-        return { awayDisplayColor: awayTeam.teamColor, homeDisplayColor: homeTeam.teamAlternateColor };
+    // Check if the chosen colors are too similar to each other
+    const colorDistance = getColorDistance(awayColor, homeColor);
+
+    if (colorDistance < COLOR_SIMILARITY_THRESHOLD) {
+      // Try alternate combinations to find better contrast
+      const awayCandidates = [awayTeam.teamColor, awayTeam.teamAlternateColor].filter(c => !isColorTooLight(c));
+      const homeCandidates = [homeTeam.teamColor, homeTeam.teamAlternateColor].filter(c => !isColorTooLight(c));
+
+      let bestDistance = colorDistance;
+      for (const ac of awayCandidates.length ? awayCandidates : [FALLBACK_DARK_COLOR]) {
+        for (const hc of homeCandidates.length ? homeCandidates : [FALLBACK_DARK_COLOR]) {
+          const dist = getColorDistance(ac, hc);
+          if (dist > bestDistance) {
+            bestDistance = dist;
+            awayColor = ac;
+            homeColor = hc;
+          }
+        }
       }
     }
 
-    return { awayDisplayColor: awayTeam.teamColor, homeDisplayColor: homeTeam.teamColor };
+    return { awayDisplayColor: awayColor, homeDisplayColor: homeColor };
   }, [awayTeam.teamColor, awayTeam.teamAlternateColor, homeTeam.teamColor, homeTeam.teamAlternateColor]);
 
   const data = useMemo(() => {

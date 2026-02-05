@@ -52,6 +52,7 @@ export interface GameTeamStats extends FourFactors, BoxScoreStats {
   teamAbbreviation: string;
   teamLogo: string;
   teamColor: string;
+  teamAlternateColor: string;
   score: number;
   isHome: boolean;
 }

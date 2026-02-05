@@ -27,14 +27,48 @@ const FACTOR_DISPLAY: FactorDisplay[] = [
   { key: 'freeThrows', label: 'Free Throws', shortLabel: 'FTR', homeStatKey: 'ftr', awayStatKey: 'ftr' },
 ];
 
+// Parse hex color to RGB
+function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16),
+  } : null;
+}
+
+// Calculate color distance using weighted Euclidean distance (accounts for human perception)
+function getColorDistance(color1: string, color2: string): number {
+  const rgb1 = hexToRgb(color1);
+  const rgb2 = hexToRgb(color2);
+  if (!rgb1 || !rgb2) return 1000; // Max distance if parsing fails
+
+  // Weighted distance (human eyes are more sensitive to green)
+  const rMean = (rgb1.r + rgb2.r) / 2;
+  const dR = rgb1.r - rgb2.r;
+  const dG = rgb1.g - rgb2.g;
+  const dB = rgb1.b - rgb2.b;
+
+  // Formula from: https://www.compuphase.com/cmetric.htm
+  return Math.sqrt(
+    (2 + rMean / 256) * dR * dR +
+    4 * dG * dG +
+    (2 + (255 - rMean) / 256) * dB * dB
+  );
+}
+
+// Threshold for considering colors too similar (lower = more strict)
+const COLOR_SIMILARITY_THRESHOLD = 120;
+
 interface WaterfallBar {
   key: ContributionKey;
   label: string;
-  value: number; // Points impact from winning team's perspective
+  value: number; // Points impact from home team's perspective (positive = home advantage)
   runningTotal: number;
   previousTotal: number;
-  winningTeamAdvantage: boolean; // true if winning team had the advantage in this factor
+  homeAdvantage: boolean; // true if home team had the advantage in this factor
   advantageTeamColor: string;
+  advantageTeamLogo: string;
   advantageTeamAbbr: string;
   homeValue: number; // actual percentage for home team
   awayValue: number; // actual percentage for away team
@@ -42,6 +76,26 @@ interface WaterfallBar {
 
 export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
   const [hoveredBar, setHoveredBar] = useState<ContributionKey | null>(null);
+
+  // Determine if we need to use alternate colors due to similarity
+  const { awayDisplayColor, homeDisplayColor } = useMemo(() => {
+    const primaryDistance = getColorDistance(awayTeam.teamColor, homeTeam.teamColor);
+
+    if (primaryDistance < COLOR_SIMILARITY_THRESHOLD) {
+      // Colors are too similar, try alternate colors
+      const awayAltDistance = getColorDistance(awayTeam.teamAlternateColor, homeTeam.teamColor);
+      const homeAltDistance = getColorDistance(awayTeam.teamColor, homeTeam.teamAlternateColor);
+
+      // Use whichever alternate provides better contrast
+      if (awayAltDistance > homeAltDistance && awayAltDistance > primaryDistance) {
+        return { awayDisplayColor: awayTeam.teamAlternateColor, homeDisplayColor: homeTeam.teamColor };
+      } else if (homeAltDistance > primaryDistance) {
+        return { awayDisplayColor: awayTeam.teamColor, homeDisplayColor: homeTeam.teamAlternateColor };
+      }
+    }
+
+    return { awayDisplayColor: awayTeam.teamColor, homeDisplayColor: homeTeam.teamColor };
+  }, [awayTeam.teamColor, awayTeam.teamAlternateColor, homeTeam.teamColor, homeTeam.teamAlternateColor]);
 
   const data = useMemo(() => {
     // Calculate point contributions using Dean Oliver's formulas
@@ -63,6 +117,7 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
       // Determine which team had the advantage in this factor
       const homeAdvantage = pointsImpact >= 0;
       const advantageTeam = homeAdvantage ? homeTeam : awayTeam;
+      const advantageColor = homeAdvantage ? homeDisplayColor : awayDisplayColor;
 
       return {
         key: factor.key,
@@ -70,8 +125,9 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
         value: pointsImpact,
         runningTotal,
         previousTotal,
-        winningTeamAdvantage: homeAdvantage,
-        advantageTeamColor: advantageTeam.teamColor,
+        homeAdvantage,
+        advantageTeamColor: advantageColor,
+        advantageTeamLogo: advantageTeam.teamLogo,
         advantageTeamAbbr: advantageTeam.teamAbbreviation,
         homeValue: homeTeam[factor.homeStatKey],
         awayValue: awayTeam[factor.awayStatKey],
@@ -80,16 +136,20 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
 
     // Determine which team has the Four Factors edge
     const edgeTeam = runningTotal >= 0 ? homeTeam : awayTeam;
+    const edgeColor = runningTotal >= 0 ? homeDisplayColor : awayDisplayColor;
 
     return {
       bars,
       total: runningTotal,
       edgeTeam,
+      edgeColor,
       // Always keep positions consistent: away on left, home on right
       leftTeam: awayTeam,
       rightTeam: homeTeam,
+      leftColor: awayDisplayColor,
+      rightColor: homeDisplayColor,
     };
-  }, [homeTeam, awayTeam]);
+  }, [homeTeam, awayTeam, awayDisplayColor, homeDisplayColor]);
 
   // Calculate scale: find the max absolute value we need to display
   // This includes intermediate running totals and individual bar values
@@ -114,7 +174,7 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
         <div className="flex items-center gap-2">
           <div
             className="w-6 h-6 rounded flex items-center justify-center overflow-hidden"
-            style={{ backgroundColor: data.leftTeam.teamColor + '20' }}
+            style={{ backgroundColor: data.leftColor + '20' }}
           >
             {data.leftTeam.teamLogo && (
               <img
@@ -136,7 +196,7 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
           </span>
           <div
             className="w-6 h-6 rounded flex items-center justify-center overflow-hidden"
-            style={{ backgroundColor: data.rightTeam.teamColor + '20' }}
+            style={{ backgroundColor: data.rightColor + '20' }}
           >
             {data.rightTeam.teamLogo && (
               <img
@@ -172,6 +232,8 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
             const left = Math.min(startPercent, endPercent);
             const width = Math.abs(endPercent - startPercent);
             const isHovered = hoveredBar === bar.key;
+            // Logo position: left of bar if away team won (bar goes left), right of bar if home team won (bar goes right)
+            const logoOnRight = bar.homeAdvantage;
 
             return (
               <div
@@ -187,11 +249,11 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
                   </span>
                   {isHovered && (
                     <div className="flex items-center gap-3 text-xs animate-in fade-in duration-150">
-                      <span style={{ color: awayTeam.teamColor }} className="font-semibold">
+                      <span style={{ color: awayDisplayColor }} className="font-semibold">
                         {awayTeam.teamAbbreviation}: {bar.awayValue.toFixed(1)}%
                       </span>
                       <span className="text-[var(--foreground-muted)]">vs</span>
-                      <span style={{ color: homeTeam.teamColor }} className="font-semibold">
+                      <span style={{ color: homeDisplayColor }} className="font-semibold">
                         {homeTeam.teamAbbreviation}: {bar.homeValue.toFixed(1)}%
                       </span>
                     </div>
@@ -212,6 +274,26 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
                       className="absolute top-0 h-full w-px bg-[var(--foreground-muted)] opacity-20"
                       style={{ left: `${startPercent}%` }}
                     />
+                  )}
+
+                  {/* Team logo on the appropriate side of the bar */}
+                  {bar.advantageTeamLogo && (
+                    <div
+                      className="absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded flex items-center justify-center z-20"
+                      style={{
+                        [logoOnRight ? 'left' : 'right']: `${logoOnRight ? Math.min(startPercent, endPercent) + width : 100 - Math.max(startPercent, endPercent)}%`,
+                        [logoOnRight ? 'marginLeft' : 'marginRight']: '4px',
+                        backgroundColor: bar.advantageTeamColor + '30',
+                      }}
+                    >
+                      <img
+                        src={bar.advantageTeamLogo}
+                        alt={bar.advantageTeamAbbr}
+                        width={18}
+                        height={18}
+                        className="object-contain"
+                      />
+                    </div>
                   )}
 
                   {/* The bar itself */}
@@ -271,7 +353,7 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
         <div className="flex items-center justify-center gap-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden"
-            style={{ backgroundColor: data.edgeTeam.teamColor + '20' }}
+            style={{ backgroundColor: data.edgeColor + '20' }}
           >
             {data.edgeTeam.teamLogo && (
               <img
@@ -289,7 +371,7 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
             </p>
             <p
               className="stat-number text-3xl font-bold"
-              style={{ color: data.edgeTeam.teamColor }}
+              style={{ color: data.edgeColor }}
             >
               +{Math.abs(data.total).toFixed(1)} pts
             </p>

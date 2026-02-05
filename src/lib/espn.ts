@@ -166,6 +166,7 @@ export async function fetchGameDetails(
       teamAbbreviation: teamData?.abbreviation || teamInfo.abbreviation,
       teamLogo: teamData?.logo || teamInfo.logo || '',
       teamColor: teamData?.color || (teamInfo.color ? `#${teamInfo.color}` : '#666666'),
+      teamAlternateColor: teamData?.alternateColor || (teamInfo.alternateColor ? `#${teamInfo.alternateColor}` : '#333333'),
       score,
       isHome,
       ...boxStats,

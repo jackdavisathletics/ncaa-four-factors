@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { GameTeamStats, calculateContributionDifferentials, calculateAllContributions, PointContributions } from '@/lib/types';
+import { GameTeamStats, calculateAllContributions } from '@/lib/types';
 
 interface WaterfallChartProps {
   homeTeam: GameTeamStats;
@@ -45,35 +45,24 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
 
   const data = useMemo(() => {
     // Calculate point contributions using Dean Oliver's formulas
-    const differentials = calculateContributionDifferentials(homeTeam, awayTeam);
-
-    // Determine winning team (by Four Factors total, not actual score)
-    const homeIsWinner = differentials.total >= 0;
-    const winningTeam = homeIsWinner ? homeTeam : awayTeam;
-    const losingTeam = homeIsWinner ? awayTeam : homeTeam;
-
-    // Calculate contributions from winning team's perspective
-    const winnerContribs = calculateAllContributions(
-      winningTeam,
-      losingTeam.dreb
-    );
-    const loserContribs = calculateAllContributions(
-      losingTeam,
-      winningTeam.dreb
-    );
+    // Always from home team's perspective (positive = home advantage, negative = away advantage)
+    const homeContribs = calculateAllContributions(homeTeam, awayTeam.dreb);
+    const awayContribs = calculateAllContributions(awayTeam, homeTeam.dreb);
 
     // Build bars for each factor
+    // Positive values = home advantage (goes right)
+    // Negative values = away advantage (goes left)
     let runningTotal = 0;
     const bars: WaterfallBar[] = FACTOR_DISPLAY.map(factor => {
-      // Differential from winning team's perspective
-      const pointsImpact = winnerContribs[factor.key] - loserContribs[factor.key];
+      // Differential from home team's perspective
+      const pointsImpact = homeContribs[factor.key] - awayContribs[factor.key];
 
       const previousTotal = runningTotal;
       runningTotal += pointsImpact;
 
       // Determine which team had the advantage in this factor
-      const winningTeamAdvantage = pointsImpact >= 0;
-      const advantageTeam = winningTeamAdvantage ? winningTeam : losingTeam;
+      const homeAdvantage = pointsImpact >= 0;
+      const advantageTeam = homeAdvantage ? homeTeam : awayTeam;
 
       return {
         key: factor.key,
@@ -81,7 +70,7 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
         value: pointsImpact,
         runningTotal,
         previousTotal,
-        winningTeamAdvantage,
+        winningTeamAdvantage: homeAdvantage,
         advantageTeamColor: advantageTeam.teamColor,
         advantageTeamAbbr: advantageTeam.teamAbbreviation,
         homeValue: homeTeam[factor.homeStatKey],
@@ -89,11 +78,16 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
       };
     });
 
+    // Determine which team has the Four Factors edge
+    const edgeTeam = runningTotal >= 0 ? homeTeam : awayTeam;
+
     return {
       bars,
       total: runningTotal,
-      winningTeam,
-      losingTeam,
+      edgeTeam,
+      // Always keep positions consistent: away on left, home on right
+      leftTeam: awayTeam,
+      rightTeam: homeTeam,
     };
   }, [homeTeam, awayTeam]);
 
@@ -115,17 +109,17 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
 
   return (
     <div className="space-y-2">
-      {/* Header showing team perspectives */}
+      {/* Header showing team perspectives - away on left, home on right to match game header */}
       <div className="flex justify-between items-center mb-4 px-2">
         <div className="flex items-center gap-2">
           <div
             className="w-6 h-6 rounded flex items-center justify-center overflow-hidden"
-            style={{ backgroundColor: data.losingTeam.teamColor + '20' }}
+            style={{ backgroundColor: data.leftTeam.teamColor + '20' }}
           >
-            {data.losingTeam.teamLogo && (
+            {data.leftTeam.teamLogo && (
               <img
-                src={data.losingTeam.teamLogo}
-                alt={data.losingTeam.teamName}
+                src={data.leftTeam.teamLogo}
+                alt={data.leftTeam.teamName}
                 width={16}
                 height={16}
                 className="object-contain"
@@ -133,21 +127,21 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
             )}
           </div>
           <span className="text-sm text-[var(--foreground-muted)]">
-            {data.losingTeam.teamAbbreviation} advantage
+            {data.leftTeam.teamAbbreviation} advantage
           </span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-sm text-[var(--foreground-muted)]">
-            {data.winningTeam.teamAbbreviation} advantage
+            {data.rightTeam.teamAbbreviation} advantage
           </span>
           <div
             className="w-6 h-6 rounded flex items-center justify-center overflow-hidden"
-            style={{ backgroundColor: data.winningTeam.teamColor + '20' }}
+            style={{ backgroundColor: data.rightTeam.teamColor + '20' }}
           >
-            {data.winningTeam.teamLogo && (
+            {data.rightTeam.teamLogo && (
               <img
-                src={data.winningTeam.teamLogo}
-                alt={data.winningTeam.teamName}
+                src={data.rightTeam.teamLogo}
+                alt={data.rightTeam.teamName}
                 width={16}
                 height={16}
                 className="object-contain"
@@ -277,12 +271,12 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
         <div className="flex items-center justify-center gap-4">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden"
-            style={{ backgroundColor: data.winningTeam.teamColor + '20' }}
+            style={{ backgroundColor: data.edgeTeam.teamColor + '20' }}
           >
-            {data.winningTeam.teamLogo && (
+            {data.edgeTeam.teamLogo && (
               <img
-                src={data.winningTeam.teamLogo}
-                alt={data.winningTeam.teamName}
+                src={data.edgeTeam.teamLogo}
+                alt={data.edgeTeam.teamName}
                 width={28}
                 height={28}
                 className="object-contain"
@@ -295,13 +289,13 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
             </p>
             <p
               className="stat-number text-3xl font-bold"
-              style={{ color: data.winningTeam.teamColor }}
+              style={{ color: data.edgeTeam.teamColor }}
             >
               +{Math.abs(data.total).toFixed(1)} pts
             </p>
           </div>
           <div className="text-sm text-[var(--foreground-muted)]">
-            {data.winningTeam.teamAbbreviation}
+            {data.edgeTeam.teamAbbreviation}
           </div>
         </div>
       </div>

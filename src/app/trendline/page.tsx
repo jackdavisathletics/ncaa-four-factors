@@ -21,16 +21,20 @@ import {
   AVAILABLE_SEASONS,
   TeamStandings,
   FOUR_FACTORS_META,
-  calculateCombinedPointsImpact,
+  calculatePointsImpactVsAvg,
   calculateAveragesFromStandings,
   FourFactors,
 } from '@/lib/types';
+
+type ViewMode = 'cumulative' | 'split';
 
 // Seasons in chronological order for the chart
 const CHRONOLOGICAL_SEASONS: Season[] = [...AVAILABLE_SEASONS].reverse();
 
 interface TeamSeasonData {
   pointsImpact: number | null;
+  offensiveImpact: number | null;
+  allowedImpact: number | null;
   offensive: number | null;
   allowed: number | null;
   confAvg: number | null;
@@ -42,6 +46,10 @@ interface TrendDataPoint {
   seasonRaw: Season;
   team1Value: number | null;
   team2Value: number | null;
+  team1Offensive: number | null;
+  team1Allowed: number | null;
+  team2Offensive: number | null;
+  team2Allowed: number | null;
   team1Name: string;
   team2Name: string;
   team1Data: TeamSeasonData;
@@ -78,6 +86,8 @@ function TrendlinePageContent() {
     return s === 'conference' ? 'conference' : 'di';
   });
 
+  const [viewMode, setViewMode] = useState<ViewMode>('cumulative');
+
   // Get teams list from the most recent season that has data
   const teams = useMemo(() => {
     // Try to get teams from most recent season first
@@ -109,7 +119,7 @@ function TrendlinePageContent() {
 
         const getTeamSeasonData = (teamId: string | null): TeamSeasonData => {
           if (!teamId) {
-            return { pointsImpact: null, offensive: null, allowed: null, confAvg: null, confName: null };
+            return { pointsImpact: null, offensiveImpact: null, allowedImpact: null, offensive: null, allowed: null, confAvg: null, confName: null };
           }
 
           // Get team's conference info
@@ -158,11 +168,13 @@ function TrendlinePageContent() {
           }
 
           if (offensive === null || allowed === null) {
-            return { pointsImpact: null, offensive: null, allowed: null, confAvg, confName };
+            return { pointsImpact: null, offensiveImpact: null, allowedImpact: null, offensive: null, allowed: null, confAvg, confName };
           }
 
-          const pointsImpact = calculateCombinedPointsImpact(meta.key, offensive, allowed, averages);
-          return { pointsImpact, offensive, allowed, confAvg, confName };
+          const offensiveImpact = calculatePointsImpactVsAvg(meta.key, offensive, averages, false);
+          const allowedImpact = calculatePointsImpactVsAvg(meta.key, allowed, averages, true);
+          const pointsImpact = offensiveImpact + allowedImpact;
+          return { pointsImpact, offensiveImpact, allowedImpact, offensive, allowed, confAvg, confName };
         };
 
         const team1Info = team1Id ? teams.find((t) => t.id === team1Id) : null;
@@ -176,6 +188,10 @@ function TrendlinePageContent() {
           seasonRaw: season,
           team1Value: team1Data.pointsImpact,
           team2Value: team2Data.pointsImpact,
+          team1Offensive: team1Data.offensiveImpact,
+          team1Allowed: team1Data.allowedImpact,
+          team2Offensive: team2Data.offensiveImpact,
+          team2Allowed: team2Data.allowedImpact,
           team1Name: team1Info?.abbreviation || 'Team 1',
           team2Name: team2Info?.abbreviation || 'Team 2',
           team1Data,
@@ -277,7 +293,7 @@ function TrendlinePageContent() {
               <span className="text-xs ml-2">({scope === 'di' ? 'all DI games' : 'conference games only'})</span>
             </p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
             <GenderToggle
               value={gender}
               onChange={(g) => {
@@ -287,6 +303,42 @@ function TrendlinePageContent() {
               }}
             />
             <ScopeToggle value={scope} onChange={setScope} conferenceName="Conf" />
+            {/* Cumulative/Split Toggle */}
+            <div className="inline-flex rounded-lg p-1 bg-[var(--background-tertiary)] border border-[var(--border)]">
+              <button
+                onClick={() => setViewMode('cumulative')}
+                className={`
+                  relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
+                  transition-all duration-200
+                  ${viewMode === 'cumulative'
+                    ? 'bg-[var(--accent-primary)] text-[var(--background)] shadow-lg'
+                    : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
+                  }
+                `}
+              >
+                <span className="relative z-10">Cumulative</span>
+                {viewMode === 'cumulative' && (
+                  <div className="absolute inset-0 rounded-md bg-[var(--accent-primary)] opacity-20 blur-md" />
+                )}
+              </button>
+              <button
+                onClick={() => setViewMode('split')}
+                className={`
+                  relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
+                  transition-all duration-200
+                  ${viewMode === 'split'
+                    ? 'bg-[var(--accent-primary)] text-[var(--background)] shadow-lg'
+                    : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
+                  }
+                `}
+                title="Show offensive and allowed stats as separate lines"
+              >
+                <span className="relative z-10">Split</span>
+                {viewMode === 'split' && (
+                  <div className="absolute inset-0 rounded-md bg-[var(--accent-primary)] opacity-20 blur-md" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -379,27 +431,78 @@ function TrendlinePageContent() {
         {/* Legend */}
         {(team1Id || team2Id) && (
           <div className="mt-4 pt-4 border-t border-[var(--border)] flex flex-wrap gap-4">
-            {team1Id && team1Info && (
-              <div className="flex items-center gap-2">
-                <div
-                  className="w-4 h-1 rounded"
-                  style={{ backgroundColor: team1Color }}
-                />
-                <span className="text-sm text-[var(--foreground-muted)]">
-                  {team1Info.displayName}
-                </span>
-              </div>
-            )}
-            {team2Id && team2Info && (
-              <div className="flex items-center gap-2">
-                <div
-                  className="w-4 h-1 rounded"
-                  style={{ backgroundColor: team2Color }}
-                />
-                <span className="text-sm text-[var(--foreground-muted)]">
-                  {team2Info.displayName}
-                </span>
-              </div>
+            {viewMode === 'cumulative' ? (
+              <>
+                {team1Id && team1Info && (
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="w-4 h-1 rounded"
+                      style={{ backgroundColor: team1Color }}
+                    />
+                    <span className="text-sm text-[var(--foreground-muted)]">
+                      {team1Info.displayName}
+                    </span>
+                  </div>
+                )}
+                {team2Id && team2Info && (
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="w-4 h-1 rounded"
+                      style={{ backgroundColor: team2Color }}
+                    />
+                    <span className="text-sm text-[var(--foreground-muted)]">
+                      {team2Info.displayName}
+                    </span>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                {team1Id && team1Info && (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-4 h-1 rounded"
+                        style={{ backgroundColor: team1Color }}
+                      />
+                      <span className="text-sm text-[var(--foreground-muted)]">
+                        {team1Info.abbreviation} Offensive
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-4 h-0 border-t-2 border-dashed"
+                        style={{ borderColor: team1Color }}
+                      />
+                      <span className="text-sm text-[var(--foreground-muted)]">
+                        {team1Info.abbreviation} Allowed
+                      </span>
+                    </div>
+                  </>
+                )}
+                {team2Id && team2Info && (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-4 h-1 rounded"
+                        style={{ backgroundColor: team2Color }}
+                      />
+                      <span className="text-sm text-[var(--foreground-muted)]">
+                        {team2Info.abbreviation} Offensive
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-4 h-0 border-t-2 border-dashed"
+                        style={{ borderColor: team2Color }}
+                      />
+                      <span className="text-sm text-[var(--foreground-muted)]">
+                        {team2Info.abbreviation} Allowed
+                      </span>
+                    </div>
+                  </>
+                )}
+              </>
             )}
           </div>
         )}
@@ -454,7 +557,8 @@ function TrendlinePageContent() {
                       strokeOpacity={0.5}
                     />
                     <Tooltip content={createCustomTooltip(factor.key, factor.shortLabel)} />
-                    {team1Id && (
+                    {/* Cumulative mode: single line per team */}
+                    {viewMode === 'cumulative' && team1Id && (
                       <Line
                         type="monotone"
                         dataKey="team1Value"
@@ -466,7 +570,7 @@ function TrendlinePageContent() {
                         name={team1Info?.abbreviation || 'Team 1'}
                       />
                     )}
-                    {team2Id && (
+                    {viewMode === 'cumulative' && team2Id && (
                       <Line
                         type="monotone"
                         dataKey="team2Value"
@@ -478,15 +582,77 @@ function TrendlinePageContent() {
                         name={team2Info?.abbreviation || 'Team 2'}
                       />
                     )}
+                    {/* Split mode: separate offensive and allowed lines per team */}
+                    {viewMode === 'split' && team1Id && (
+                      <>
+                        <Line
+                          type="monotone"
+                          dataKey="team1Offensive"
+                          stroke={team1Color}
+                          strokeWidth={3}
+                          dot={{ fill: team1Color, strokeWidth: 0, r: 4 }}
+                          activeDot={{ r: 6, fill: team1Color }}
+                          connectNulls={false}
+                          name={`${team1Info?.abbreviation || 'Team 1'} Off`}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="team1Allowed"
+                          stroke={team1Color}
+                          strokeWidth={3}
+                          strokeDasharray="5 5"
+                          dot={{ fill: team1Color, strokeWidth: 0, r: 4 }}
+                          activeDot={{ r: 6, fill: team1Color }}
+                          connectNulls={false}
+                          name={`${team1Info?.abbreviation || 'Team 1'} Def`}
+                        />
+                      </>
+                    )}
+                    {viewMode === 'split' && team2Id && (
+                      <>
+                        <Line
+                          type="monotone"
+                          dataKey="team2Offensive"
+                          stroke={team2Color}
+                          strokeWidth={3}
+                          dot={{ fill: team2Color, strokeWidth: 0, r: 4 }}
+                          activeDot={{ r: 6, fill: team2Color }}
+                          connectNulls={false}
+                          name={`${team2Info?.abbreviation || 'Team 2'} Off`}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="team2Allowed"
+                          stroke={team2Color}
+                          strokeWidth={3}
+                          strokeDasharray="5 5"
+                          dot={{ fill: team2Color, strokeWidth: 0, r: 4 }}
+                          activeDot={{ r: 6, fill: team2Color }}
+                          connectNulls={false}
+                          name={`${team2Info?.abbreviation || 'Team 2'} Def`}
+                        />
+                      </>
+                    )}
                   </LineChart>
                 </ResponsiveContainer>
               </div>
 
               <p className="text-xs text-[var(--foreground-muted)] mt-3">
-                {factor.key === 'efg' && 'Shooting efficiency impact (offense + defense)'}
-                {factor.key === 'tov' && 'Ball security impact (offense + defense)'}
-                {factor.key === 'orb' && 'Rebounding impact (offense + defense)'}
-                {factor.key === 'ftr' && 'Free throw generation impact (offense + defense)'}
+                {viewMode === 'cumulative' ? (
+                  <>
+                    {factor.key === 'efg' && 'Shooting efficiency impact (offense + defense combined)'}
+                    {factor.key === 'tov' && 'Ball security impact (offense + defense combined)'}
+                    {factor.key === 'orb' && 'Rebounding impact (offense + defense combined)'}
+                    {factor.key === 'ftr' && 'Free throw generation impact (offense + defense combined)'}
+                  </>
+                ) : (
+                  <>
+                    {factor.key === 'efg' && 'Shooting efficiency: solid = offensive, dashed = allowed'}
+                    {factor.key === 'tov' && 'Ball security: solid = offensive, dashed = allowed'}
+                    {factor.key === 'orb' && 'Rebounding: solid = offensive, dashed = allowed'}
+                    {factor.key === 'ftr' && 'Free throws: solid = offensive, dashed = allowed'}
+                  </>
+                )}
               </p>
             </div>
           ))}

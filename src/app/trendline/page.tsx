@@ -85,18 +85,34 @@ function FillBetweenLines({ data, higherOffensiveIsBetter, valueMode, containerR
     const svg = containerRef.current.querySelector('svg.recharts-surface');
     if (!svg) return;
 
-    // Find the chart area (clipPath rect gives us the actual plot area)
-    const chartArea = svg.querySelector('.recharts-cartesian-grid rect');
-    if (!chartArea) return;
+    // Find chart bounds from line curve paths
+    const linePaths = svg.querySelectorAll('.recharts-line-curve');
+    if (linePaths.length < 2) return;
 
-    const chartRect = chartArea.getBoundingClientRect();
-    const svgRect = svg.getBoundingClientRect();
+    // Get coordinates from line path data
+    const pathData = linePaths[0].getAttribute('d');
+    if (!pathData) return;
 
-    // Chart dimensions relative to SVG
-    const chartLeft = chartRect.left - svgRect.left;
-    const chartTop = chartRect.top - svgRect.top;
-    const chartWidth = chartRect.width;
-    const chartHeight = chartRect.height;
+    // Parse path to extract x coordinates (format: M x,y L x,y L x,y...)
+    const coords = pathData.match(/[\d.]+,[\d.]+/g);
+    if (!coords || coords.length < 2) return;
+
+    const xCoords = coords.map(c => parseFloat(c.split(',')[0]));
+    const chartLeft = Math.min(...xCoords);
+    const chartRight = Math.max(...xCoords);
+    const chartWidth = chartRight - chartLeft;
+
+    // Get chart height from the cartesian grid or use container bounds
+    const gridLines = svg.querySelectorAll('.recharts-cartesian-grid-horizontal line');
+    let chartTop = 5;
+    let chartHeight = 200;
+
+    if (gridLines.length > 0) {
+      const yCoords = Array.from(gridLines).map(l => parseFloat(l.getAttribute('y1') || '0'));
+      chartTop = Math.min(...yCoords);
+      const chartBottom = Math.max(...yCoords);
+      chartHeight = chartBottom - chartTop;
+    }
 
     const offKey = valueMode === 'points-impact' ? 'teamOffensive' : 'teamOffPct';
     const allowedKey = valueMode === 'points-impact' ? 'teamAllowed' : 'teamAllowedPct';

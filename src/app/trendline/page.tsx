@@ -51,6 +51,11 @@ interface TrendDataPoint {
   team1Allowed: number | null;
   team2Offensive: number | null;
   team2Allowed: number | null;
+  // Raw percentage values for % mode
+  team1OffPct: number | null;
+  team1AllowedPct: number | null;
+  team2OffPct: number | null;
+  team2AllowedPct: number | null;
   team1Name: string;
   team2Name: string;
   team1Data: TeamSeasonData;
@@ -88,6 +93,7 @@ function TrendlinePageContent() {
   });
 
   const [viewMode, setViewMode] = useState<ViewMode>('cumulative');
+  const [valueMode, setValueMode] = useState<ValueMode>('percentages');
 
   // Get teams list from the most recent season that has data
   const teams = useMemo(() => {
@@ -193,6 +199,11 @@ function TrendlinePageContent() {
           team1Allowed: team1Data.allowedImpact,
           team2Offensive: team2Data.offensiveImpact,
           team2Allowed: team2Data.allowedImpact,
+          // Raw percentage values for % mode
+          team1OffPct: team1Data.offensive,
+          team1AllowedPct: team1Data.allowed,
+          team2OffPct: team2Data.offensive,
+          team2AllowedPct: team2Data.allowed,
           team1Name: team1Info?.abbreviation || 'Team 1',
           team2Name: team2Info?.abbreviation || 'Team 2',
           team1Data,
@@ -243,7 +254,7 @@ function TrendlinePageContent() {
               </p>
               <div className="space-y-0.5 text-xs">
                 <div className="flex justify-between gap-4">
-                  <span className="text-[var(--foreground-muted)]">Points Impact (vs {scope === 'di' ? 'DI' : 'conf'}):</span>
+                  <span className="text-[var(--foreground-muted)]">Net Points Impact:</span>
                   <span className="stat-number font-semibold" style={{ color: teamData.pointsImpact >= 0 ? 'var(--chart-positive)' : 'var(--chart-negative)' }}>
                     {teamData.pointsImpact >= 0 ? '+' : ''}{teamData.pointsImpact.toFixed(1)}
                   </span>
@@ -304,6 +315,42 @@ function TrendlinePageContent() {
               }}
             />
             <ScopeToggle value={scope} onChange={setScope} conferenceName="Conf" />
+            {/* % / Points Impact Toggle */}
+            <div className="inline-flex rounded-lg p-1 bg-[var(--background-tertiary)] border border-[var(--border)]">
+              <button
+                onClick={() => setValueMode('percentages')}
+                className={`
+                  relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
+                  transition-all duration-200
+                  ${valueMode === 'percentages'
+                    ? 'bg-[var(--accent-primary)] text-[var(--background)] shadow-lg'
+                    : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
+                  }
+                `}
+              >
+                <span className="relative z-10">%</span>
+                {valueMode === 'percentages' && (
+                  <div className="absolute inset-0 rounded-md bg-[var(--accent-primary)] opacity-20 blur-md" />
+                )}
+              </button>
+              <button
+                onClick={() => setValueMode('points-impact')}
+                className={`
+                  relative px-4 py-1.5 rounded-md text-sm font-semibold tracking-wide
+                  transition-all duration-200
+                  ${valueMode === 'points-impact'
+                    ? 'bg-[var(--accent-primary)] text-[var(--background)] shadow-lg'
+                    : 'text-[var(--foreground-muted)] hover:text-[var(--foreground)]'
+                  }
+                `}
+                title="Points Impact"
+              >
+                <span className="relative z-10">Pts</span>
+                {valueMode === 'points-impact' && (
+                  <div className="absolute inset-0 rounded-md bg-[var(--accent-primary)] opacity-20 blur-md" />
+                )}
+              </button>
+            </div>
             {/* Cumulative/Split Toggle */}
             <div className="inline-flex rounded-lg p-1 bg-[var(--background-tertiary)] border border-[var(--border)]">
               <button
@@ -522,9 +569,11 @@ function TrendlinePageContent() {
                 <h3 className="text-lg font-semibold" style={{ color: factor.color }}>
                   {factor.shortLabel}
                 </h3>
-                <span className="text-sm text-[var(--foreground-muted)]">
-                  Points Impact
-                </span>
+                {valueMode === 'points-impact' && (
+                  <span className="text-sm text-[var(--foreground-muted)]">
+                    Points Impact
+                  </span>
+                )}
               </div>
 
               <div className="h-64">
@@ -548,21 +597,26 @@ function TrendlinePageContent() {
                       tick={{ fill: 'var(--foreground-muted)', fontSize: 12 }}
                       axisLine={{ stroke: 'var(--border)' }}
                       tickLine={{ stroke: 'var(--border)' }}
-                      tickFormatter={(value) => (value >= 0 ? '+' : '') + value.toFixed(1)}
+                      tickFormatter={(value) => valueMode === 'points-impact'
+                        ? (value >= 0 ? '+' : '') + value.toFixed(1)
+                        : value.toFixed(1) + '%'
+                      }
                       domain={['auto', 'auto']}
                     />
-                    <ReferenceLine
-                      y={0}
-                      stroke="var(--foreground-muted)"
-                      strokeDasharray="3 3"
-                      strokeOpacity={0.5}
-                    />
+                    {valueMode === 'points-impact' && (
+                      <ReferenceLine
+                        y={0}
+                        stroke="var(--foreground-muted)"
+                        strokeDasharray="3 3"
+                        strokeOpacity={0.5}
+                      />
+                    )}
                     <Tooltip content={createCustomTooltip(factor.key, factor.shortLabel)} />
                     {/* Cumulative mode: single line per team */}
                     {viewMode === 'cumulative' && team1Id && (
                       <Line
                         type="monotone"
-                        dataKey="team1Value"
+                        dataKey={valueMode === 'points-impact' ? 'team1Value' : 'team1OffPct'}
                         stroke={team1Color}
                         strokeWidth={3}
                         dot={{ fill: team1Color, strokeWidth: 0, r: 4 }}
@@ -574,7 +628,7 @@ function TrendlinePageContent() {
                     {viewMode === 'cumulative' && team2Id && (
                       <Line
                         type="monotone"
-                        dataKey="team2Value"
+                        dataKey={valueMode === 'points-impact' ? 'team2Value' : 'team2OffPct'}
                         stroke={team2Color}
                         strokeWidth={3}
                         dot={{ fill: team2Color, strokeWidth: 0, r: 4 }}
@@ -588,7 +642,7 @@ function TrendlinePageContent() {
                       <>
                         <Line
                           type="monotone"
-                          dataKey="team1Offensive"
+                          dataKey={valueMode === 'points-impact' ? 'team1Offensive' : 'team1OffPct'}
                           stroke={team1Color}
                           strokeWidth={3}
                           dot={{ fill: team1Color, strokeWidth: 0, r: 4 }}
@@ -598,7 +652,7 @@ function TrendlinePageContent() {
                         />
                         <Line
                           type="monotone"
-                          dataKey="team1Allowed"
+                          dataKey={valueMode === 'points-impact' ? 'team1Allowed' : 'team1AllowedPct'}
                           stroke={team1Color}
                           strokeWidth={3}
                           strokeDasharray="5 5"
@@ -613,7 +667,7 @@ function TrendlinePageContent() {
                       <>
                         <Line
                           type="monotone"
-                          dataKey="team2Offensive"
+                          dataKey={valueMode === 'points-impact' ? 'team2Offensive' : 'team2OffPct'}
                           stroke={team2Color}
                           strokeWidth={3}
                           dot={{ fill: team2Color, strokeWidth: 0, r: 4 }}
@@ -623,7 +677,7 @@ function TrendlinePageContent() {
                         />
                         <Line
                           type="monotone"
-                          dataKey="team2Allowed"
+                          dataKey={valueMode === 'points-impact' ? 'team2Allowed' : 'team2AllowedPct'}
                           stroke={team2Color}
                           strokeWidth={3}
                           strokeDasharray="5 5"
@@ -640,19 +694,37 @@ function TrendlinePageContent() {
 
               <p className="text-xs text-[var(--foreground-muted)] mt-3">
                 {viewMode === 'cumulative' ? (
-                  <>
-                    {factor.key === 'efg' && 'Shooting efficiency impact (offense + defense combined)'}
-                    {factor.key === 'tov' && 'Ball security impact (offense + defense combined)'}
-                    {factor.key === 'orb' && 'Rebounding impact (offense + defense combined)'}
-                    {factor.key === 'ftr' && 'Free throw generation impact (offense + defense combined)'}
-                  </>
+                  valueMode === 'points-impact' ? (
+                    <>
+                      {factor.key === 'efg' && 'Shooting efficiency impact (offense + defense combined)'}
+                      {factor.key === 'tov' && 'Ball security impact (offense + defense combined)'}
+                      {factor.key === 'orb' && 'Rebounding impact (offense + defense combined)'}
+                      {factor.key === 'ftr' && 'Free throw generation impact (offense + defense combined)'}
+                    </>
+                  ) : (
+                    <>
+                      {factor.key === 'efg' && 'Offensive shooting efficiency (eFG%)'}
+                      {factor.key === 'tov' && 'Offensive turnover rate (TOV%)'}
+                      {factor.key === 'orb' && 'Offensive rebounding rate (ORB%)'}
+                      {factor.key === 'ftr' && 'Offensive free throw rate (FTR)'}
+                    </>
+                  )
                 ) : (
-                  <>
-                    {factor.key === 'efg' && 'Shooting efficiency: solid = offensive, dashed = allowed'}
-                    {factor.key === 'tov' && 'Ball security: solid = offensive, dashed = allowed'}
-                    {factor.key === 'orb' && 'Rebounding: solid = offensive, dashed = allowed'}
-                    {factor.key === 'ftr' && 'Free throws: solid = offensive, dashed = allowed'}
-                  </>
+                  valueMode === 'points-impact' ? (
+                    <>
+                      {factor.key === 'efg' && 'Solid: Offensive Shooting Efficiency | Dashed: Shooting Efficiency Allowed'}
+                      {factor.key === 'tov' && 'Solid: Offensive Turnover Rate | Dashed: Turnover Rate Forced'}
+                      {factor.key === 'orb' && 'Solid: Offensive Rebounding | Dashed: Offensive Rebounds Allowed'}
+                      {factor.key === 'ftr' && 'Solid: Offensive Free Throw Rate | Dashed: Free Throw Rate Allowed'}
+                    </>
+                  ) : (
+                    <>
+                      {factor.key === 'efg' && 'Solid: Offensive Shooting Efficiency | Dashed: Shooting Efficiency Allowed'}
+                      {factor.key === 'tov' && 'Solid: Offensive Turnover Rate | Dashed: Turnover Rate Forced'}
+                      {factor.key === 'orb' && 'Solid: Offensive Rebounding | Dashed: Offensive Rebounds Allowed'}
+                      {factor.key === 'ftr' && 'Solid: Offensive Free Throw Rate | Dashed: Free Throw Rate Allowed'}
+                    </>
+                  )
                 )}
               </p>
             </div>

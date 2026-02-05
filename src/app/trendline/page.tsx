@@ -3,7 +3,7 @@
 import { useState, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
-  LineChart,
+  ComposedChart,
   Line,
   XAxis,
   YAxis,
@@ -11,7 +11,6 @@ import {
   Tooltip,
   ResponsiveContainer,
   ReferenceLine,
-  Customized,
 } from 'recharts';
 import { GenderToggle, ScopeToggle, type StatsScope } from '@/components';
 import { getTeams, getStandings, getTeamConference, getConferenceStandings, getTeamConferenceGames, calculateStatsFromGames, getConferenceOnlyAverages } from '@/lib/data';
@@ -482,7 +481,7 @@ function TrendlinePageContent() {
 
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart
+                  <ComposedChart
                     data={factor.data}
                     margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
                   >
@@ -531,101 +530,11 @@ function TrendlinePageContent() {
                       />
                     )}
 
-                    {/* Split mode: area fills and lines */}
+                    {/* Split mode: lines only (fill via CSS overlay) */}
                     {effectiveViewMode === 'split' && (
                       <>
-                        {/* Custom fill between lines - compute positions from chart dimensions */}
-                        <Customized
-                          component={(props: { width?: number; height?: number; offset?: { top?: number; right?: number; bottom?: number; left?: number } }) => {
-                            const { width, height, offset } = props;
-                            if (!width || !height || !offset) return null;
-
-                            const chartLeft = offset.left ?? 0;
-                            const chartRight = width - (offset.right ?? 0);
-                            const chartTop = offset.top ?? 0;
-                            const chartBottom = height - (offset.bottom ?? 0);
-                            const chartWidth = chartRight - chartLeft;
-                            const chartHeight = chartBottom - chartTop;
-
-                            if (chartWidth <= 0 || chartHeight <= 0) return null;
-
-                            const offKey = valueMode === 'points-impact' ? 'teamOffensive' : 'teamOffPct';
-                            const allowedKey = valueMode === 'points-impact' ? 'teamAllowed' : 'teamAllowedPct';
-
-                            // Filter to valid data points
-                            const validData = factor.data.filter(d =>
-                              d[offKey as keyof TrendDataPoint] !== null &&
-                              d[allowedKey as keyof TrendDataPoint] !== null
-                            );
-
-                            if (validData.length < 2) return null;
-
-                            // Calculate Y domain from all values
-                            const allYValues = validData.flatMap(d => [
-                              d[offKey as keyof TrendDataPoint] as number,
-                              d[allowedKey as keyof TrendDataPoint] as number
-                            ]);
-                            const yMin = Math.min(...allYValues);
-                            const yMax = Math.max(...allYValues);
-                            const yRange = yMax - yMin || 1;
-
-                            // Add padding similar to Recharts auto domain
-                            const yPadding = yRange * 0.1;
-                            const yMinPadded = yMin - yPadding;
-                            const yMaxPadded = yMax + yPadding;
-                            const yRangePadded = yMaxPadded - yMinPadded;
-
-                            // Calculate pixel positions for each point
-                            const points = validData.map((d, i) => {
-                              const x = chartLeft + (i / (validData.length - 1)) * chartWidth;
-                              const offVal = d[offKey as keyof TrendDataPoint] as number;
-                              const allowedVal = d[allowedKey as keyof TrendDataPoint] as number;
-                              const yOff = chartTop + (1 - (offVal - yMinPadded) / yRangePadded) * chartHeight;
-                              const yAllowed = chartTop + (1 - (allowedVal - yMinPadded) / yRangePadded) * chartHeight;
-                              return { x, yOff, yAllowed, offVal, allowedVal };
-                            });
-
-                            // Build path segments
-                            const goodPaths: string[] = [];
-                            const badPaths: string[] = [];
-
-                            for (let i = 0; i < points.length - 1; i++) {
-                              const curr = points[i];
-                              const next = points[i + 1];
-
-                              const path = `M${curr.x},${curr.yOff} L${next.x},${next.yOff} L${next.x},${next.yAllowed} L${curr.x},${curr.yAllowed} Z`;
-
-                              const currIsGood = factor.higherOffensiveIsBetter
-                                ? curr.offVal >= curr.allowedVal
-                                : curr.offVal <= curr.allowedVal;
-                              const nextIsGood = factor.higherOffensiveIsBetter
-                                ? next.offVal >= next.allowedVal
-                                : next.offVal <= next.allowedVal;
-
-                              if (currIsGood && nextIsGood) {
-                                goodPaths.push(path);
-                              } else if (!currIsGood && !nextIsGood) {
-                                badPaths.push(path);
-                              } else {
-                                if (currIsGood) goodPaths.push(path);
-                                else badPaths.push(path);
-                              }
-                            }
-
-                            return (
-                              <g>
-                                {/* Test rectangle - should be visible if Customized works */}
-                                <rect x={chartLeft} y={chartTop} width={50} height={20} fill="red" />
-                                {goodPaths.map((d, i) => (
-                                  <path key={`good-${i}`} d={d} fill="rgba(34, 197, 94, 0.3)" stroke="none" />
-                                ))}
-                                {badPaths.map((d, i) => (
-                                  <path key={`bad-${i}`} d={d} fill="rgba(239, 68, 68, 0.3)" stroke="none" />
-                                ))}
-                              </g>
-                            );
-                          }}
-                        />
+                        {/* Raw SVG test */}
+                        <rect x={50} y={20} width={80} height={25} fill="red" />
 
                         {/* Offensive line (solid) */}
                         <Line
@@ -653,7 +562,7 @@ function TrendlinePageContent() {
                         />
                       </>
                     )}
-                  </LineChart>
+                  </ComposedChart>
                 </ResponsiveContainer>
               </div>
 

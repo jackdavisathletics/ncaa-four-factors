@@ -1716,18 +1716,6 @@
     "conferenceId": "10"
   },
   {
-    "id": "2097",
-    "name": "Fighting Camels",
-    "abbreviation": "CAM",
-    "displayName": "Campbell Fighting Camels",
-    "shortDisplayName": "Campbell",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2097.png",
-    "color": "#000000",
-    "alternateColor": "#333333",
-    "conference": "Coastal Athletic Association",
-    "conferenceId": "10"
-  },
-  {
     "id": "2182",
     "name": "Dragons",
     "abbreviation": "DREX",
@@ -1748,6 +1736,30 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2405.png",
     "color": "#051844",
     "alternateColor": "#333333",
+    "conference": "Coastal Athletic Association",
+    "conferenceId": "10"
+  },
+  {
+    "id": "2097",
+    "name": "Fighting Camels",
+    "abbreviation": "CAM",
+    "displayName": "Campbell Fighting Camels",
+    "shortDisplayName": "Campbell",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2097.png",
+    "color": "#000000",
+    "alternateColor": "#333333",
+    "conference": "Coastal Athletic Association",
+    "conferenceId": "10"
+  },
+  {
+    "id": "2729",
+    "name": "Tribe",
+    "abbreviation": "W&M",
+    "displayName": "William & Mary Tribe",
+    "shortDisplayName": "William & Mary",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2729.png",
+    "color": "#115740",
+    "alternateColor": "#f0b323",
     "conference": "Coastal Athletic Association",
     "conferenceId": "10"
   },
@@ -1776,14 +1788,14 @@
     "conferenceId": "10"
   },
   {
-    "id": "2729",
-    "name": "Tribe",
-    "abbreviation": "W&M",
-    "displayName": "William & Mary Tribe",
-    "shortDisplayName": "William & Mary",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2729.png",
-    "color": "#115740",
-    "alternateColor": "#f0b323",
+    "id": "2448",
+    "name": "Aggies",
+    "abbreviation": "NCAT",
+    "displayName": "North Carolina A&T Aggies",
+    "shortDisplayName": "NC A&T",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2448.png",
+    "color": "#0505aa",
+    "alternateColor": "#004684",
     "conference": "Coastal Athletic Association",
     "conferenceId": "10"
   },
@@ -1796,18 +1808,6 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2261.png",
     "color": "#0067AC",
     "alternateColor": "#333333",
-    "conference": "Coastal Athletic Association",
-    "conferenceId": "10"
-  },
-  {
-    "id": "2448",
-    "name": "Aggies",
-    "abbreviation": "NCAT",
-    "displayName": "North Carolina A&T Aggies",
-    "shortDisplayName": "NC A&T",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2448.png",
-    "color": "#0505aa",
-    "alternateColor": "#004684",
     "conference": "Coastal Athletic Association",
     "conferenceId": "10"
   },
@@ -2172,18 +2172,6 @@
     "conferenceId": "12"
   },
   {
-    "id": "219",
-    "name": "Quakers",
-    "abbreviation": "PENN",
-    "displayName": "Pennsylvania Quakers",
-    "shortDisplayName": "Penn",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/219.png",
-    "color": "#082A74",
-    "alternateColor": "#a6163d",
-    "conference": "Ivy League",
-    "conferenceId": "12"
-  },
-  {
     "id": "172",
     "name": "Big Red",
     "abbreviation": "COR",
@@ -2192,6 +2180,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/172.png",
     "color": "#d60027",
     "alternateColor": "#101010",
+    "conference": "Ivy League",
+    "conferenceId": "12"
+  },
+  {
+    "id": "219",
+    "name": "Quakers",
+    "abbreviation": "PENN",
+    "displayName": "Pennsylvania Quakers",
+    "shortDisplayName": "Penn",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/219.png",
+    "color": "#082A74",
+    "alternateColor": "#a6163d",
     "conference": "Ivy League",
     "conferenceId": "12"
   },

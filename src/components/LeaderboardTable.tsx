@@ -254,7 +254,7 @@ export function LeaderboardTable({ standings, gender, viewMode, selectedConferen
                         alt={team.teamName}
                         width={20}
                         height={20}
-                        className="object-contain"
+                        className="object-contain" referrerPolicy="no-referrer"
                       />
                     ) : (
                       <span

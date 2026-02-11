@@ -77,6 +77,7 @@ export function TeamPageClient({
                 width={64}
                 height={64}
                 className="object-contain w-12 h-12 sm:w-16 sm:h-16"
+                referrerPolicy="no-referrer"
               />
             ) : (
               <span

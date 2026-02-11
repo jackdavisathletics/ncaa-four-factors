@@ -53,6 +53,7 @@ function TeamHeader({ team, won, gender, season, compact = false }: { team: Game
             width={56}
             height={56}
             className={`object-contain ${compact ? 'w-8 h-8 sm:w-14 sm:h-14' : 'w-10 h-10 sm:w-14 sm:h-14'}`}
+            referrerPolicy="no-referrer"
           />
         ) : (
           <span

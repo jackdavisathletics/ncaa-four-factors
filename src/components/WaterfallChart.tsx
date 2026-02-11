@@ -219,7 +219,7 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
                 alt={data.leftTeam.teamName}
                 width={16}
                 height={16}
-                className="object-contain"
+                className="object-contain" referrerPolicy="no-referrer"
               />
             )}
           </div>
@@ -241,7 +241,7 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
                 alt={data.rightTeam.teamName}
                 width={16}
                 height={16}
-                className="object-contain"
+                className="object-contain" referrerPolicy="no-referrer"
               />
             )}
           </div>
@@ -329,7 +329,7 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
                         alt={bar.advantageTeamAbbr}
                         width={18}
                         height={18}
-                        className="object-contain"
+                        className="object-contain" referrerPolicy="no-referrer"
                       />
                     </div>
                   )}
@@ -399,7 +399,7 @@ export function WaterfallChart({ homeTeam, awayTeam }: WaterfallChartProps) {
                 alt={data.edgeTeam.teamName}
                 width={28}
                 height={28}
-                className="object-contain"
+                className="object-contain" referrerPolicy="no-referrer"
               />
             )}
           </div>

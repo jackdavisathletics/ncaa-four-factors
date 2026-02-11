@@ -53,7 +53,7 @@ export function GameCard({ game, gender, season = DEFAULT_SEASON, showFactors = 
               alt={game.awayTeam.teamName}
               width={28}
               height={28}
-              className="object-contain"
+              className="object-contain" referrerPolicy="no-referrer"
             />
           ) : (
             <span
@@ -87,7 +87,7 @@ export function GameCard({ game, gender, season = DEFAULT_SEASON, showFactors = 
               alt={game.homeTeam.teamName}
               width={28}
               height={28}
-              className="object-contain"
+              className="object-contain" referrerPolicy="no-referrer"
             />
           ) : (
             <span
@@ -129,7 +129,7 @@ export function GameCard({ game, gender, season = DEFAULT_SEASON, showFactors = 
                   alt={game.awayTeam.teamAbbreviation}
                   width={18}
                   height={18}
-                  className="object-contain"
+                  className="object-contain" referrerPolicy="no-referrer"
                 />
               ) : (
                 <span className="text-[10px] font-bold" style={{ color: game.awayTeam.teamColor }}>
@@ -172,7 +172,7 @@ export function GameCard({ game, gender, season = DEFAULT_SEASON, showFactors = 
                   alt={game.homeTeam.teamAbbreviation}
                   width={18}
                   height={18}
-                  className="object-contain"
+                  className="object-contain" referrerPolicy="no-referrer"
                 />
               ) : (
                 <span className="text-[10px] font-bold" style={{ color: game.homeTeam.teamColor }}>

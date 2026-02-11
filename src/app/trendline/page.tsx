@@ -565,7 +565,7 @@ function TrendlinePageContent() {
           {teamInfo && (
             <div className="mt-2 flex items-center gap-2">
               {teamInfo.logo && (
-                <img src={teamInfo.logo} alt={teamInfo.displayName} className="w-6 h-6 object-contain" />
+                <img src={teamInfo.logo} alt={teamInfo.displayName} className="w-6 h-6 object-contain" referrerPolicy="no-referrer" />
               )}
               <span className="text-sm" style={{ color: teamColor }}>
                 {teamInfo.displayName}

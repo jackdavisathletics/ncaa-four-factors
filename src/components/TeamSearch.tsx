@@ -143,7 +143,7 @@ export function TeamSearch({ gender, season = DEFAULT_SEASON, placeholder = 'Sea
                     alt={team.name}
                     width={24}
                     height={24}
-                    className="object-contain"
+                    className="object-contain" referrerPolicy="no-referrer"
                   />
                 ) : (
                   <span

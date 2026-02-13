@@ -444,18 +444,6 @@
     "conferenceId": "1"
   },
   {
-    "id": "2803",
-    "name": "Bulldogs",
-    "abbreviation": "BRY",
-    "displayName": "Bryant Bulldogs",
-    "shortDisplayName": "Bryant",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2803.png",
-    "color": "#000000",
-    "alternateColor": "#9f8343",
-    "conference": "America East Conference",
-    "conferenceId": "1"
-  },
-  {
     "id": "399",
     "name": "Great Danes",
     "abbreviation": "UALB",
@@ -464,6 +452,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/399.png",
     "color": "#3D2777",
     "alternateColor": "#ffffff",
+    "conference": "America East Conference",
+    "conferenceId": "1"
+  },
+  {
+    "id": "2803",
+    "name": "Bulldogs",
+    "abbreviation": "BRY",
+    "displayName": "Bryant Bulldogs",
+    "shortDisplayName": "Bryant",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2803.png",
+    "color": "#000000",
+    "alternateColor": "#9f8343",
     "conference": "America East Conference",
     "conferenceId": "1"
   },
@@ -540,18 +540,6 @@
     "conferenceId": "62"
   },
   {
-    "id": "235",
-    "name": "Tigers",
-    "abbreviation": "MEM",
-    "displayName": "Memphis Tigers",
-    "shortDisplayName": "Memphis",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/235.png",
-    "color": "#004991",
-    "alternateColor": "#8e908f",
-    "conference": "American Conference",
-    "conferenceId": "62"
-  },
-  {
     "id": "5",
     "name": "Blazers",
     "abbreviation": "UAB",
@@ -572,6 +560,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2724.png",
     "color": "#ffcd00",
     "alternateColor": "#27251f",
+    "conference": "American Conference",
+    "conferenceId": "62"
+  },
+  {
+    "id": "235",
+    "name": "Tigers",
+    "abbreviation": "MEM",
+    "displayName": "Memphis Tigers",
+    "shortDisplayName": "Memphis",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/235.png",
+    "color": "#004991",
+    "alternateColor": "#8e908f",
     "conference": "American Conference",
     "conferenceId": "62"
   },
@@ -600,18 +600,6 @@
     "conferenceId": "62"
   },
   {
-    "id": "242",
-    "name": "Owls",
-    "abbreviation": "RICE",
-    "displayName": "Rice Owls",
-    "shortDisplayName": "Rice",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/242.png",
-    "color": "#00205b",
-    "alternateColor": "#c1c6c8",
-    "conference": "American Conference",
-    "conferenceId": "62"
-  },
-  {
     "id": "249",
     "name": "Mean Green",
     "abbreviation": "UNT",
@@ -620,6 +608,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/249.png",
     "color": "#068f33",
     "alternateColor": "#ffffff",
+    "conference": "American Conference",
+    "conferenceId": "62"
+  },
+  {
+    "id": "242",
+    "name": "Owls",
+    "abbreviation": "RICE",
+    "displayName": "Rice Owls",
+    "shortDisplayName": "Rice",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/242.png",
+    "color": "#00205b",
+    "alternateColor": "#c1c6c8",
     "conference": "American Conference",
     "conferenceId": "62"
   },
@@ -1164,30 +1164,6 @@
     "conferenceId": "5"
   },
   {
-    "id": "70",
-    "name": "Vandals",
-    "abbreviation": "IDHO",
-    "displayName": "Idaho Vandals",
-    "shortDisplayName": "Idaho",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/70.png",
-    "color": "#000000",
-    "alternateColor": "#8c6e4a",
-    "conference": "Big Sky Conference",
-    "conferenceId": "5"
-  },
-  {
-    "id": "16",
-    "name": "Hornets",
-    "abbreviation": "SAC",
-    "displayName": "Sacramento State Hornets",
-    "shortDisplayName": "Sacramento St",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/16.png",
-    "color": "#00573C",
-    "alternateColor": "#cdb97d",
-    "conference": "Big Sky Conference",
-    "conferenceId": "5"
-  },
-  {
     "id": "331",
     "name": "Eagles",
     "abbreviation": "EWU",
@@ -1208,6 +1184,30 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2458.png",
     "color": "#13558D",
     "alternateColor": "#ffc533",
+    "conference": "Big Sky Conference",
+    "conferenceId": "5"
+  },
+  {
+    "id": "70",
+    "name": "Vandals",
+    "abbreviation": "IDHO",
+    "displayName": "Idaho Vandals",
+    "shortDisplayName": "Idaho",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/70.png",
+    "color": "#000000",
+    "alternateColor": "#8c6e4a",
+    "conference": "Big Sky Conference",
+    "conferenceId": "5"
+  },
+  {
+    "id": "16",
+    "name": "Hornets",
+    "abbreviation": "SAC",
+    "displayName": "Sacramento State Hornets",
+    "shortDisplayName": "Sacramento St",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/16.png",
+    "color": "#00573C",
+    "alternateColor": "#cdb97d",
     "conference": "Big Sky Conference",
     "conferenceId": "5"
   },
@@ -1272,18 +1272,6 @@
     "conferenceId": "6"
   },
   {
-    "id": "2506",
-    "name": "Blue Hose",
-    "abbreviation": "PRES",
-    "displayName": "Presbyterian Blue Hose",
-    "shortDisplayName": "Presbyterian",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2506.png",
-    "color": "#194896",
-    "alternateColor": "#990134",
-    "conference": "Big South Conference",
-    "conferenceId": "6"
-  },
-  {
     "id": "2427",
     "name": "Bulldogs",
     "abbreviation": "UNCA",
@@ -1292,6 +1280,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2427.png",
     "color": "#003da5",
     "alternateColor": "#ffffff",
+    "conference": "Big South Conference",
+    "conferenceId": "6"
+  },
+  {
+    "id": "2506",
+    "name": "Blue Hose",
+    "abbreviation": "PRES",
+    "displayName": "Presbyterian Blue Hose",
+    "shortDisplayName": "Presbyterian",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2506.png",
+    "color": "#194896",
+    "alternateColor": "#990134",
     "conference": "Big South Conference",
     "conferenceId": "6"
   },
@@ -1308,18 +1308,6 @@
     "conferenceId": "6"
   },
   {
-    "id": "2908",
-    "name": "Spartans",
-    "abbreviation": "UPST",
-    "displayName": "South Carolina Upstate Spartans",
-    "shortDisplayName": "SC Upstate",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2908.png",
-    "color": "#008545",
-    "alternateColor": "#000000",
-    "conference": "Big South Conference",
-    "conferenceId": "6"
-  },
-  {
     "id": "2127",
     "name": "Buccaneers",
     "abbreviation": "CHSO",
@@ -1328,6 +1316,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2127.png",
     "color": "#2e3192",
     "alternateColor": "#ded090",
+    "conference": "Big South Conference",
+    "conferenceId": "6"
+  },
+  {
+    "id": "2908",
+    "name": "Spartans",
+    "abbreviation": "UPST",
+    "displayName": "South Carolina Upstate Spartans",
+    "shortDisplayName": "SC Upstate",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2908.png",
+    "color": "#008545",
+    "alternateColor": "#000000",
     "conference": "Big South Conference",
     "conferenceId": "6"
   },
@@ -1572,18 +1572,6 @@
     "conferenceId": "9"
   },
   {
-    "id": "300",
-    "name": "Anteaters",
-    "abbreviation": "UCI",
-    "displayName": "UC Irvine Anteaters",
-    "shortDisplayName": "UC Irvine",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/300.png",
-    "color": "#002B5C",
-    "alternateColor": "#fec52e",
-    "conference": "Big West Conference",
-    "conferenceId": "9"
-  },
-  {
     "id": "2540",
     "name": "Gauchos",
     "abbreviation": "UCSB",
@@ -1596,14 +1584,14 @@
     "conferenceId": "9"
   },
   {
-    "id": "302",
-    "name": "Aggies",
-    "abbreviation": "UCD",
-    "displayName": "UC Davis Aggies",
-    "shortDisplayName": "UC Davis",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/302.png",
-    "color": "#002855",
-    "alternateColor": "#c3c4c6",
+    "id": "300",
+    "name": "Anteaters",
+    "abbreviation": "UCI",
+    "displayName": "UC Irvine Anteaters",
+    "shortDisplayName": "UC Irvine",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/300.png",
+    "color": "#002B5C",
+    "alternateColor": "#fec52e",
     "conference": "Big West Conference",
     "conferenceId": "9"
   },
@@ -1616,6 +1604,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2463.png",
     "color": "#b50000",
     "alternateColor": "#333333",
+    "conference": "Big West Conference",
+    "conferenceId": "9"
+  },
+  {
+    "id": "302",
+    "name": "Aggies",
+    "abbreviation": "UCD",
+    "displayName": "UC Davis Aggies",
+    "shortDisplayName": "UC Davis",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/302.png",
+    "color": "#002855",
+    "alternateColor": "#c3c4c6",
     "conference": "Big West Conference",
     "conferenceId": "9"
   },
@@ -1728,30 +1728,6 @@
     "conferenceId": "10"
   },
   {
-    "id": "2619",
-    "name": "Seawolves",
-    "abbreviation": "STBK",
-    "displayName": "Stony Brook Seawolves",
-    "shortDisplayName": "Stony Brook",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2619.png",
-    "color": "#990000",
-    "alternateColor": "#333333",
-    "conference": "Coastal Athletic Association",
-    "conferenceId": "10"
-  },
-  {
-    "id": "2182",
-    "name": "Dragons",
-    "abbreviation": "DREX",
-    "displayName": "Drexel Dragons",
-    "shortDisplayName": "Drexel",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2182.png",
-    "color": "#020260",
-    "alternateColor": "#ffd65a",
-    "conference": "Coastal Athletic Association",
-    "conferenceId": "10"
-  },
-  {
     "id": "2405",
     "name": "Hawks",
     "abbreviation": "MONM",
@@ -1772,6 +1748,30 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2729.png",
     "color": "#115740",
     "alternateColor": "#f0b323",
+    "conference": "Coastal Athletic Association",
+    "conferenceId": "10"
+  },
+  {
+    "id": "2619",
+    "name": "Seawolves",
+    "abbreviation": "STBK",
+    "displayName": "Stony Brook Seawolves",
+    "shortDisplayName": "Stony Brook",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2619.png",
+    "color": "#990000",
+    "alternateColor": "#333333",
+    "conference": "Coastal Athletic Association",
+    "conferenceId": "10"
+  },
+  {
+    "id": "2182",
+    "name": "Dragons",
+    "abbreviation": "DREX",
+    "displayName": "Drexel Dragons",
+    "shortDisplayName": "Drexel",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2182.png",
+    "color": "#020260",
+    "alternateColor": "#ffd65a",
     "conference": "Coastal Athletic Association",
     "conferenceId": "10"
   },
@@ -1884,6 +1884,18 @@
     "conferenceId": "11"
   },
   {
+    "id": "2348",
+    "name": "Bulldogs",
+    "abbreviation": "LT",
+    "displayName": "Louisiana Tech Bulldogs",
+    "shortDisplayName": "Louisiana Tech",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2348.png",
+    "color": "#003087",
+    "alternateColor": "#cb333b",
+    "conference": "Conference USA",
+    "conferenceId": "11"
+  },
+  {
     "id": "2623",
     "name": "Bears",
     "abbreviation": "MOST",
@@ -1908,18 +1920,6 @@
     "conferenceId": "11"
   },
   {
-    "id": "2348",
-    "name": "Bulldogs",
-    "abbreviation": "LT",
-    "displayName": "Louisiana Tech Bulldogs",
-    "shortDisplayName": "Louisiana Tech",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2348.png",
-    "color": "#003087",
-    "alternateColor": "#cb333b",
-    "conference": "Conference USA",
-    "conferenceId": "11"
-  },
-  {
     "id": "98",
     "name": "Hilltoppers",
     "abbreviation": "WKU",
@@ -1927,6 +1927,18 @@
     "shortDisplayName": "Western KY",
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/98.png",
     "color": "#e13a3e",
+    "alternateColor": "#ffffff",
+    "conference": "Conference USA",
+    "conferenceId": "11"
+  },
+  {
+    "id": "2393",
+    "name": "Blue Raiders",
+    "abbreviation": "MTSU",
+    "displayName": "Middle Tennessee Blue Raiders",
+    "shortDisplayName": "MTSU",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2393.png",
+    "color": "#036eb7",
     "alternateColor": "#ffffff",
     "conference": "Conference USA",
     "conferenceId": "11"
@@ -1944,18 +1956,6 @@
     "conferenceId": "11"
   },
   {
-    "id": "2393",
-    "name": "Blue Raiders",
-    "abbreviation": "MTSU",
-    "displayName": "Middle Tennessee Blue Raiders",
-    "shortDisplayName": "MTSU",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2393.png",
-    "color": "#036eb7",
-    "alternateColor": "#ffffff",
-    "conference": "Conference USA",
-    "conferenceId": "11"
-  },
-  {
     "id": "2229",
     "name": "Panthers",
     "abbreviation": "FIU",
@@ -1968,18 +1968,6 @@
     "conferenceId": "11"
   },
   {
-    "id": "166",
-    "name": "Aggies",
-    "abbreviation": "NMSU",
-    "displayName": "New Mexico State Aggies",
-    "shortDisplayName": "New Mexico St",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/166.png",
-    "color": "#7e141b",
-    "alternateColor": "#231f20",
-    "conference": "Conference USA",
-    "conferenceId": "11"
-  },
-  {
     "id": "48",
     "name": "Blue Hens",
     "abbreviation": "DEL",
@@ -1988,6 +1976,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/48.png",
     "color": "#00539f",
     "alternateColor": "#ffd200",
+    "conference": "Conference USA",
+    "conferenceId": "11"
+  },
+  {
+    "id": "166",
+    "name": "Aggies",
+    "abbreviation": "NMSU",
+    "displayName": "New Mexico State Aggies",
+    "shortDisplayName": "New Mexico St",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/166.png",
+    "color": "#7e141b",
+    "alternateColor": "#231f20",
     "conference": "Conference USA",
     "conferenceId": "11"
   },
@@ -2028,18 +2028,6 @@
     "conferenceId": "45"
   },
   {
-    "id": "2870",
-    "name": "Mastodons",
-    "abbreviation": "PFW",
-    "displayName": "Purdue Fort Wayne Mastodons",
-    "shortDisplayName": "Purdue FW",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2870.png",
-    "color": "#cfb991",
-    "alternateColor": "#000000",
-    "conference": "Horizon League",
-    "conferenceId": "45"
-  },
-  {
     "id": "2523",
     "name": "Colonials",
     "abbreviation": "RMU",
@@ -2048,6 +2036,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2523.png",
     "color": "#00214D",
     "alternateColor": "#a21d2b",
+    "conference": "Horizon League",
+    "conferenceId": "45"
+  },
+  {
+    "id": "2870",
+    "name": "Mastodons",
+    "abbreviation": "PFW",
+    "displayName": "Purdue Fort Wayne Mastodons",
+    "shortDisplayName": "Purdue FW",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2870.png",
+    "color": "#cfb991",
+    "alternateColor": "#000000",
     "conference": "Horizon League",
     "conferenceId": "45"
   },
@@ -2076,6 +2076,18 @@
     "conferenceId": "45"
   },
   {
+    "id": "2754",
+    "name": "Penguins",
+    "abbreviation": "YSU",
+    "displayName": "Youngstown State Penguins",
+    "shortDisplayName": "Youngstown St",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2754.png",
+    "color": "#E51935",
+    "alternateColor": "#690717",
+    "conference": "Horizon League",
+    "conferenceId": "45"
+  },
+  {
     "id": "325",
     "name": "Vikings",
     "abbreviation": "CLE",
@@ -2096,18 +2108,6 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/270.png",
     "color": "#000000",
     "alternateColor": "#ffc20e",
-    "conference": "Horizon League",
-    "conferenceId": "45"
-  },
-  {
-    "id": "2754",
-    "name": "Penguins",
-    "abbreviation": "YSU",
-    "displayName": "Youngstown State Penguins",
-    "shortDisplayName": "Youngstown St",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2754.png",
-    "color": "#E51935",
-    "alternateColor": "#690717",
     "conference": "Horizon League",
     "conferenceId": "45"
   },
@@ -2256,18 +2256,6 @@
     "conferenceId": "13"
   },
   {
-    "id": "2368",
-    "name": "Red Foxes",
-    "abbreviation": "MRST",
-    "displayName": "Marist Red Foxes",
-    "shortDisplayName": "Marist",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2368.png",
-    "color": "#e53730",
-    "alternateColor": "#f0f0f0",
-    "conference": "Metro Atlantic Athletic Conference",
-    "conferenceId": "13"
-  },
-  {
     "id": "2514",
     "name": "Bobcats",
     "abbreviation": "QUIN",
@@ -2276,6 +2264,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2514.png",
     "color": "#041B43",
     "alternateColor": "#333333",
+    "conference": "Metro Atlantic Athletic Conference",
+    "conferenceId": "13"
+  },
+  {
+    "id": "2368",
+    "name": "Red Foxes",
+    "abbreviation": "MRST",
+    "displayName": "Marist Red Foxes",
+    "shortDisplayName": "Marist",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2368.png",
+    "color": "#e53730",
+    "alternateColor": "#f0f0f0",
     "conference": "Metro Atlantic Athletic Conference",
     "conferenceId": "13"
   },
@@ -2820,18 +2820,6 @@
     "conferenceId": "18"
   },
   {
-    "id": "2460",
-    "name": "Panthers",
-    "abbreviation": "UNI",
-    "displayName": "Northern Iowa Panthers",
-    "shortDisplayName": "Northern Iowa",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2460.png",
-    "color": "#473282",
-    "alternateColor": "#ffffff",
-    "conference": "Missouri Valley Conference",
-    "conferenceId": "18"
-  },
-  {
     "id": "82",
     "name": "Flames",
     "abbreviation": "UIC",
@@ -2840,6 +2828,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/82.png",
     "color": "#001e62",
     "alternateColor": "#d50032",
+    "conference": "Missouri Valley Conference",
+    "conferenceId": "18"
+  },
+  {
+    "id": "2460",
+    "name": "Panthers",
+    "abbreviation": "UNI",
+    "displayName": "Northern Iowa Panthers",
+    "shortDisplayName": "Northern Iowa",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2460.png",
+    "color": "#473282",
+    "alternateColor": "#ffffff",
     "conference": "Missouri Valley Conference",
     "conferenceId": "18"
   },
@@ -2856,18 +2856,6 @@
     "conferenceId": "18"
   },
   {
-    "id": "2181",
-    "name": "Bulldogs",
-    "abbreviation": "DRKE",
-    "displayName": "Drake Bulldogs",
-    "shortDisplayName": "Drake",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2181.png",
-    "color": "#005596",
-    "alternateColor": "#bec0c2",
-    "conference": "Missouri Valley Conference",
-    "conferenceId": "18"
-  },
-  {
     "id": "79",
     "name": "Salukis",
     "abbreviation": "SIU",
@@ -2876,6 +2864,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/79.png",
     "color": "#85283D",
     "alternateColor": "#c2c3c0",
+    "conference": "Missouri Valley Conference",
+    "conferenceId": "18"
+  },
+  {
+    "id": "2181",
+    "name": "Bulldogs",
+    "abbreviation": "DRKE",
+    "displayName": "Drake Bulldogs",
+    "shortDisplayName": "Drake",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2181.png",
+    "color": "#005596",
+    "alternateColor": "#bec0c2",
     "conference": "Missouri Valley Conference",
     "conferenceId": "18"
   },
@@ -2928,18 +2928,6 @@
     "conferenceId": "19"
   },
   {
-    "id": "2385",
-    "name": "Lakers",
-    "abbreviation": "MERC",
-    "displayName": "Mercyhurst Lakers",
-    "shortDisplayName": "Mercyhurst",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2385.png",
-    "color": "#000000",
-    "alternateColor": "#333333",
-    "conference": "Northeast Conference",
-    "conferenceId": "19"
-  },
-  {
     "id": "2330",
     "name": "Dolphins",
     "abbreviation": "LEM",
@@ -2947,6 +2935,18 @@
     "shortDisplayName": "Le Moyne",
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2330.png",
     "color": "#666666",
+    "alternateColor": "#333333",
+    "conference": "Northeast Conference",
+    "conferenceId": "19"
+  },
+  {
+    "id": "2385",
+    "name": "Lakers",
+    "abbreviation": "MERC",
+    "displayName": "Mercyhurst Lakers",
+    "shortDisplayName": "Mercyhurst",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2385.png",
+    "color": "#000000",
     "alternateColor": "#333333",
     "conference": "Northeast Conference",
     "conferenceId": "19"
@@ -3000,18 +3000,6 @@
     "conferenceId": "19"
   },
   {
-    "id": "2681",
-    "name": "Seahawks",
-    "abbreviation": "WAG",
-    "displayName": "Wagner Seahawks",
-    "shortDisplayName": "Wagner",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2681.png",
-    "color": "#00483A",
-    "alternateColor": "#ffffff",
-    "conference": "Northeast Conference",
-    "conferenceId": "19"
-  },
-  {
     "id": "2130",
     "name": "Cougars",
     "abbreviation": "CHST",
@@ -3020,6 +3008,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2130.png",
     "color": "#006700",
     "alternateColor": "#333333",
+    "conference": "Northeast Conference",
+    "conferenceId": "19"
+  },
+  {
+    "id": "2681",
+    "name": "Seahawks",
+    "abbreviation": "WAG",
+    "displayName": "Wagner Seahawks",
+    "shortDisplayName": "Wagner",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2681.png",
+    "color": "#00483A",
+    "alternateColor": "#ffffff",
     "conference": "Northeast Conference",
     "conferenceId": "19"
   },
@@ -3048,18 +3048,6 @@
     "conferenceId": "20"
   },
   {
-    "id": "2546",
-    "name": "Redhawks",
-    "abbreviation": "SEMO",
-    "displayName": "Southeast Missouri State Redhawks",
-    "shortDisplayName": "SE Missouri",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2546.png",
-    "color": "#c8102e",
-    "alternateColor": "#000000",
-    "conference": "Ohio Valley Conference",
-    "conferenceId": "20"
-  },
-  {
     "id": "2565",
     "name": "Cougars",
     "abbreviation": "SIUE",
@@ -3080,6 +3068,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2815.png",
     "color": "#000000",
     "alternateColor": "#333333",
+    "conference": "Ohio Valley Conference",
+    "conferenceId": "20"
+  },
+  {
+    "id": "2546",
+    "name": "Redhawks",
+    "abbreviation": "SEMO",
+    "displayName": "Southeast Missouri State Redhawks",
+    "shortDisplayName": "SE Missouri",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2546.png",
+    "color": "#c8102e",
+    "alternateColor": "#000000",
     "conference": "Ohio Valley Conference",
     "conferenceId": "20"
   },
@@ -3816,18 +3816,6 @@
     "conferenceId": "49"
   },
   {
-    "id": "140",
-    "name": "Roos",
-    "abbreviation": "KC",
-    "displayName": "Kansas City Roos",
-    "shortDisplayName": "Kansas City",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/140.png",
-    "color": "#004b87",
-    "alternateColor": "#ffc72c",
-    "conference": "Summit League",
-    "conferenceId": "49"
-  },
-  {
     "id": "198",
     "name": "Golden Eagles",
     "abbreviation": "ORU",
@@ -3836,6 +3824,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/198.png",
     "color": "#002462",
     "alternateColor": "#dac792",
+    "conference": "Summit League",
+    "conferenceId": "49"
+  },
+  {
+    "id": "140",
+    "name": "Roos",
+    "abbreviation": "KC",
+    "displayName": "Kansas City Roos",
+    "shortDisplayName": "Kansas City",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/140.png",
+    "color": "#004b87",
+    "alternateColor": "#ffc72c",
     "conference": "Summit League",
     "conferenceId": "49"
   },
@@ -3864,6 +3864,18 @@
     "conferenceId": "27"
   },
   {
+    "id": "6",
+    "name": "Jaguars",
+    "abbreviation": "USA",
+    "displayName": "South Alabama Jaguars",
+    "shortDisplayName": "South Alabama",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/6.png",
+    "color": "#00205b",
+    "alternateColor": "#bf0d3e",
+    "conference": "Sun Belt Conference",
+    "conferenceId": "27"
+  },
+  {
     "id": "276",
     "name": "Thundering Herd",
     "abbreviation": "MRSH",
@@ -3876,14 +3888,14 @@
     "conferenceId": "27"
   },
   {
-    "id": "6",
-    "name": "Jaguars",
-    "abbreviation": "USA",
-    "displayName": "South Alabama Jaguars",
-    "shortDisplayName": "South Alabama",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/6.png",
-    "color": "#00205b",
-    "alternateColor": "#bf0d3e",
+    "id": "324",
+    "name": "Chanticleers",
+    "abbreviation": "CCU",
+    "displayName": "Coastal Carolina Chanticleers",
+    "shortDisplayName": "Coastal",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/324.png",
+    "color": "#006f71",
+    "alternateColor": "#a27752",
     "conference": "Sun Belt Conference",
     "conferenceId": "27"
   },
@@ -3912,14 +3924,14 @@
     "conferenceId": "27"
   },
   {
-    "id": "324",
-    "name": "Chanticleers",
-    "abbreviation": "CCU",
-    "displayName": "Coastal Carolina Chanticleers",
-    "shortDisplayName": "Coastal",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/324.png",
-    "color": "#006f71",
-    "alternateColor": "#a27752",
+    "id": "290",
+    "name": "Eagles",
+    "abbreviation": "GASO",
+    "displayName": "Georgia Southern Eagles",
+    "shortDisplayName": "GA Southern",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/290.png",
+    "color": "#041e42",
+    "alternateColor": "#a3aaae",
     "conference": "Sun Belt Conference",
     "conferenceId": "27"
   },
@@ -3944,18 +3956,6 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2247.png",
     "color": "#0039a6",
     "alternateColor": "#ffffff",
-    "conference": "Sun Belt Conference",
-    "conferenceId": "27"
-  },
-  {
-    "id": "290",
-    "name": "Eagles",
-    "abbreviation": "GASO",
-    "displayName": "Georgia Southern Eagles",
-    "shortDisplayName": "GA Southern",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/290.png",
-    "color": "#041e42",
-    "alternateColor": "#a3aaae",
     "conference": "Sun Belt Conference",
     "conferenceId": "27"
   },
@@ -4284,18 +4284,6 @@
     "conferenceId": "29"
   },
   {
-    "id": "2539",
-    "name": "Dons",
-    "abbreviation": "SF",
-    "displayName": "San Francisco Dons",
-    "shortDisplayName": "San Francisco",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2539.png",
-    "color": "#005a36",
-    "alternateColor": "#ffffff",
-    "conference": "West Coast Conference",
-    "conferenceId": "29"
-  },
-  {
     "id": "204",
     "name": "Beavers",
     "abbreviation": "ORST",
@@ -4304,6 +4292,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/204.png",
     "color": "#dc4405",
     "alternateColor": "#000000",
+    "conference": "West Coast Conference",
+    "conferenceId": "29"
+  },
+  {
+    "id": "2539",
+    "name": "Dons",
+    "abbreviation": "SF",
+    "displayName": "San Francisco Dons",
+    "shortDisplayName": "San Francisco",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2539.png",
+    "color": "#005a36",
+    "alternateColor": "#ffffff",
     "conference": "West Coast Conference",
     "conferenceId": "29"
   },

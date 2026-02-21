@@ -1368,18 +1368,6 @@
     "conferenceId": "7"
   },
   {
-    "id": "158",
-    "name": "Cornhuskers",
-    "abbreviation": "NEB",
-    "displayName": "Nebraska Cornhuskers",
-    "shortDisplayName": "Nebraska",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/158.png",
-    "color": "#e31937",
-    "alternateColor": "#ffffff",
-    "conference": "Big Ten Conference",
-    "conferenceId": "7"
-  },
-  {
     "id": "2509",
     "name": "Boilermakers",
     "abbreviation": "PUR",
@@ -1388,6 +1376,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2509.png",
     "color": "#ceb888",
     "alternateColor": "#000000",
+    "conference": "Big Ten Conference",
+    "conferenceId": "7"
+  },
+  {
+    "id": "158",
+    "name": "Cornhuskers",
+    "abbreviation": "NEB",
+    "displayName": "Nebraska Cornhuskers",
+    "shortDisplayName": "Nebraska",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/158.png",
+    "color": "#e31937",
+    "alternateColor": "#ffffff",
     "conference": "Big Ten Conference",
     "conferenceId": "7"
   },
@@ -2004,14 +2004,14 @@
     "conferenceId": "45"
   },
   {
-    "id": "2473",
-    "name": "Golden Grizzlies",
-    "abbreviation": "OAK",
-    "displayName": "Oakland Golden Grizzlies",
-    "shortDisplayName": "Oakland",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2473.png",
-    "color": "#04091c",
-    "alternateColor": "#bc955c",
+    "id": "2739",
+    "name": "Phoenix",
+    "abbreviation": "GB",
+    "displayName": "Green Bay Phoenix",
+    "shortDisplayName": "Green Bay",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2739.png",
+    "color": "#006633",
+    "alternateColor": "#ffffff",
     "conference": "Horizon League",
     "conferenceId": "45"
   },
@@ -2028,14 +2028,14 @@
     "conferenceId": "45"
   },
   {
-    "id": "2739",
-    "name": "Phoenix",
-    "abbreviation": "GB",
-    "displayName": "Green Bay Phoenix",
-    "shortDisplayName": "Green Bay",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2739.png",
-    "color": "#006633",
-    "alternateColor": "#ffffff",
+    "id": "2473",
+    "name": "Golden Grizzlies",
+    "abbreviation": "OAK",
+    "displayName": "Oakland Golden Grizzlies",
+    "shortDisplayName": "Oakland",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2473.png",
+    "color": "#04091c",
+    "alternateColor": "#bc955c",
     "conference": "Horizon League",
     "conferenceId": "45"
   },
@@ -2244,18 +2244,6 @@
     "conferenceId": "13"
   },
   {
-    "id": "2561",
-    "name": "Saints",
-    "abbreviation": "SIE",
-    "displayName": "Siena Saints",
-    "shortDisplayName": "Siena",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2561.png",
-    "color": "#037961",
-    "alternateColor": "#eea60f",
-    "conference": "Metro Atlantic Athletic Conference",
-    "conferenceId": "13"
-  },
-  {
     "id": "2514",
     "name": "Bobcats",
     "abbreviation": "QUIN",
@@ -2264,6 +2252,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2514.png",
     "color": "#041B43",
     "alternateColor": "#333333",
+    "conference": "Metro Atlantic Athletic Conference",
+    "conferenceId": "13"
+  },
+  {
+    "id": "2561",
+    "name": "Saints",
+    "abbreviation": "SIE",
+    "displayName": "Siena Saints",
+    "shortDisplayName": "Siena",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2561.png",
+    "color": "#037961",
+    "alternateColor": "#eea60f",
     "conference": "Metro Atlantic Athletic Conference",
     "conferenceId": "13"
   },
@@ -2304,6 +2304,18 @@
     "conferenceId": "13"
   },
   {
+    "id": "314",
+    "name": "Gaels",
+    "abbreviation": "IONA",
+    "displayName": "Iona Gaels",
+    "shortDisplayName": "Iona",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/314.png",
+    "color": "#6f2c3e",
+    "alternateColor": "#f0ab00",
+    "conference": "Metro Atlantic Athletic Conference",
+    "conferenceId": "13"
+  },
+  {
     "id": "2363",
     "name": "Jaspers",
     "abbreviation": "MAN",
@@ -2328,14 +2340,14 @@
     "conferenceId": "13"
   },
   {
-    "id": "314",
-    "name": "Gaels",
-    "abbreviation": "IONA",
-    "displayName": "Iona Gaels",
-    "shortDisplayName": "Iona",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/314.png",
-    "color": "#6f2c3e",
-    "alternateColor": "#f0ab00",
+    "id": "2099",
+    "name": "Golden Griffins",
+    "abbreviation": "CAN",
+    "displayName": "Canisius Golden Griffins",
+    "shortDisplayName": "Canisius",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2099.png",
+    "color": "#004a81",
+    "alternateColor": "#dda50f",
     "conference": "Metro Atlantic Athletic Conference",
     "conferenceId": "13"
   },
@@ -2348,18 +2360,6 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/315.png",
     "color": "#69207E",
     "alternateColor": "#f0f0f0",
-    "conference": "Metro Atlantic Athletic Conference",
-    "conferenceId": "13"
-  },
-  {
-    "id": "2099",
-    "name": "Golden Griffins",
-    "abbreviation": "CAN",
-    "displayName": "Canisius Golden Griffins",
-    "shortDisplayName": "Canisius",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2099.png",
-    "color": "#004a81",
-    "alternateColor": "#dda50f",
     "conference": "Metro Atlantic Athletic Conference",
     "conferenceId": "13"
   },

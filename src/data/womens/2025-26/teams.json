@@ -528,18 +528,6 @@
     "conferenceId": "62"
   },
   {
-    "id": "249",
-    "name": "Mean Green",
-    "abbreviation": "UNT",
-    "displayName": "North Texas Mean Green",
-    "shortDisplayName": "North Texas",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/249.png",
-    "color": "#068f33",
-    "alternateColor": "#ffffff",
-    "conference": "American Conference",
-    "conferenceId": "62"
-  },
-  {
     "id": "202",
     "name": "Golden Hurricane",
     "abbreviation": "TLSA",
@@ -548,6 +536,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/202.png",
     "color": "#003595",
     "alternateColor": "#d0b787",
+    "conference": "American Conference",
+    "conferenceId": "62"
+  },
+  {
+    "id": "249",
+    "name": "Mean Green",
+    "abbreviation": "UNT",
+    "displayName": "North Texas Mean Green",
+    "shortDisplayName": "North Texas",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/249.png",
+    "color": "#068f33",
+    "alternateColor": "#ffffff",
     "conference": "American Conference",
     "conferenceId": "62"
   },
@@ -576,18 +576,6 @@
     "conferenceId": "62"
   },
   {
-    "id": "2429",
-    "name": "49ers",
-    "abbreviation": "CLT",
-    "displayName": "Charlotte 49ers",
-    "shortDisplayName": "Charlotte",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2429.png",
-    "color": "#005035",
-    "alternateColor": "#a49665",
-    "conference": "American Conference",
-    "conferenceId": "62"
-  },
-  {
     "id": "2226",
     "name": "Owls",
     "abbreviation": "FAU",
@@ -596,6 +584,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2226.png",
     "color": "#003366",
     "alternateColor": "#cc0000",
+    "conference": "American Conference",
+    "conferenceId": "62"
+  },
+  {
+    "id": "2429",
+    "name": "49ers",
+    "abbreviation": "CLT",
+    "displayName": "Charlotte 49ers",
+    "shortDisplayName": "Charlotte",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2429.png",
+    "color": "#005035",
+    "alternateColor": "#a49665",
     "conference": "American Conference",
     "conferenceId": "62"
   },
@@ -2640,18 +2640,6 @@
     "conferenceId": "44"
   },
   {
-    "id": "68",
-    "name": "Broncos",
-    "abbreviation": "BOIS",
-    "displayName": "Boise State Broncos",
-    "shortDisplayName": "Boise St",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/68.png",
-    "color": "#0033a0",
-    "alternateColor": "#d64309",
-    "conference": "Mountain West Conference",
-    "conferenceId": "44"
-  },
-  {
     "id": "36",
     "name": "Rams",
     "abbreviation": "CSU",
@@ -2660,6 +2648,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/36.png",
     "color": "#004c23",
     "alternateColor": "#c8c372",
+    "conference": "Mountain West Conference",
+    "conferenceId": "44"
+  },
+  {
+    "id": "68",
+    "name": "Broncos",
+    "abbreviation": "BOIS",
+    "displayName": "Boise State Broncos",
+    "shortDisplayName": "Boise St",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/68.png",
+    "color": "#0033a0",
+    "alternateColor": "#d64309",
     "conference": "Mountain West Conference",
     "conferenceId": "44"
   },
@@ -3636,18 +3636,6 @@
     "conferenceId": "25"
   },
   {
-    "id": "2837",
-    "name": "Lions",
-    "abbreviation": "ETAM",
-    "displayName": "East Texas A&M Lions",
-    "shortDisplayName": "E Texas A&M",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2837.png",
-    "color": "#000000",
-    "alternateColor": "#333333",
-    "conference": "Southland Conference",
-    "conferenceId": "25"
-  },
-  {
     "id": "2447",
     "name": "Colonels",
     "abbreviation": "NICH",
@@ -3656,6 +3644,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2447.png",
     "color": "#C41230",
     "alternateColor": "#f0f0f0",
+    "conference": "Southland Conference",
+    "conferenceId": "25"
+  },
+  {
+    "id": "2837",
+    "name": "Lions",
+    "abbreviation": "ETAM",
+    "displayName": "East Texas A&M Lions",
+    "shortDisplayName": "E Texas A&M",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2837.png",
+    "color": "#000000",
+    "alternateColor": "#333333",
     "conference": "Southland Conference",
     "conferenceId": "25"
   },
@@ -4032,6 +4032,18 @@
     "conferenceId": "26"
   },
   {
+    "id": "2296",
+    "name": "Lady Tigers",
+    "abbreviation": "JKST",
+    "displayName": "Jackson State Lady Tigers",
+    "shortDisplayName": "Jackson St",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2296.png",
+    "color": "#123297",
+    "alternateColor": "#b5b7ba",
+    "conference": "Southwestern Athletic Conference",
+    "conferenceId": "26"
+  },
+  {
     "id": "2029",
     "name": "Golden Lions",
     "abbreviation": "UAPB",
@@ -4056,18 +4068,6 @@
     "conferenceId": "26"
   },
   {
-    "id": "2296",
-    "name": "Lady Tigers",
-    "abbreviation": "JKST",
-    "displayName": "Jackson State Lady Tigers",
-    "shortDisplayName": "Jackson St",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2296.png",
-    "color": "#123297",
-    "alternateColor": "#b5b7ba",
-    "conference": "Southwestern Athletic Conference",
-    "conferenceId": "26"
-  },
-  {
     "id": "50",
     "name": "Rattlers",
     "abbreviation": "FAMU",
@@ -4080,18 +4080,6 @@
     "conferenceId": "26"
   },
   {
-    "id": "2400",
-    "name": "Devilettes",
-    "abbreviation": "MVSU",
-    "displayName": "Mississippi Valley State Devilettes",
-    "shortDisplayName": "Miss Valley St",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2400.png",
-    "color": "#005328",
-    "alternateColor": "#cf2d34",
-    "conference": "Southwestern Athletic Conference",
-    "conferenceId": "26"
-  },
-  {
     "id": "2640",
     "name": "Tigers",
     "abbreviation": "TXSO",
@@ -4100,6 +4088,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2640.png",
     "color": "#860038",
     "alternateColor": "#ffffff",
+    "conference": "Southwestern Athletic Conference",
+    "conferenceId": "26"
+  },
+  {
+    "id": "2400",
+    "name": "Devilettes",
+    "abbreviation": "MVSU",
+    "displayName": "Mississippi Valley State Devilettes",
+    "shortDisplayName": "Miss Valley St",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2400.png",
+    "color": "#005328",
+    "alternateColor": "#cf2d34",
     "conference": "Southwestern Athletic Conference",
     "conferenceId": "26"
   },

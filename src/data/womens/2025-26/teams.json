@@ -1884,18 +1884,6 @@
     "conferenceId": "11"
   },
   {
-    "id": "2534",
-    "name": "Bearkats",
-    "abbreviation": "SHSU",
-    "displayName": "Sam Houston Bearkats",
-    "shortDisplayName": "Sam Houston",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2534.png",
-    "color": "#f56423",
-    "alternateColor": "#ffffff",
-    "conference": "Conference USA",
-    "conferenceId": "11"
-  },
-  {
     "id": "2335",
     "name": "Flames",
     "abbreviation": "LIB",
@@ -1904,6 +1892,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2335.png",
     "color": "#0a254e",
     "alternateColor": "#b72025",
+    "conference": "Conference USA",
+    "conferenceId": "11"
+  },
+  {
+    "id": "2534",
+    "name": "Bearkats",
+    "abbreviation": "SHSU",
+    "displayName": "Sam Houston Bearkats",
+    "shortDisplayName": "Sam Houston",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2534.png",
+    "color": "#f56423",
+    "alternateColor": "#ffffff",
     "conference": "Conference USA",
     "conferenceId": "11"
   },
@@ -3336,18 +3336,6 @@
     "conferenceId": "23"
   },
   {
-    "id": "96",
-    "name": "Wildcats",
-    "abbreviation": "UK",
-    "displayName": "Kentucky Wildcats",
-    "shortDisplayName": "Kentucky",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/96.png",
-    "color": "#0033a0",
-    "alternateColor": "#ffffff",
-    "conference": "Southeastern Conference",
-    "conferenceId": "23"
-  },
-  {
     "id": "61",
     "name": "Lady Bulldogs",
     "abbreviation": "UGA",
@@ -3356,6 +3344,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/61.png",
     "color": "#ba0c2f",
     "alternateColor": "#2c2a29",
+    "conference": "Southeastern Conference",
+    "conferenceId": "23"
+  },
+  {
+    "id": "96",
+    "name": "Wildcats",
+    "abbreviation": "UK",
+    "displayName": "Kentucky Wildcats",
+    "shortDisplayName": "Kentucky",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/96.png",
+    "color": "#0033a0",
+    "alternateColor": "#ffffff",
     "conference": "Southeastern Conference",
     "conferenceId": "23"
   },
@@ -3744,18 +3744,6 @@
     "conferenceId": "47"
   },
   {
-    "id": "198",
-    "name": "Golden Eagles",
-    "abbreviation": "ORU",
-    "displayName": "Oral Roberts Golden Eagles",
-    "shortDisplayName": "Oral Roberts",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/198.png",
-    "color": "#002462",
-    "alternateColor": "#dac792",
-    "conference": "Summit League",
-    "conferenceId": "47"
-  },
-  {
     "id": "2900",
     "name": "Tommies",
     "abbreviation": "STMN",
@@ -3764,6 +3752,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2900.png",
     "color": "#000000",
     "alternateColor": "#333333",
+    "conference": "Summit League",
+    "conferenceId": "47"
+  },
+  {
+    "id": "198",
+    "name": "Golden Eagles",
+    "abbreviation": "ORU",
+    "displayName": "Oral Roberts Golden Eagles",
+    "shortDisplayName": "Oral Roberts",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/198.png",
+    "color": "#002462",
+    "alternateColor": "#dac792",
     "conference": "Summit League",
     "conferenceId": "47"
   },

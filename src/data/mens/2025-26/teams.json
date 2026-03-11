@@ -2016,18 +2016,6 @@
     "conferenceId": "45"
   },
   {
-    "id": "2174",
-    "name": "Titans",
-    "abbreviation": "DETM",
-    "displayName": "Detroit Mercy Titans",
-    "shortDisplayName": "Detroit Mercy",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2174.png",
-    "color": "#165b9e",
-    "alternateColor": "#d31733",
-    "conference": "Horizon League",
-    "conferenceId": "45"
-  },
-  {
     "id": "2739",
     "name": "Phoenix",
     "abbreviation": "GB",
@@ -2036,6 +2024,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2739.png",
     "color": "#006633",
     "alternateColor": "#ffffff",
+    "conference": "Horizon League",
+    "conferenceId": "45"
+  },
+  {
+    "id": "2174",
+    "name": "Titans",
+    "abbreviation": "DETM",
+    "displayName": "Detroit Mercy Titans",
+    "shortDisplayName": "Detroit Mercy",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2174.png",
+    "color": "#165b9e",
+    "alternateColor": "#d31733",
     "conference": "Horizon League",
     "conferenceId": "45"
   },

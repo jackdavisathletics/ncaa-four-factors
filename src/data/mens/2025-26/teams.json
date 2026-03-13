@@ -84,18 +84,6 @@
     "conferenceId": "3"
   },
   {
-    "id": "2230",
-    "name": "Rams",
-    "abbreviation": "FOR",
-    "displayName": "Fordham Rams",
-    "shortDisplayName": "Fordham",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2230.png",
-    "color": "#830032",
-    "alternateColor": "#909090",
-    "conference": "Atlantic 10 Conference",
-    "conferenceId": "3"
-  },
-  {
     "id": "45",
     "name": "Revolutionaries",
     "abbreviation": "GW",
@@ -104,6 +92,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/45.png",
     "color": "#002843",
     "alternateColor": "#e8d2a1",
+    "conference": "Atlantic 10 Conference",
+    "conferenceId": "3"
+  },
+  {
+    "id": "2230",
+    "name": "Rams",
+    "abbreviation": "FOR",
+    "displayName": "Fordham Rams",
+    "shortDisplayName": "Fordham",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2230.png",
+    "color": "#830032",
+    "alternateColor": "#909090",
     "conference": "Atlantic 10 Conference",
     "conferenceId": "3"
   },
@@ -1092,18 +1092,6 @@
     "conferenceId": "4"
   },
   {
-    "id": "2752",
-    "name": "Musketeers",
-    "abbreviation": "XAV",
-    "displayName": "Xavier Musketeers",
-    "shortDisplayName": "Xavier",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2752.png",
-    "color": "#21304e",
-    "alternateColor": "#a5a7a8",
-    "conference": "Big East Conference",
-    "conferenceId": "4"
-  },
-  {
     "id": "46",
     "name": "Hoyas",
     "abbreviation": "GTWN",
@@ -1112,6 +1100,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/46.png",
     "color": "#110E42",
     "alternateColor": "#001c58",
+    "conference": "Big East Conference",
+    "conferenceId": "4"
+  },
+  {
+    "id": "2752",
+    "name": "Musketeers",
+    "abbreviation": "XAV",
+    "displayName": "Xavier Musketeers",
+    "shortDisplayName": "Xavier",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2752.png",
+    "color": "#21304e",
+    "alternateColor": "#a5a7a8",
     "conference": "Big East Conference",
     "conferenceId": "4"
   },
@@ -1872,18 +1872,6 @@
     "conferenceId": "11"
   },
   {
-    "id": "98",
-    "name": "Hilltoppers",
-    "abbreviation": "WKU",
-    "displayName": "Western Kentucky Hilltoppers",
-    "shortDisplayName": "Western KY",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/98.png",
-    "color": "#e13a3e",
-    "alternateColor": "#ffffff",
-    "conference": "Conference USA",
-    "conferenceId": "11"
-  },
-  {
     "id": "2348",
     "name": "Bulldogs",
     "abbreviation": "LT",
@@ -1892,6 +1880,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2348.png",
     "color": "#003087",
     "alternateColor": "#cb333b",
+    "conference": "Conference USA",
+    "conferenceId": "11"
+  },
+  {
+    "id": "98",
+    "name": "Hilltoppers",
+    "abbreviation": "WKU",
+    "displayName": "Western Kentucky Hilltoppers",
+    "shortDisplayName": "Western KY",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/98.png",
+    "color": "#e13a3e",
+    "alternateColor": "#ffffff",
     "conference": "Conference USA",
     "conferenceId": "11"
   },
@@ -3360,18 +3360,6 @@
     "conferenceId": "23"
   },
   {
-    "id": "142",
-    "name": "Tigers",
-    "abbreviation": "MIZ",
-    "displayName": "Missouri Tigers",
-    "shortDisplayName": "Missouri",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/142.png",
-    "color": "#f1b82d",
-    "alternateColor": "#000000",
-    "conference": "Southeastern Conference",
-    "conferenceId": "23"
-  },
-  {
     "id": "96",
     "name": "Wildcats",
     "abbreviation": "UK",
@@ -3380,6 +3368,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/96.png",
     "color": "#0033a0",
     "alternateColor": "#ffffff",
+    "conference": "Southeastern Conference",
+    "conferenceId": "23"
+  },
+  {
+    "id": "142",
+    "name": "Tigers",
+    "abbreviation": "MIZ",
+    "displayName": "Missouri Tigers",
+    "shortDisplayName": "Missouri",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/142.png",
+    "color": "#f1b82d",
+    "alternateColor": "#000000",
     "conference": "Southeastern Conference",
     "conferenceId": "23"
   },
@@ -3432,18 +3432,6 @@
     "conferenceId": "23"
   },
   {
-    "id": "2579",
-    "name": "Gamecocks",
-    "abbreviation": "SC",
-    "displayName": "South Carolina Gamecocks",
-    "shortDisplayName": "South Carolina",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2579.png",
-    "color": "#73000a",
-    "alternateColor": "#000000",
-    "conference": "Southeastern Conference",
-    "conferenceId": "23"
-  },
-  {
     "id": "145",
     "name": "Rebels",
     "abbreviation": "MISS",
@@ -3452,6 +3440,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/145.png",
     "color": "#13294b",
     "alternateColor": "#cf142b",
+    "conference": "Southeastern Conference",
+    "conferenceId": "23"
+  },
+  {
+    "id": "2579",
+    "name": "Gamecocks",
+    "abbreviation": "SC",
+    "displayName": "South Carolina Gamecocks",
+    "shortDisplayName": "South Carolina",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2579.png",
+    "color": "#73000a",
+    "alternateColor": "#000000",
     "conference": "Southeastern Conference",
     "conferenceId": "23"
   },
@@ -4212,18 +4212,6 @@
     "conferenceId": "30"
   },
   {
-    "id": "2000",
-    "name": "Wildcats",
-    "abbreviation": "ACU",
-    "displayName": "Abilene Christian Wildcats",
-    "shortDisplayName": "Abilene Chrstn",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2000.png",
-    "color": "#592d82",
-    "alternateColor": "#b1b3b3",
-    "conference": "Western Athletic Conference",
-    "conferenceId": "30"
-  },
-  {
     "id": "2627",
     "name": "Texans",
     "abbreviation": "TAR",
@@ -4232,6 +4220,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2627.png",
     "color": "#000000",
     "alternateColor": "#333333",
+    "conference": "Western Athletic Conference",
+    "conferenceId": "30"
+  },
+  {
+    "id": "2000",
+    "name": "Wildcats",
+    "abbreviation": "ACU",
+    "displayName": "Abilene Christian Wildcats",
+    "shortDisplayName": "Abilene Chrstn",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2000.png",
+    "color": "#592d82",
+    "alternateColor": "#b1b3b3",
     "conference": "Western Athletic Conference",
     "conferenceId": "30"
   },

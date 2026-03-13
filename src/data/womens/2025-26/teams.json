@@ -1872,18 +1872,6 @@
     "conferenceId": "11"
   },
   {
-    "id": "2534",
-    "name": "Bearkats",
-    "abbreviation": "SHSU",
-    "displayName": "Sam Houston Bearkats",
-    "shortDisplayName": "Sam Houston",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2534.png",
-    "color": "#f56423",
-    "alternateColor": "#ffffff",
-    "conference": "Conference USA",
-    "conferenceId": "11"
-  },
-  {
     "id": "2623",
     "name": "Bears",
     "abbreviation": "MOST",
@@ -1904,6 +1892,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2335.png",
     "color": "#0a254e",
     "alternateColor": "#b72025",
+    "conference": "Conference USA",
+    "conferenceId": "11"
+  },
+  {
+    "id": "2534",
+    "name": "Bearkats",
+    "abbreviation": "SHSU",
+    "displayName": "Sam Houston Bearkats",
+    "shortDisplayName": "Sam Houston",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2534.png",
+    "color": "#f56423",
+    "alternateColor": "#ffffff",
     "conference": "Conference USA",
     "conferenceId": "11"
   },

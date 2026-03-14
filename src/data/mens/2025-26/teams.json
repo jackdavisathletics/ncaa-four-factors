@@ -3288,18 +3288,6 @@
     "conferenceId": "23"
   },
   {
-    "id": "333",
-    "name": "Crimson Tide",
-    "abbreviation": "ALA",
-    "displayName": "Alabama Crimson Tide",
-    "shortDisplayName": "Alabama",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/333.png",
-    "color": "#9e1b32",
-    "alternateColor": "#ffffff",
-    "conference": "Southeastern Conference",
-    "conferenceId": "23"
-  },
-  {
     "id": "8",
     "name": "Razorbacks",
     "abbreviation": "ARK",
@@ -3307,6 +3295,18 @@
     "shortDisplayName": "Arkansas",
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/8.png",
     "color": "#a32136",
+    "alternateColor": "#ffffff",
+    "conference": "Southeastern Conference",
+    "conferenceId": "23"
+  },
+  {
+    "id": "333",
+    "name": "Crimson Tide",
+    "abbreviation": "ALA",
+    "displayName": "Alabama Crimson Tide",
+    "shortDisplayName": "Alabama",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/333.png",
+    "color": "#9e1b32",
     "alternateColor": "#ffffff",
     "conference": "Southeastern Conference",
     "conferenceId": "23"
@@ -3360,18 +3360,6 @@
     "conferenceId": "23"
   },
   {
-    "id": "96",
-    "name": "Wildcats",
-    "abbreviation": "UK",
-    "displayName": "Kentucky Wildcats",
-    "shortDisplayName": "Kentucky",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/96.png",
-    "color": "#0033a0",
-    "alternateColor": "#ffffff",
-    "conference": "Southeastern Conference",
-    "conferenceId": "23"
-  },
-  {
     "id": "142",
     "name": "Tigers",
     "abbreviation": "MIZ",
@@ -3380,6 +3368,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/142.png",
     "color": "#f1b82d",
     "alternateColor": "#000000",
+    "conference": "Southeastern Conference",
+    "conferenceId": "23"
+  },
+  {
+    "id": "96",
+    "name": "Wildcats",
+    "abbreviation": "UK",
+    "displayName": "Kentucky Wildcats",
+    "shortDisplayName": "Kentucky",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/96.png",
+    "color": "#0033a0",
+    "alternateColor": "#ffffff",
     "conference": "Southeastern Conference",
     "conferenceId": "23"
   },
@@ -4020,18 +4020,6 @@
     "conferenceId": "26"
   },
   {
-    "id": "50",
-    "name": "Rattlers",
-    "abbreviation": "FAMU",
-    "displayName": "Florida A&M Rattlers",
-    "shortDisplayName": "Florida A&M",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/50.png",
-    "color": "#F89728",
-    "alternateColor": "#00843d",
-    "conference": "Southwestern Athletic Conference",
-    "conferenceId": "26"
-  },
-  {
     "id": "2582",
     "name": "Jaguars",
     "abbreviation": "SOU",
@@ -4040,6 +4028,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2582.png",
     "color": "#004B97",
     "alternateColor": "#ffc82d",
+    "conference": "Southwestern Athletic Conference",
+    "conferenceId": "26"
+  },
+  {
+    "id": "50",
+    "name": "Rattlers",
+    "abbreviation": "FAMU",
+    "displayName": "Florida A&M Rattlers",
+    "shortDisplayName": "Florida A&M",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/50.png",
+    "color": "#F89728",
+    "alternateColor": "#00843d",
     "conference": "Southwestern Athletic Conference",
     "conferenceId": "26"
   },

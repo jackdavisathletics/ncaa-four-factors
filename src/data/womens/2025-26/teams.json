@@ -1873,9 +1873,9 @@
   },
   {
     "id": "2623",
-    "name": "Bears",
+    "name": "Lady Bears",
     "abbreviation": "MOST",
-    "displayName": "Missouri State Bears",
+    "displayName": "Missouri State Lady Bears",
     "shortDisplayName": "Missouri St",
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2623.png",
     "color": "#5e0009",
@@ -2436,18 +2436,6 @@
     "conferenceId": "14"
   },
   {
-    "id": "2649",
-    "name": "Rockets",
-    "abbreviation": "TOL",
-    "displayName": "Toledo Rockets",
-    "shortDisplayName": "Toledo",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2649.png",
-    "color": "#0b2240",
-    "alternateColor": "#ffcd00",
-    "conference": "Mid-American Conference",
-    "conferenceId": "14"
-  },
-  {
     "id": "189",
     "name": "Falcons",
     "abbreviation": "BGSU",
@@ -2456,6 +2444,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/189.png",
     "color": "#fd5000",
     "alternateColor": "#4f2c1d",
+    "conference": "Mid-American Conference",
+    "conferenceId": "14"
+  },
+  {
+    "id": "2649",
+    "name": "Rockets",
+    "abbreviation": "TOL",
+    "displayName": "Toledo Rockets",
+    "shortDisplayName": "Toledo",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2649.png",
+    "color": "#0b2240",
+    "alternateColor": "#ffcd00",
     "conference": "Mid-American Conference",
     "conferenceId": "14"
   },
@@ -2544,18 +2544,6 @@
     "conferenceId": "16"
   },
   {
-    "id": "2450",
-    "name": "Spartans",
-    "abbreviation": "NORF",
-    "displayName": "Norfolk State Spartans",
-    "shortDisplayName": "Norfolk St",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2450.png",
-    "color": "#0c8968",
-    "alternateColor": "#fdb813",
-    "conference": "Mid-Eastern Athletic Conference",
-    "conferenceId": "16"
-  },
-  {
     "id": "2379",
     "name": "Hawks",
     "abbreviation": "UMES",
@@ -2564,6 +2552,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2379.png",
     "color": "#5c2301",
     "alternateColor": "#b5b7ba",
+    "conference": "Mid-Eastern Athletic Conference",
+    "conferenceId": "16"
+  },
+  {
+    "id": "2450",
+    "name": "Spartans",
+    "abbreviation": "NORF",
+    "displayName": "Norfolk State Spartans",
+    "shortDisplayName": "Norfolk St",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2450.png",
+    "color": "#0c8968",
+    "alternateColor": "#fdb813",
     "conference": "Mid-Eastern Athletic Conference",
     "conferenceId": "16"
   },
@@ -2796,18 +2796,6 @@
     "conferenceId": "18"
   },
   {
-    "id": "2287",
-    "name": "Redbirds",
-    "abbreviation": "ILST",
-    "displayName": "Illinois State Redbirds",
-    "shortDisplayName": "Illinois St",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2287.png",
-    "color": "#CE1126",
-    "alternateColor": "#ffe716",
-    "conference": "Missouri Valley Conference",
-    "conferenceId": "18"
-  },
-  {
     "id": "71",
     "name": "Braves",
     "abbreviation": "BRAD",
@@ -2816,6 +2804,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/71.png",
     "color": "#b70002",
     "alternateColor": "#c0c0c0",
+    "conference": "Missouri Valley Conference",
+    "conferenceId": "18"
+  },
+  {
+    "id": "2287",
+    "name": "Redbirds",
+    "abbreviation": "ILST",
+    "displayName": "Illinois State Redbirds",
+    "shortDisplayName": "Illinois St",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2287.png",
+    "color": "#CE1126",
+    "alternateColor": "#ffe716",
     "conference": "Missouri Valley Conference",
     "conferenceId": "18"
   },

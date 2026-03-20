@@ -1008,18 +1008,6 @@
     "conferenceId": "4"
   },
   {
-    "id": "2550",
-    "name": "Pirates",
-    "abbreviation": "HALL",
-    "displayName": "Seton Hall Pirates",
-    "shortDisplayName": "Seton Hall",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2550.png",
-    "color": "#0857B1",
-    "alternateColor": "#8a8d8f",
-    "conference": "Big East Conference",
-    "conferenceId": "4"
-  },
-  {
     "id": "269",
     "name": "Golden Eagles",
     "abbreviation": "MARQ",
@@ -1028,6 +1016,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/269.png",
     "color": "#003366",
     "alternateColor": "#ffcc00",
+    "conference": "Big East Conference",
+    "conferenceId": "4"
+  },
+  {
+    "id": "2550",
+    "name": "Pirates",
+    "abbreviation": "HALL",
+    "displayName": "Seton Hall Pirates",
+    "shortDisplayName": "Seton Hall",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2550.png",
+    "color": "#0857B1",
+    "alternateColor": "#8a8d8f",
     "conference": "Big East Conference",
     "conferenceId": "4"
   },
@@ -1500,18 +1500,6 @@
     "conferenceId": "7"
   },
   {
-    "id": "2509",
-    "name": "Boilermakers",
-    "abbreviation": "PUR",
-    "displayName": "Purdue Boilermakers",
-    "shortDisplayName": "Purdue",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2509.png",
-    "color": "#ceb888",
-    "alternateColor": "#000000",
-    "conference": "Big Ten Conference",
-    "conferenceId": "7"
-  },
-  {
     "id": "275",
     "name": "Badgers",
     "abbreviation": "WIS",
@@ -1520,6 +1508,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/275.png",
     "color": "#a00000",
     "alternateColor": "#ffffff",
+    "conference": "Big Ten Conference",
+    "conferenceId": "7"
+  },
+  {
+    "id": "2509",
+    "name": "Boilermakers",
+    "abbreviation": "PUR",
+    "displayName": "Purdue Boilermakers",
+    "shortDisplayName": "Purdue",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2509.png",
+    "color": "#ceb888",
+    "alternateColor": "#000000",
     "conference": "Big Ten Conference",
     "conferenceId": "7"
   },
@@ -1884,18 +1884,6 @@
     "conferenceId": "11"
   },
   {
-    "id": "2534",
-    "name": "Bearkats",
-    "abbreviation": "SHSU",
-    "displayName": "Sam Houston Bearkats",
-    "shortDisplayName": "Sam Houston",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2534.png",
-    "color": "#f56423",
-    "alternateColor": "#ffffff",
-    "conference": "Conference USA",
-    "conferenceId": "11"
-  },
-  {
     "id": "2335",
     "name": "Flames",
     "abbreviation": "LIB",
@@ -1904,6 +1892,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2335.png",
     "color": "#0a254e",
     "alternateColor": "#b72025",
+    "conference": "Conference USA",
+    "conferenceId": "11"
+  },
+  {
+    "id": "2534",
+    "name": "Bearkats",
+    "abbreviation": "SHSU",
+    "displayName": "Sam Houston Bearkats",
+    "shortDisplayName": "Sam Houston",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2534.png",
+    "color": "#f56423",
+    "alternateColor": "#ffffff",
     "conference": "Conference USA",
     "conferenceId": "11"
   },
@@ -2796,18 +2796,6 @@
     "conferenceId": "18"
   },
   {
-    "id": "71",
-    "name": "Braves",
-    "abbreviation": "BRAD",
-    "displayName": "Bradley Braves",
-    "shortDisplayName": "Bradley",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/71.png",
-    "color": "#b70002",
-    "alternateColor": "#c0c0c0",
-    "conference": "Missouri Valley Conference",
-    "conferenceId": "18"
-  },
-  {
     "id": "2287",
     "name": "Redbirds",
     "abbreviation": "ILST",
@@ -2816,6 +2804,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2287.png",
     "color": "#CE1126",
     "alternateColor": "#ffe716",
+    "conference": "Missouri Valley Conference",
+    "conferenceId": "18"
+  },
+  {
+    "id": "71",
+    "name": "Braves",
+    "abbreviation": "BRAD",
+    "displayName": "Bradley Braves",
+    "shortDisplayName": "Bradley",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/71.png",
+    "color": "#b70002",
+    "alternateColor": "#c0c0c0",
     "conference": "Missouri Valley Conference",
     "conferenceId": "18"
   },

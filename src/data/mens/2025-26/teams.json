@@ -3360,18 +3360,6 @@
     "conferenceId": "23"
   },
   {
-    "id": "142",
-    "name": "Tigers",
-    "abbreviation": "MIZ",
-    "displayName": "Missouri Tigers",
-    "shortDisplayName": "Missouri",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/142.png",
-    "color": "#f1b82d",
-    "alternateColor": "#000000",
-    "conference": "Southeastern Conference",
-    "conferenceId": "23"
-  },
-  {
     "id": "96",
     "name": "Wildcats",
     "abbreviation": "UK",
@@ -3380,6 +3368,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/96.png",
     "color": "#0033a0",
     "alternateColor": "#ffffff",
+    "conference": "Southeastern Conference",
+    "conferenceId": "23"
+  },
+  {
+    "id": "142",
+    "name": "Tigers",
+    "abbreviation": "MIZ",
+    "displayName": "Missouri Tigers",
+    "shortDisplayName": "Missouri",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/142.png",
+    "color": "#f1b82d",
+    "alternateColor": "#000000",
     "conference": "Southeastern Conference",
     "conferenceId": "23"
   },

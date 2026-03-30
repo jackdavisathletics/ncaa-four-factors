@@ -228,18 +228,6 @@
     "conferenceId": "2"
   },
   {
-    "id": "87",
-    "name": "Fighting Irish",
-    "abbreviation": "ND",
-    "displayName": "Notre Dame Fighting Irish",
-    "shortDisplayName": "Notre Dame",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/87.png",
-    "color": "#062340",
-    "alternateColor": "#c99700",
-    "conference": "Atlantic Coast Conference",
-    "conferenceId": "2"
-  },
-  {
     "id": "259",
     "name": "Hokies",
     "abbreviation": "VT",
@@ -248,6 +236,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/259.png",
     "color": "#6a2c3e",
     "alternateColor": "#cf4520",
+    "conference": "Atlantic Coast Conference",
+    "conferenceId": "2"
+  },
+  {
+    "id": "87",
+    "name": "Fighting Irish",
+    "abbreviation": "ND",
+    "displayName": "Notre Dame Fighting Irish",
+    "shortDisplayName": "Notre Dame",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/87.png",
+    "color": "#062340",
+    "alternateColor": "#c99700",
     "conference": "Atlantic Coast Conference",
     "conferenceId": "2"
   },

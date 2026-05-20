@@ -11880,7 +11880,7 @@
       "ftr": 26.31578947368421
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401851213",
@@ -13155,7 +13155,7 @@
       "ftr": 23.943661971830984
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401851244",
@@ -14022,7 +14022,7 @@
       "ftr": 22.22222222222222
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401851340",
@@ -14634,7 +14634,7 @@
       "ftr": 5.172413793103448
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401851399",
@@ -33351,7 +33351,7 @@
       "ftr": 24.324324324324326
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828898",
@@ -38655,58 +38655,7 @@
       "ftr": 30.64516129032258
     },
     "isComplete": true,
-    "isConferenceGame": true
-  },
-  {
-    "id": "401828888",
-    "date": "2026-02-27T02:00Z",
-    "venue": "",
-    "homeTeam": {
-      "teamId": "2250",
-      "teamName": "Gonzaga Bulldogs",
-      "teamAbbreviation": "GONZ",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
-      "teamColor": "#041e42",
-      "score": 75,
-      "isHome": true,
-      "fgm": 25,
-      "fga": 53,
-      "fg3m": 10,
-      "fg3a": 21,
-      "ftm": 15,
-      "fta": 21,
-      "oreb": 10,
-      "dreb": 23,
-      "turnovers": 14,
-      "efg": 56.60377358490566,
-      "tov": 18.36306400839454,
-      "orb": 31.25,
-      "ftr": 28.30188679245283
-    },
-    "awayTeam": {
-      "teamId": "2608",
-      "teamName": "Saint Mary's Gaels",
-      "teamAbbreviation": "SMC",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2608.png",
-      "teamColor": "#d80024",
-      "score": 67,
-      "isHome": false,
-      "fgm": 25,
-      "fga": 53,
-      "fg3m": 8,
-      "fg3a": 15,
-      "ftm": 9,
-      "fta": 13,
-      "oreb": 7,
-      "dreb": 22,
-      "turnovers": 17,
-      "efg": 54.71698113207547,
-      "tov": 22.451135763338616,
-      "orb": 23.333333333333332,
-      "ftr": 16.9811320754717
-    },
-    "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828891",
@@ -38757,7 +38706,7 @@
       "ftr": 7.042253521126761
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828890",
@@ -38806,6 +38755,57 @@
       "tov": 14.299332697807435,
       "orb": 38.88888888888889,
       "ftr": 21.875
+    },
+    "isComplete": true,
+    "isConferenceGame": false
+  },
+  {
+    "id": "401828888",
+    "date": "2026-02-27T02:00Z",
+    "venue": "",
+    "homeTeam": {
+      "teamId": "2250",
+      "teamName": "Gonzaga Bulldogs",
+      "teamAbbreviation": "GONZ",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
+      "teamColor": "#041e42",
+      "score": 75,
+      "isHome": true,
+      "fgm": 25,
+      "fga": 53,
+      "fg3m": 10,
+      "fg3a": 21,
+      "ftm": 15,
+      "fta": 21,
+      "oreb": 10,
+      "dreb": 23,
+      "turnovers": 14,
+      "efg": 56.60377358490566,
+      "tov": 18.36306400839454,
+      "orb": 31.25,
+      "ftr": 28.30188679245283
+    },
+    "awayTeam": {
+      "teamId": "2608",
+      "teamName": "Saint Mary's Gaels",
+      "teamAbbreviation": "SMC",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2608.png",
+      "teamColor": "#d80024",
+      "score": 67,
+      "isHome": false,
+      "fgm": 25,
+      "fga": 53,
+      "fg3m": 8,
+      "fg3a": 15,
+      "ftm": 9,
+      "fta": 13,
+      "oreb": 7,
+      "dreb": 22,
+      "turnovers": 17,
+      "efg": 54.71698113207547,
+      "tov": 22.451135763338616,
+      "orb": 23.333333333333332,
+      "ftr": 16.9811320754717
     },
     "isComplete": true,
     "isConferenceGame": true
@@ -48192,7 +48192,7 @@
       "ftr": 44
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401831159",
@@ -48858,57 +48858,6 @@
     "isConferenceGame": true
   },
   {
-    "id": "401828882",
-    "date": "2026-02-21T22:00Z",
-    "venue": "",
-    "homeTeam": {
-      "teamId": "279",
-      "teamName": "Pacific Tigers",
-      "teamAbbreviation": "PAC",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/279.png",
-      "teamColor": "#F47820",
-      "score": 70,
-      "isHome": true,
-      "fgm": 19,
-      "fga": 47,
-      "fg3m": 8,
-      "fg3a": 18,
-      "ftm": 24,
-      "fta": 30,
-      "oreb": 6,
-      "dreb": 16,
-      "turnovers": 17,
-      "efg": 48.93617021276596,
-      "tov": 22.020725388601036,
-      "orb": 20,
-      "ftr": 51.06382978723404
-    },
-    "awayTeam": {
-      "teamId": "2250",
-      "teamName": "Gonzaga Bulldogs",
-      "teamAbbreviation": "GONZ",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
-      "teamColor": "#041e42",
-      "score": 85,
-      "isHome": false,
-      "fgm": 27,
-      "fga": 56,
-      "fg3m": 6,
-      "fg3a": 17,
-      "ftm": 25,
-      "fta": 28,
-      "oreb": 15,
-      "dreb": 24,
-      "turnovers": 16,
-      "efg": 53.57142857142857,
-      "tov": 18.975332068311197,
-      "orb": 48.38709677419355,
-      "ftr": 44.642857142857146
-    },
-    "isComplete": true,
-    "isConferenceGame": true
-  },
-  {
     "id": "401828885",
     "date": "2026-02-21T22:00Z",
     "venue": "",
@@ -48955,6 +48904,57 @@
       "tov": 12.702078521939955,
       "orb": 26.53061224489796,
       "ftr": 18.84057971014493
+    },
+    "isComplete": true,
+    "isConferenceGame": false
+  },
+  {
+    "id": "401828882",
+    "date": "2026-02-21T22:00Z",
+    "venue": "",
+    "homeTeam": {
+      "teamId": "279",
+      "teamName": "Pacific Tigers",
+      "teamAbbreviation": "PAC",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/279.png",
+      "teamColor": "#F47820",
+      "score": 70,
+      "isHome": true,
+      "fgm": 19,
+      "fga": 47,
+      "fg3m": 8,
+      "fg3a": 18,
+      "ftm": 24,
+      "fta": 30,
+      "oreb": 6,
+      "dreb": 16,
+      "turnovers": 17,
+      "efg": 48.93617021276596,
+      "tov": 22.020725388601036,
+      "orb": 20,
+      "ftr": 51.06382978723404
+    },
+    "awayTeam": {
+      "teamId": "2250",
+      "teamName": "Gonzaga Bulldogs",
+      "teamAbbreviation": "GONZ",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
+      "teamColor": "#041e42",
+      "score": 85,
+      "isHome": false,
+      "fgm": 27,
+      "fga": 56,
+      "fg3m": 6,
+      "fg3a": 17,
+      "ftm": 25,
+      "fta": 28,
+      "oreb": 15,
+      "dreb": 24,
+      "turnovers": 16,
+      "efg": 53.57142857142857,
+      "tov": 18.975332068311197,
+      "orb": 48.38709677419355,
+      "ftr": 44.642857142857146
     },
     "isComplete": true,
     "isConferenceGame": true
@@ -49926,7 +49926,7 @@
       "ftr": 8.955223880597014
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828886",
@@ -55587,58 +55587,7 @@
       "ftr": 33.33333333333333
     },
     "isComplete": true,
-    "isConferenceGame": true
-  },
-  {
-    "id": "401828876",
-    "date": "2026-02-20T02:00Z",
-    "venue": "",
-    "homeTeam": {
-      "teamId": "2250",
-      "teamName": "Gonzaga Bulldogs",
-      "teamAbbreviation": "GONZ",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
-      "teamColor": "#041e42",
-      "score": 75,
-      "isHome": true,
-      "fgm": 30,
-      "fga": 63,
-      "fg3m": 7,
-      "fg3a": 18,
-      "ftm": 8,
-      "fta": 11,
-      "oreb": 10,
-      "dreb": 33,
-      "turnovers": 8,
-      "efg": 53.17460317460318,
-      "tov": 10.548523206751053,
-      "orb": 30.303030303030305,
-      "ftr": 12.698412698412698
-    },
-    "awayTeam": {
-      "teamId": "265",
-      "teamName": "Washington State Cougars",
-      "teamAbbreviation": "WSU",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/265.png",
-      "teamColor": "#a60f2d",
-      "score": 50,
-      "isHome": false,
-      "fgm": 21,
-      "fga": 54,
-      "fg3m": 2,
-      "fg3a": 16,
-      "ftm": 6,
-      "fta": 11,
-      "oreb": 3,
-      "dreb": 23,
-      "turnovers": 9,
-      "efg": 40.74074074074074,
-      "tov": 13.266509433962264,
-      "orb": 8.333333333333332,
-      "ftr": 11.11111111111111
-    },
-    "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828881",
@@ -55689,7 +55638,7 @@
       "ftr": 6.779661016949152
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828878",
@@ -55738,6 +55687,57 @@
       "tov": 14.153371075656201,
       "orb": 14.285714285714285,
       "ftr": 16.39344262295082
+    },
+    "isComplete": true,
+    "isConferenceGame": false
+  },
+  {
+    "id": "401828876",
+    "date": "2026-02-20T02:00Z",
+    "venue": "",
+    "homeTeam": {
+      "teamId": "2250",
+      "teamName": "Gonzaga Bulldogs",
+      "teamAbbreviation": "GONZ",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
+      "teamColor": "#041e42",
+      "score": 75,
+      "isHome": true,
+      "fgm": 30,
+      "fga": 63,
+      "fg3m": 7,
+      "fg3a": 18,
+      "ftm": 8,
+      "fta": 11,
+      "oreb": 10,
+      "dreb": 33,
+      "turnovers": 8,
+      "efg": 53.17460317460318,
+      "tov": 10.548523206751053,
+      "orb": 30.303030303030305,
+      "ftr": 12.698412698412698
+    },
+    "awayTeam": {
+      "teamId": "265",
+      "teamName": "Washington State Cougars",
+      "teamAbbreviation": "WSU",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/265.png",
+      "teamColor": "#a60f2d",
+      "score": 50,
+      "isHome": false,
+      "fgm": 21,
+      "fga": 54,
+      "fg3m": 2,
+      "fg3a": 16,
+      "ftm": 6,
+      "fta": 11,
+      "oreb": 3,
+      "dreb": 23,
+      "turnovers": 9,
+      "efg": 40.74074074074074,
+      "tov": 13.266509433962264,
+      "orb": 8.333333333333332,
+      "ftr": 11.11111111111111
     },
     "isComplete": true,
     "isConferenceGame": true
@@ -64665,7 +64665,7 @@
       "ftr": 23.076923076923077
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828873",
@@ -65736,7 +65736,7 @@
       "ftr": 19.607843137254903
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828872",
@@ -65787,7 +65787,7 @@
       "ftr": 30.18867924528302
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401812233",
@@ -72723,6 +72723,57 @@
       "ftr": 28.26086956521739
     },
     "isComplete": true,
+    "isConferenceGame": false
+  },
+  {
+    "id": "401828868",
+    "date": "2026-02-13T02:00Z",
+    "venue": "",
+    "homeTeam": {
+      "teamId": "204",
+      "teamName": "Oregon State Beavers",
+      "teamAbbreviation": "ORST",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/204.png",
+      "teamColor": "#dc4405",
+      "score": 70,
+      "isHome": true,
+      "fgm": 27,
+      "fga": 72,
+      "fg3m": 5,
+      "fg3a": 19,
+      "ftm": 11,
+      "fta": 18,
+      "oreb": 15,
+      "dreb": 28,
+      "turnovers": 7,
+      "efg": 40.97222222222222,
+      "tov": 8.053382420616659,
+      "orb": 31.25,
+      "ftr": 15.277777777777779
+    },
+    "awayTeam": {
+      "teamId": "2541",
+      "teamName": "Santa Clara Broncos",
+      "teamAbbreviation": "SCU",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2541.png",
+      "teamColor": "#690b0b",
+      "score": 83,
+      "isHome": false,
+      "fgm": 29,
+      "fga": 77,
+      "fg3m": 14,
+      "fg3a": 40,
+      "ftm": 11,
+      "fta": 16,
+      "oreb": 19,
+      "dreb": 33,
+      "turnovers": 7,
+      "efg": 46.75324675324675,
+      "tov": 7.6889279437609845,
+      "orb": 40.42553191489361,
+      "ftr": 14.285714285714285
+    },
+    "isComplete": true,
     "isConferenceGame": true
   },
   {
@@ -72772,57 +72823,6 @@
       "tov": 22.880539499036605,
       "orb": 41.17647058823529,
       "ftr": 26.31578947368421
-    },
-    "isComplete": true,
-    "isConferenceGame": true
-  },
-  {
-    "id": "401828868",
-    "date": "2026-02-13T02:00Z",
-    "venue": "",
-    "homeTeam": {
-      "teamId": "204",
-      "teamName": "Oregon State Beavers",
-      "teamAbbreviation": "ORST",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/204.png",
-      "teamColor": "#dc4405",
-      "score": 70,
-      "isHome": true,
-      "fgm": 27,
-      "fga": 72,
-      "fg3m": 5,
-      "fg3a": 19,
-      "ftm": 11,
-      "fta": 18,
-      "oreb": 15,
-      "dreb": 28,
-      "turnovers": 7,
-      "efg": 40.97222222222222,
-      "tov": 8.053382420616659,
-      "orb": 31.25,
-      "ftr": 15.277777777777779
-    },
-    "awayTeam": {
-      "teamId": "2541",
-      "teamName": "Santa Clara Broncos",
-      "teamAbbreviation": "SCU",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2541.png",
-      "teamColor": "#690b0b",
-      "score": 83,
-      "isHome": false,
-      "fgm": 29,
-      "fga": 77,
-      "fg3m": 14,
-      "fg3a": 40,
-      "ftm": 11,
-      "fta": 16,
-      "oreb": 19,
-      "dreb": 33,
-      "turnovers": 7,
-      "efg": 46.75324675324675,
-      "tov": 7.6889279437609845,
-      "orb": 40.42553191489361,
-      "ftr": 14.285714285714285
     },
     "isComplete": true,
     "isConferenceGame": true
@@ -82008,57 +82008,6 @@
     "isConferenceGame": true
   },
   {
-    "id": "401828861",
-    "date": "2026-02-07T22:00Z",
-    "venue": "",
-    "homeTeam": {
-      "teamId": "2250",
-      "teamName": "Gonzaga Bulldogs",
-      "teamAbbreviation": "GONZ",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
-      "teamColor": "#041e42",
-      "score": 72,
-      "isHome": true,
-      "fgm": 29,
-      "fga": 75,
-      "fg3m": 4,
-      "fg3a": 12,
-      "ftm": 10,
-      "fta": 16,
-      "oreb": 21,
-      "dreb": 31,
-      "turnovers": 9,
-      "efg": 41.333333333333336,
-      "tov": 9.885764499121265,
-      "orb": 44.680851063829785,
-      "ftr": 13.333333333333334
-    },
-    "awayTeam": {
-      "teamId": "279",
-      "teamName": "Pacific Tigers",
-      "teamAbbreviation": "PAC",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/279.png",
-      "teamColor": "#F47820",
-      "score": 44,
-      "isHome": false,
-      "fgm": 17,
-      "fga": 57,
-      "fg3m": 4,
-      "fg3a": 23,
-      "ftm": 6,
-      "fta": 9,
-      "oreb": 9,
-      "dreb": 26,
-      "turnovers": 17,
-      "efg": 33.33333333333333,
-      "tov": 21.806054386865057,
-      "orb": 22.5,
-      "ftr": 10.526315789473683
-    },
-    "isComplete": true,
-    "isConferenceGame": true
-  },
-  {
     "id": "401828862",
     "date": "2026-02-07T22:00Z",
     "venue": "",
@@ -82105,6 +82054,57 @@
       "tov": 21.827706635622818,
       "orb": 25.806451612903224,
       "ftr": 14.583333333333334
+    },
+    "isComplete": true,
+    "isConferenceGame": false
+  },
+  {
+    "id": "401828861",
+    "date": "2026-02-07T22:00Z",
+    "venue": "",
+    "homeTeam": {
+      "teamId": "2250",
+      "teamName": "Gonzaga Bulldogs",
+      "teamAbbreviation": "GONZ",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
+      "teamColor": "#041e42",
+      "score": 72,
+      "isHome": true,
+      "fgm": 29,
+      "fga": 75,
+      "fg3m": 4,
+      "fg3a": 12,
+      "ftm": 10,
+      "fta": 16,
+      "oreb": 21,
+      "dreb": 31,
+      "turnovers": 9,
+      "efg": 41.333333333333336,
+      "tov": 9.885764499121265,
+      "orb": 44.680851063829785,
+      "ftr": 13.333333333333334
+    },
+    "awayTeam": {
+      "teamId": "279",
+      "teamName": "Pacific Tigers",
+      "teamAbbreviation": "PAC",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/279.png",
+      "teamColor": "#F47820",
+      "score": 44,
+      "isHome": false,
+      "fgm": 17,
+      "fga": 57,
+      "fg3m": 4,
+      "fg3a": 23,
+      "ftm": 6,
+      "fta": 9,
+      "oreb": 9,
+      "dreb": 26,
+      "turnovers": 17,
+      "efg": 33.33333333333333,
+      "tov": 21.806054386865057,
+      "orb": 22.5,
+      "ftr": 10.526315789473683
     },
     "isComplete": true,
     "isConferenceGame": true
@@ -88584,7 +88584,7 @@
       "ftr": 27.77777777777778
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401807605",
@@ -89148,57 +89148,6 @@
     "isConferenceGame": true
   },
   {
-    "id": "401828856",
-    "date": "2026-02-06T02:00Z",
-    "venue": "",
-    "homeTeam": {
-      "teamId": "2250",
-      "teamName": "Gonzaga Bulldogs",
-      "teamAbbreviation": "GONZ",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
-      "teamColor": "#041e42",
-      "score": 67,
-      "isHome": true,
-      "fgm": 24,
-      "fga": 77,
-      "fg3m": 7,
-      "fg3a": 30,
-      "ftm": 12,
-      "fta": 16,
-      "oreb": 25,
-      "dreb": 29,
-      "turnovers": 7,
-      "efg": 35.714285714285715,
-      "tov": 7.6889279437609845,
-      "orb": 46.2962962962963,
-      "ftr": 15.584415584415584
-    },
-    "awayTeam": {
-      "teamId": "204",
-      "teamName": "Oregon State Beavers",
-      "teamAbbreviation": "ORST",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/204.png",
-      "teamColor": "#dc4405",
-      "score": 37,
-      "isHome": false,
-      "fgm": 13,
-      "fga": 53,
-      "fg3m": 1,
-      "fg3a": 21,
-      "ftm": 10,
-      "fta": 19,
-      "oreb": 14,
-      "dreb": 29,
-      "turnovers": 20,
-      "efg": 25.471698113207548,
-      "tov": 24.582104228121928,
-      "orb": 32.55813953488372,
-      "ftr": 18.867924528301888
-    },
-    "isComplete": true,
-    "isConferenceGame": true
-  },
-  {
     "id": "401828858",
     "date": "2026-02-06T02:00Z",
     "venue": "",
@@ -89247,7 +89196,58 @@
       "ftr": 49.23076923076923
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
+  },
+  {
+    "id": "401828856",
+    "date": "2026-02-06T02:00Z",
+    "venue": "",
+    "homeTeam": {
+      "teamId": "2250",
+      "teamName": "Gonzaga Bulldogs",
+      "teamAbbreviation": "GONZ",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
+      "teamColor": "#041e42",
+      "score": 67,
+      "isHome": true,
+      "fgm": 24,
+      "fga": 77,
+      "fg3m": 7,
+      "fg3a": 30,
+      "ftm": 12,
+      "fta": 16,
+      "oreb": 25,
+      "dreb": 29,
+      "turnovers": 7,
+      "efg": 35.714285714285715,
+      "tov": 7.6889279437609845,
+      "orb": 46.2962962962963,
+      "ftr": 15.584415584415584
+    },
+    "awayTeam": {
+      "teamId": "204",
+      "teamName": "Oregon State Beavers",
+      "teamAbbreviation": "ORST",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/204.png",
+      "teamColor": "#dc4405",
+      "score": 37,
+      "isHome": false,
+      "fgm": 13,
+      "fga": 53,
+      "fg3m": 1,
+      "fg3a": 21,
+      "ftm": 10,
+      "fta": 19,
+      "oreb": 14,
+      "dreb": 29,
+      "turnovers": 20,
+      "efg": 25.471698113207548,
+      "tov": 24.582104228121928,
+      "orb": 32.55813953488372,
+      "ftr": 18.867924528301888
+    },
+    "isComplete": true,
+    "isConferenceGame": false
   },
   {
     "id": "401828860",
@@ -100467,7 +100467,7 @@
       "ftr": 32
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401827363",
@@ -101130,7 +101130,7 @@
       "ftr": 19.298245614035086
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828853",
@@ -101181,7 +101181,7 @@
       "ftr": 6.451612903225806
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401807884",
@@ -106740,58 +106740,7 @@
       "ftr": 8.47457627118644
     },
     "isComplete": true,
-    "isConferenceGame": true
-  },
-  {
-    "id": "401828845",
-    "date": "2026-01-30T02:00Z",
-    "venue": "",
-    "homeTeam": {
-      "teamId": "2539",
-      "teamName": "San Francisco Dons",
-      "teamAbbreviation": "SF",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2539.png",
-      "teamColor": "#005a36",
-      "score": 66,
-      "isHome": true,
-      "fgm": 23,
-      "fga": 69,
-      "fg3m": 6,
-      "fg3a": 27,
-      "ftm": 14,
-      "fta": 17,
-      "oreb": 17,
-      "dreb": 26,
-      "turnovers": 15,
-      "efg": 37.68115942028986,
-      "tov": 16.39702667249672,
-      "orb": 36.17021276595745,
-      "ftr": 20.28985507246377
-    },
-    "awayTeam": {
-      "teamId": "2250",
-      "teamName": "Gonzaga Bulldogs",
-      "teamAbbreviation": "GONZ",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
-      "teamColor": "#041e42",
-      "score": 74,
-      "isHome": false,
-      "fgm": 23,
-      "fga": 71,
-      "fg3m": 7,
-      "fg3a": 26,
-      "ftm": 21,
-      "fta": 26,
-      "oreb": 25,
-      "dreb": 30,
-      "turnovers": 18,
-      "efg": 37.32394366197183,
-      "tov": 17.921146953405017,
-      "orb": 49.01960784313725,
-      "ftr": 29.577464788732392
-    },
-    "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828850",
@@ -106842,7 +106791,7 @@
       "ftr": 17.91044776119403
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828847",
@@ -106891,6 +106840,57 @@
       "tov": 10.934937124111537,
       "orb": 23.404255319148938,
       "ftr": 10.16949152542373
+    },
+    "isComplete": true,
+    "isConferenceGame": false
+  },
+  {
+    "id": "401828845",
+    "date": "2026-01-30T02:00Z",
+    "venue": "",
+    "homeTeam": {
+      "teamId": "2539",
+      "teamName": "San Francisco Dons",
+      "teamAbbreviation": "SF",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2539.png",
+      "teamColor": "#005a36",
+      "score": 66,
+      "isHome": true,
+      "fgm": 23,
+      "fga": 69,
+      "fg3m": 6,
+      "fg3a": 27,
+      "ftm": 14,
+      "fta": 17,
+      "oreb": 17,
+      "dreb": 26,
+      "turnovers": 15,
+      "efg": 37.68115942028986,
+      "tov": 16.39702667249672,
+      "orb": 36.17021276595745,
+      "ftr": 20.28985507246377
+    },
+    "awayTeam": {
+      "teamId": "2250",
+      "teamName": "Gonzaga Bulldogs",
+      "teamAbbreviation": "GONZ",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
+      "teamColor": "#041e42",
+      "score": 74,
+      "isHome": false,
+      "fgm": 23,
+      "fga": 71,
+      "fg3m": 7,
+      "fg3a": 26,
+      "ftm": 21,
+      "fta": 26,
+      "oreb": 25,
+      "dreb": 30,
+      "turnovers": 18,
+      "efg": 37.32394366197183,
+      "tov": 17.921146953405017,
+      "orb": 49.01960784313725,
+      "ftr": 29.577464788732392
     },
     "isComplete": true,
     "isConferenceGame": true
@@ -115767,7 +115767,7 @@
       "ftr": 23.4375
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828842",
@@ -122499,58 +122499,7 @@
       "ftr": 17.741935483870968
     },
     "isComplete": true,
-    "isConferenceGame": true
-  },
-  {
-    "id": "401828835",
-    "date": "2026-01-23T02:00Z",
-    "venue": "",
-    "homeTeam": {
-      "teamId": "204",
-      "teamName": "Oregon State Beavers",
-      "teamAbbreviation": "ORST",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/204.png",
-      "teamColor": "#dc4405",
-      "score": 92,
-      "isHome": true,
-      "fgm": 29,
-      "fga": 59,
-      "fg3m": 10,
-      "fg3a": 24,
-      "ftm": 24,
-      "fta": 34,
-      "oreb": 11,
-      "dreb": 21,
-      "turnovers": 16,
-      "efg": 57.6271186440678,
-      "tov": 17.78568252556692,
-      "orb": 31.428571428571427,
-      "ftr": 40.67796610169492
-    },
-    "awayTeam": {
-      "teamId": "2250",
-      "teamName": "Gonzaga Bulldogs",
-      "teamAbbreviation": "GONZ",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
-      "teamColor": "#041e42",
-      "score": 87,
-      "isHome": false,
-      "fgm": 30,
-      "fga": 66,
-      "fg3m": 8,
-      "fg3a": 23,
-      "ftm": 19,
-      "fta": 25,
-      "oreb": 16,
-      "dreb": 24,
-      "turnovers": 19,
-      "efg": 51.515151515151516,
-      "tov": 19.791666666666664,
-      "orb": 43.24324324324324,
-      "ftr": 28.78787878787879
-    },
-    "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828840",
@@ -122601,7 +122550,58 @@
       "ftr": 12.658227848101266
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
+  },
+  {
+    "id": "401828835",
+    "date": "2026-01-23T02:00Z",
+    "venue": "",
+    "homeTeam": {
+      "teamId": "204",
+      "teamName": "Oregon State Beavers",
+      "teamAbbreviation": "ORST",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/204.png",
+      "teamColor": "#dc4405",
+      "score": 92,
+      "isHome": true,
+      "fgm": 29,
+      "fga": 59,
+      "fg3m": 10,
+      "fg3a": 24,
+      "ftm": 24,
+      "fta": 34,
+      "oreb": 11,
+      "dreb": 21,
+      "turnovers": 16,
+      "efg": 57.6271186440678,
+      "tov": 17.78568252556692,
+      "orb": 31.428571428571427,
+      "ftr": 40.67796610169492
+    },
+    "awayTeam": {
+      "teamId": "2250",
+      "teamName": "Gonzaga Bulldogs",
+      "teamAbbreviation": "GONZ",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
+      "teamColor": "#041e42",
+      "score": 87,
+      "isHome": false,
+      "fgm": 30,
+      "fga": 66,
+      "fg3m": 8,
+      "fg3a": 23,
+      "ftm": 19,
+      "fta": 25,
+      "oreb": 16,
+      "dreb": 24,
+      "turnovers": 19,
+      "efg": 51.515151515151516,
+      "tov": 19.791666666666664,
+      "orb": 43.24324324324324,
+      "ftr": 28.78787878787879
+    },
+    "isComplete": true,
+    "isConferenceGame": false
   },
   {
     "id": "401828839",
@@ -132801,7 +132801,7 @@
       "ftr": 18.96551724137931
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828832",
@@ -133464,58 +133464,7 @@
       "ftr": 11.475409836065573
     },
     "isComplete": true,
-    "isConferenceGame": true
-  },
-  {
-    "id": "401828829",
-    "date": "2026-01-17T22:00Z",
-    "venue": "",
-    "homeTeam": {
-      "teamId": "2250",
-      "teamName": "Gonzaga Bulldogs",
-      "teamAbbreviation": "GONZ",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
-      "teamColor": "#041e42",
-      "score": 87,
-      "isHome": true,
-      "fgm": 35,
-      "fga": 63,
-      "fg3m": 12,
-      "fg3a": 25,
-      "ftm": 5,
-      "fta": 5,
-      "oreb": 12,
-      "dreb": 29,
-      "turnovers": 11,
-      "efg": 65.07936507936508,
-      "tov": 14.435695538057741,
-      "orb": 46.15384615384615,
-      "ftr": 7.936507936507936
-    },
-    "awayTeam": {
-      "teamId": "301",
-      "teamName": "San Diego Toreros",
-      "teamAbbreviation": "USD",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/301.png",
-      "teamColor": "#2f99d4",
-      "score": 42,
-      "isHome": false,
-      "fgm": 18,
-      "fga": 57,
-      "fg3m": 2,
-      "fg3a": 9,
-      "ftm": 4,
-      "fta": 6,
-      "oreb": 11,
-      "dreb": 14,
-      "turnovers": 15,
-      "efg": 33.33333333333333,
-      "tov": 20.096463022508036,
-      "orb": 27.500000000000004,
-      "ftr": 7.017543859649122
-    },
-    "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828831",
@@ -133564,6 +133513,57 @@
       "tov": 22.52252252252252,
       "orb": 42.857142857142854,
       "ftr": 25.49019607843137
+    },
+    "isComplete": true,
+    "isConferenceGame": false
+  },
+  {
+    "id": "401828829",
+    "date": "2026-01-17T22:00Z",
+    "venue": "",
+    "homeTeam": {
+      "teamId": "2250",
+      "teamName": "Gonzaga Bulldogs",
+      "teamAbbreviation": "GONZ",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
+      "teamColor": "#041e42",
+      "score": 87,
+      "isHome": true,
+      "fgm": 35,
+      "fga": 63,
+      "fg3m": 12,
+      "fg3a": 25,
+      "ftm": 5,
+      "fta": 5,
+      "oreb": 12,
+      "dreb": 29,
+      "turnovers": 11,
+      "efg": 65.07936507936508,
+      "tov": 14.435695538057741,
+      "orb": 46.15384615384615,
+      "ftr": 7.936507936507936
+    },
+    "awayTeam": {
+      "teamId": "301",
+      "teamName": "San Diego Toreros",
+      "teamAbbreviation": "USD",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/301.png",
+      "teamColor": "#2f99d4",
+      "score": 42,
+      "isHome": false,
+      "fgm": 18,
+      "fga": 57,
+      "fg3m": 2,
+      "fg3a": 9,
+      "ftm": 4,
+      "fta": 6,
+      "oreb": 11,
+      "dreb": 14,
+      "turnovers": 15,
+      "efg": 33.33333333333333,
+      "tov": 20.096463022508036,
+      "orb": 27.500000000000004,
+      "ftr": 7.017543859649122
     },
     "isComplete": true,
     "isConferenceGame": true
@@ -139893,57 +139893,6 @@
     "isConferenceGame": true
   },
   {
-    "id": "401828824",
-    "date": "2026-01-16T02:00Z",
-    "venue": "",
-    "homeTeam": {
-      "teamId": "2250",
-      "teamName": "Gonzaga Bulldogs",
-      "teamAbbreviation": "GONZ",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
-      "teamColor": "#041e42",
-      "score": 82,
-      "isHome": true,
-      "fgm": 28,
-      "fga": 52,
-      "fg3m": 11,
-      "fg3a": 20,
-      "ftm": 15,
-      "fta": 17,
-      "oreb": 7,
-      "dreb": 27,
-      "turnovers": 19,
-      "efg": 64.42307692307693,
-      "tov": 24.20998980632008,
-      "orb": 30.434782608695656,
-      "ftr": 28.846153846153843
-    },
-    "awayTeam": {
-      "teamId": "2539",
-      "teamName": "San Francisco Dons",
-      "teamAbbreviation": "SF",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2539.png",
-      "teamColor": "#005a36",
-      "score": 69,
-      "isHome": false,
-      "fgm": 28,
-      "fga": 65,
-      "fg3m": 3,
-      "fg3a": 15,
-      "ftm": 10,
-      "fta": 17,
-      "oreb": 12,
-      "dreb": 16,
-      "turnovers": 10,
-      "efg": 45.38461538461539,
-      "tov": 12.12415130940834,
-      "orb": 30.76923076923077,
-      "ftr": 15.384615384615385
-    },
-    "isComplete": true,
-    "isConferenceGame": true
-  },
-  {
     "id": "401828827",
     "date": "2026-01-16T02:00Z",
     "venue": "",
@@ -139990,6 +139939,57 @@
       "tov": 17.636684303350968,
       "orb": 22.5,
       "ftr": 13.043478260869565
+    },
+    "isComplete": true,
+    "isConferenceGame": false
+  },
+  {
+    "id": "401828824",
+    "date": "2026-01-16T02:00Z",
+    "venue": "",
+    "homeTeam": {
+      "teamId": "2250",
+      "teamName": "Gonzaga Bulldogs",
+      "teamAbbreviation": "GONZ",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
+      "teamColor": "#041e42",
+      "score": 82,
+      "isHome": true,
+      "fgm": 28,
+      "fga": 52,
+      "fg3m": 11,
+      "fg3a": 20,
+      "ftm": 15,
+      "fta": 17,
+      "oreb": 7,
+      "dreb": 27,
+      "turnovers": 19,
+      "efg": 64.42307692307693,
+      "tov": 24.20998980632008,
+      "orb": 30.434782608695656,
+      "ftr": 28.846153846153843
+    },
+    "awayTeam": {
+      "teamId": "2539",
+      "teamName": "San Francisco Dons",
+      "teamAbbreviation": "SF",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2539.png",
+      "teamColor": "#005a36",
+      "score": 69,
+      "isHome": false,
+      "fgm": 28,
+      "fga": 65,
+      "fg3m": 3,
+      "fg3a": 15,
+      "ftm": 10,
+      "fta": 17,
+      "oreb": 12,
+      "dreb": 16,
+      "turnovers": 10,
+      "efg": 45.38461538461539,
+      "tov": 12.12415130940834,
+      "orb": 30.76923076923077,
+      "ftr": 15.384615384615385
     },
     "isComplete": true,
     "isConferenceGame": true
@@ -150345,7 +150345,7 @@
       "ftr": 3.3333333333333335
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401807878",
@@ -151467,7 +151467,7 @@
       "ftr": 17.72151898734177
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401829067",
@@ -156363,7 +156363,7 @@
       "ftr": 16.417910447761194
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828819",
@@ -156414,7 +156414,7 @@
       "ftr": 30.303030303030305
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828816",
@@ -156465,7 +156465,7 @@
       "ftr": 10.76923076923077
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828817",
@@ -164319,7 +164319,7 @@
       "ftr": 30.508474576271187
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828812",
@@ -165339,7 +165339,7 @@
       "ftr": 18.181818181818183
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401819563",
@@ -172482,57 +172482,6 @@
     "isConferenceGame": true
   },
   {
-    "id": "401828804",
-    "date": "2026-01-03T02:00Z",
-    "venue": "",
-    "homeTeam": {
-      "teamId": "2547",
-      "teamName": "Seattle U Redhawks",
-      "teamAbbreviation": "SEA",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2547.png",
-      "teamColor": "#BF2E1A",
-      "score": 59,
-      "isHome": true,
-      "fgm": 22,
-      "fga": 62,
-      "fg3m": 9,
-      "fg3a": 22,
-      "ftm": 6,
-      "fta": 9,
-      "oreb": 10,
-      "dreb": 17,
-      "turnovers": 13,
-      "efg": 42.74193548387097,
-      "tov": 16.46403242147923,
-      "orb": 24.390243902439025,
-      "ftr": 9.67741935483871
-    },
-    "awayTeam": {
-      "teamId": "2250",
-      "teamName": "Gonzaga Bulldogs",
-      "teamAbbreviation": "GONZ",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
-      "teamColor": "#041e42",
-      "score": 85,
-      "isHome": false,
-      "fgm": 31,
-      "fga": 58,
-      "fg3m": 10,
-      "fg3a": 21,
-      "ftm": 13,
-      "fta": 21,
-      "oreb": 11,
-      "dreb": 31,
-      "turnovers": 16,
-      "efg": 62.06896551724138,
-      "tov": 19.221528111484865,
-      "orb": 39.285714285714285,
-      "ftr": 22.413793103448278
-    },
-    "isComplete": true,
-    "isConferenceGame": true
-  },
-  {
     "id": "401828806",
     "date": "2026-01-03T02:00Z",
     "venue": "",
@@ -172579,6 +172528,57 @@
       "tov": 13.164823591363877,
       "orb": 25.64102564102564,
       "ftr": 9.67741935483871
+    },
+    "isComplete": true,
+    "isConferenceGame": false
+  },
+  {
+    "id": "401828804",
+    "date": "2026-01-03T02:00Z",
+    "venue": "",
+    "homeTeam": {
+      "teamId": "2547",
+      "teamName": "Seattle U Redhawks",
+      "teamAbbreviation": "SEA",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2547.png",
+      "teamColor": "#BF2E1A",
+      "score": 59,
+      "isHome": true,
+      "fgm": 22,
+      "fga": 62,
+      "fg3m": 9,
+      "fg3a": 22,
+      "ftm": 6,
+      "fta": 9,
+      "oreb": 10,
+      "dreb": 17,
+      "turnovers": 13,
+      "efg": 42.74193548387097,
+      "tov": 16.46403242147923,
+      "orb": 24.390243902439025,
+      "ftr": 9.67741935483871
+    },
+    "awayTeam": {
+      "teamId": "2250",
+      "teamName": "Gonzaga Bulldogs",
+      "teamAbbreviation": "GONZ",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
+      "teamColor": "#041e42",
+      "score": 85,
+      "isHome": false,
+      "fgm": 31,
+      "fga": 58,
+      "fg3m": 10,
+      "fg3a": 21,
+      "ftm": 13,
+      "fta": 21,
+      "oreb": 11,
+      "dreb": 31,
+      "turnovers": 16,
+      "efg": 62.06896551724138,
+      "tov": 19.221528111484865,
+      "orb": 39.285714285714285,
+      "ftr": 22.413793103448278
     },
     "isComplete": true,
     "isConferenceGame": true
@@ -180078,58 +180078,7 @@
       "ftr": 30.357142857142854
     },
     "isComplete": true,
-    "isConferenceGame": true
-  },
-  {
-    "id": "401828798",
-    "date": "2025-12-31T02:00Z",
-    "venue": "",
-    "homeTeam": {
-      "teamId": "2250",
-      "teamName": "Gonzaga Bulldogs",
-      "teamAbbreviation": "GONZ",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
-      "teamColor": "#041e42",
-      "score": 75,
-      "isHome": true,
-      "fgm": 28,
-      "fga": 62,
-      "fg3m": 7,
-      "fg3a": 18,
-      "ftm": 12,
-      "fta": 16,
-      "oreb": 13,
-      "dreb": 30,
-      "turnovers": 11,
-      "efg": 50.806451612903224,
-      "tov": 13.743128435782106,
-      "orb": 37.142857142857146,
-      "ftr": 19.35483870967742
-    },
-    "awayTeam": {
-      "teamId": "2492",
-      "teamName": "Pepperdine Waves",
-      "teamAbbreviation": "PEPP",
-      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2492.png",
-      "teamColor": "#003A72",
-      "score": 52,
-      "isHome": false,
-      "fgm": 21,
-      "fga": 55,
-      "fg3m": 4,
-      "fg3a": 22,
-      "ftm": 6,
-      "fta": 9,
-      "oreb": 5,
-      "dreb": 22,
-      "turnovers": 12,
-      "efg": 41.81818181818181,
-      "tov": 16.91093573844419,
-      "orb": 14.285714285714285,
-      "ftr": 10.909090909090908
-    },
-    "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828803",
@@ -180178,6 +180127,57 @@
       "tov": 20.541324311261477,
       "orb": 25.71428571428571,
       "ftr": 4.6875
+    },
+    "isComplete": true,
+    "isConferenceGame": false
+  },
+  {
+    "id": "401828798",
+    "date": "2025-12-31T02:00Z",
+    "venue": "",
+    "homeTeam": {
+      "teamId": "2250",
+      "teamName": "Gonzaga Bulldogs",
+      "teamAbbreviation": "GONZ",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
+      "teamColor": "#041e42",
+      "score": 75,
+      "isHome": true,
+      "fgm": 28,
+      "fga": 62,
+      "fg3m": 7,
+      "fg3a": 18,
+      "ftm": 12,
+      "fta": 16,
+      "oreb": 13,
+      "dreb": 30,
+      "turnovers": 11,
+      "efg": 50.806451612903224,
+      "tov": 13.743128435782106,
+      "orb": 37.142857142857146,
+      "ftr": 19.35483870967742
+    },
+    "awayTeam": {
+      "teamId": "2492",
+      "teamName": "Pepperdine Waves",
+      "teamAbbreviation": "PEPP",
+      "teamLogo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2492.png",
+      "teamColor": "#003A72",
+      "score": 52,
+      "isHome": false,
+      "fgm": 21,
+      "fga": 55,
+      "fg3m": 4,
+      "fg3a": 22,
+      "ftm": 6,
+      "fta": 9,
+      "oreb": 5,
+      "dreb": 22,
+      "turnovers": 12,
+      "efg": 41.81818181818181,
+      "tov": 16.91093573844419,
+      "orb": 14.285714285714285,
+      "ftr": 10.909090909090908
     },
     "isComplete": true,
     "isConferenceGame": true
@@ -180282,7 +180282,7 @@
       "ftr": 39.58333333333333
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828037",
@@ -183291,7 +183291,7 @@
       "ftr": 21.428571428571427
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828795",
@@ -183342,7 +183342,7 @@
       "ftr": 27.27272727272727
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828794",
@@ -183699,7 +183699,7 @@
       "ftr": 10.44776119402985
     },
     "isComplete": true,
-    "isConferenceGame": true
+    "isConferenceGame": false
   },
   {
     "id": "401828793",

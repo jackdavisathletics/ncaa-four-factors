@@ -656,7 +656,7 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2046.png",
     "color": "#8e0b0b",
     "alternateColor": "#333333",
-    "conference": "ASUN Conference",
+    "conference": "Atlantic Sun Conference",
     "conferenceId": "46"
   },
   {
@@ -668,7 +668,7 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2110.png",
     "color": "#a7a9ac",
     "alternateColor": "#8e959a",
-    "conference": "ASUN Conference",
+    "conference": "Atlantic Sun Conference",
     "conferenceId": "46"
   },
   {
@@ -680,7 +680,7 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2511.png",
     "color": "#192C66",
     "alternateColor": "#857040",
-    "conference": "ASUN Conference",
+    "conference": "Atlantic Sun Conference",
     "conferenceId": "46"
   },
   {
@@ -692,7 +692,7 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/288.png",
     "color": "#20366C",
     "alternateColor": "#f6b734",
-    "conference": "ASUN Conference",
+    "conference": "Atlantic Sun Conference",
     "conferenceId": "46"
   },
   {
@@ -704,7 +704,7 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/526.png",
     "color": "#00885a",
     "alternateColor": "#076c3b",
-    "conference": "ASUN Conference",
+    "conference": "Atlantic Sun Conference",
     "conferenceId": "46"
   },
   {
@@ -716,7 +716,7 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2698.png",
     "color": "#0033a1",
     "alternateColor": "#db1a21",
-    "conference": "ASUN Conference",
+    "conference": "Atlantic Sun Conference",
     "conferenceId": "46"
   },
   {
@@ -728,7 +728,7 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/91.png",
     "color": "#000000",
     "alternateColor": "#333333",
-    "conference": "ASUN Conference",
+    "conference": "Atlantic Sun Conference",
     "conferenceId": "46"
   },
   {
@@ -740,7 +740,7 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/294.png",
     "color": "#00523e",
     "alternateColor": "#333333",
-    "conference": "ASUN Conference",
+    "conference": "Atlantic Sun Conference",
     "conferenceId": "46"
   },
   {
@@ -752,7 +752,7 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/56.png",
     "color": "#0a5640",
     "alternateColor": "#56854e",
-    "conference": "ASUN Conference",
+    "conference": "Atlantic Sun Conference",
     "conferenceId": "46"
   },
   {
@@ -764,7 +764,7 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2198.png",
     "color": "#660819",
     "alternateColor": "#f0f0f0",
-    "conference": "ASUN Conference",
+    "conference": "Atlantic Sun Conference",
     "conferenceId": "46"
   },
   {
@@ -776,7 +776,7 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2454.png",
     "color": "#004B8D",
     "alternateColor": "#babcbe",
-    "conference": "ASUN Conference",
+    "conference": "Atlantic Sun Conference",
     "conferenceId": "46"
   },
   {
@@ -788,7 +788,7 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2453.png",
     "color": "#663399",
     "alternateColor": "#333333",
-    "conference": "ASUN Conference",
+    "conference": "Atlantic Sun Conference",
     "conferenceId": "46"
   },
   {
@@ -1846,6 +1846,18 @@
     "alternateColor": "#c2c3c0",
     "conference": "Coastal Athletic Association",
     "conferenceId": "10"
+  },
+  {
+    "id": "201",
+    "name": "Sooners",
+    "abbreviation": "OU",
+    "displayName": "Oklahoma Sooners",
+    "shortDisplayName": "Oklahoma",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/201.png",
+    "color": "#990000",
+    "alternateColor": "#ffffff",
+    "conference": "College Basketball Crown",
+    "conferenceId": "104"
   },
   {
     "id": "2335",
@@ -3404,18 +3416,6 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2.png",
     "color": "#002b5c",
     "alternateColor": "#f26522",
-    "conference": "Southeastern Conference",
-    "conferenceId": "23"
-  },
-  {
-    "id": "201",
-    "name": "Sooners",
-    "abbreviation": "OU",
-    "displayName": "Oklahoma Sooners",
-    "shortDisplayName": "Oklahoma",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/201.png",
-    "color": "#990000",
-    "alternateColor": "#ffffff",
     "conference": "Southeastern Conference",
     "conferenceId": "23"
   },

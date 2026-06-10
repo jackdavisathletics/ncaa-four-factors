@@ -1266,8 +1266,8 @@
     "displayName": "Longwood Lancers",
     "shortDisplayName": "Longwood",
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2344.png",
-    "color": "#666666",
-    "alternateColor": "#333333",
+    "color": "#003273",
+    "alternateColor": "#9ea2a3",
     "conference": "Big South Conference",
     "conferenceId": "6"
   },
@@ -1890,8 +1890,8 @@
     "displayName": "Liberty Flames",
     "shortDisplayName": "Liberty",
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2335.png",
-    "color": "#666666",
-    "alternateColor": "#333333",
+    "color": "#0a254e",
+    "alternateColor": "#b72025",
     "conference": "Conference USA",
     "conferenceId": "11"
   },
@@ -2310,8 +2310,8 @@
     "displayName": "Manhattan Jaspers",
     "shortDisplayName": "Manhattan",
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2363.png",
-    "color": "#666666",
-    "alternateColor": "#333333",
+    "color": "#4f8537",
+    "alternateColor": "#b5b7ba",
     "conference": "Metro Atlantic Athletic Conference",
     "conferenceId": "13"
   },
@@ -3042,7 +3042,7 @@
     "displayName": "Lindenwood Lions",
     "shortDisplayName": "Lindenwood",
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2815.png",
-    "color": "#666666",
+    "color": "#000000",
     "alternateColor": "#333333",
     "conference": "Ohio Valley Conference",
     "conferenceId": "20"
@@ -3258,8 +3258,8 @@
     "displayName": "American University Eagles",
     "shortDisplayName": "American",
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/44.png",
-    "color": "#666666",
-    "alternateColor": "#333333",
+    "color": "#c41130",
+    "alternateColor": "#c8102e",
     "conference": "Patriot League",
     "conferenceId": "22"
   },

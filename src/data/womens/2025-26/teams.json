@@ -492,6 +492,162 @@
     "conferenceId": "1"
   },
   {
+    "id": "242",
+    "name": "Owls",
+    "abbreviation": "RICE",
+    "displayName": "Rice Owls",
+    "shortDisplayName": "Rice",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/242.png",
+    "color": "#00205b",
+    "alternateColor": "#c1c6c8",
+    "conference": "American Conference",
+    "conferenceId": "62"
+  },
+  {
+    "id": "151",
+    "name": "Pirates",
+    "abbreviation": "ECU",
+    "displayName": "East Carolina Pirates",
+    "shortDisplayName": "East Carolina",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/151.png",
+    "color": "#582c83",
+    "alternateColor": "#ffc72c",
+    "conference": "American Conference",
+    "conferenceId": "62"
+  },
+  {
+    "id": "58",
+    "name": "Bulls",
+    "abbreviation": "USF",
+    "displayName": "South Florida Bulls",
+    "shortDisplayName": "South Florida",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/58.png",
+    "color": "#006747",
+    "alternateColor": "#cfc493",
+    "conference": "American Conference",
+    "conferenceId": "62"
+  },
+  {
+    "id": "202",
+    "name": "Golden Hurricane",
+    "abbreviation": "TLSA",
+    "displayName": "Tulsa Golden Hurricane",
+    "shortDisplayName": "Tulsa",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/202.png",
+    "color": "#003595",
+    "alternateColor": "#d0b787",
+    "conference": "American Conference",
+    "conferenceId": "62"
+  },
+  {
+    "id": "249",
+    "name": "Mean Green",
+    "abbreviation": "UNT",
+    "displayName": "North Texas Mean Green",
+    "shortDisplayName": "North Texas",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/249.png",
+    "color": "#068f33",
+    "alternateColor": "#ffffff",
+    "conference": "American Conference",
+    "conferenceId": "62"
+  },
+  {
+    "id": "2636",
+    "name": "Roadrunners",
+    "abbreviation": "UTSA",
+    "displayName": "UTSA Roadrunners",
+    "shortDisplayName": "UTSA",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2636.png",
+    "color": "#0c2340",
+    "alternateColor": "#f15a22",
+    "conference": "American Conference",
+    "conferenceId": "62"
+  },
+  {
+    "id": "218",
+    "name": "Owls",
+    "abbreviation": "TEM",
+    "displayName": "Temple Owls",
+    "shortDisplayName": "Temple",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/218.png",
+    "color": "#a41e35",
+    "alternateColor": "#ffffff",
+    "conference": "American Conference",
+    "conferenceId": "62"
+  },
+  {
+    "id": "2429",
+    "name": "49ers",
+    "abbreviation": "CLT",
+    "displayName": "Charlotte 49ers",
+    "shortDisplayName": "Charlotte",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2429.png",
+    "color": "#005035",
+    "alternateColor": "#a49665",
+    "conference": "American Conference",
+    "conferenceId": "62"
+  },
+  {
+    "id": "2226",
+    "name": "Owls",
+    "abbreviation": "FAU",
+    "displayName": "Florida Atlantic Owls",
+    "shortDisplayName": "FAU",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2226.png",
+    "color": "#003366",
+    "alternateColor": "#cc0000",
+    "conference": "American Conference",
+    "conferenceId": "62"
+  },
+  {
+    "id": "2655",
+    "name": "Green Wave",
+    "abbreviation": "TULN",
+    "displayName": "Tulane Green Wave",
+    "shortDisplayName": "Tulane",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2655.png",
+    "color": "#006747",
+    "alternateColor": "#418fde",
+    "conference": "American Conference",
+    "conferenceId": "62"
+  },
+  {
+    "id": "2724",
+    "name": "Shockers",
+    "abbreviation": "WICH",
+    "displayName": "Wichita State Shockers",
+    "shortDisplayName": "Wichita St",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2724.png",
+    "color": "#ffcd00",
+    "alternateColor": "#27251f",
+    "conference": "American Conference",
+    "conferenceId": "62"
+  },
+  {
+    "id": "5",
+    "name": "Blazers",
+    "abbreviation": "UAB",
+    "displayName": "UAB Blazers",
+    "shortDisplayName": "UAB",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/5.png",
+    "color": "#1a5632",
+    "alternateColor": "#fdb913",
+    "conference": "American Conference",
+    "conferenceId": "62"
+  },
+  {
+    "id": "235",
+    "name": "Tigers",
+    "abbreviation": "MEM",
+    "displayName": "Memphis Tigers",
+    "shortDisplayName": "Memphis",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/235.png",
+    "color": "#004991",
+    "alternateColor": "#8e908f",
+    "conference": "American Conference",
+    "conferenceId": "62"
+  },
+  {
     "id": "2198",
     "name": "Colonels",
     "abbreviation": "EKU",
@@ -3980,7 +4136,7 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2856.png",
     "color": "#000000",
     "alternateColor": "#333333",
-    "conference": "Western Athletic Conference",
+    "conference": "United Athletic Conference",
     "conferenceId": "30"
   },
   {
@@ -3992,7 +4148,7 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2000.png",
     "color": "#592d82",
     "alternateColor": "#b1b3b3",
-    "conference": "Western Athletic Conference",
+    "conference": "United Athletic Conference",
     "conferenceId": "30"
   },
   {
@@ -4004,7 +4160,7 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/253.png",
     "color": "#c72026",
     "alternateColor": "#000000",
-    "conference": "Western Athletic Conference",
+    "conference": "United Athletic Conference",
     "conferenceId": "30"
   },
   {
@@ -4016,7 +4172,7 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/3084.png",
     "color": "#004812",
     "alternateColor": "#e1c736",
-    "conference": "Western Athletic Conference",
+    "conference": "United Athletic Conference",
     "conferenceId": "30"
   },
   {
@@ -4028,7 +4184,7 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2627.png",
     "color": "#000000",
     "alternateColor": "#333333",
-    "conference": "Western Athletic Conference",
+    "conference": "United Athletic Conference",
     "conferenceId": "30"
   },
   {
@@ -4040,7 +4196,7 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/250.png",
     "color": "#004b7c",
     "alternateColor": "#f58024",
-    "conference": "Western Athletic Conference",
+    "conference": "United Athletic Conference",
     "conferenceId": "30"
   },
   {
@@ -4052,7 +4208,7 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/3101.png",
     "color": "#000000",
     "alternateColor": "#333333",
-    "conference": "Western Athletic Conference",
+    "conference": "United Athletic Conference",
     "conferenceId": "30"
   },
   {
@@ -4064,20 +4220,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2351.png",
     "color": "#880029",
     "alternateColor": "#00345b",
-    "conference": "West Coast Conference",
-    "conferenceId": "29"
-  },
-  {
-    "id": "2250",
-    "name": "Bulldogs",
-    "abbreviation": "GONZ",
-    "displayName": "Gonzaga Bulldogs",
-    "shortDisplayName": "Gonzaga",
-    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
-    "color": "#041e42",
-    "alternateColor": "#c8102e",
-    "conference": "West Coast Conference",
-    "conferenceId": "29"
+    "conference": "Womens Basketball Invitational Tournament",
+    "conferenceId": "101"
   },
   {
     "id": "2541",
@@ -4088,8 +4232,8 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2541.png",
     "color": "#690b0b",
     "alternateColor": "#101010",
-    "conference": "West Coast Conference",
-    "conferenceId": "29"
+    "conference": "Womens Basketball Invitational Tournament",
+    "conferenceId": "101"
   },
   {
     "id": "204",
@@ -4100,6 +4244,18 @@
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/204.png",
     "color": "#dc4405",
     "alternateColor": "#000000",
+    "conference": "Womens Basketball Invitational Tournament",
+    "conferenceId": "101"
+  },
+  {
+    "id": "2250",
+    "name": "Bulldogs",
+    "abbreviation": "GONZ",
+    "displayName": "Gonzaga Bulldogs",
+    "shortDisplayName": "Gonzaga",
+    "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png",
+    "color": "#041e42",
+    "alternateColor": "#c8102e",
     "conference": "West Coast Conference",
     "conferenceId": "29"
   },

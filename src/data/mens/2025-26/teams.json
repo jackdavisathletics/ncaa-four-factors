@@ -3583,7 +3583,7 @@
     "shortDisplayName": "VMI",
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2678.png",
     "color": "#ae122a",
-    "alternateColor": "#ffd619",
+    "alternateColor": "#000000",
     "conference": "Southern Conference",
     "conferenceId": "24"
   },
@@ -3642,8 +3642,8 @@
     "displayName": "LSU New Orleans Privateers",
     "shortDisplayName": "LSU N Orleans",
     "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2443.png",
-    "color": "#005da6",
-    "alternateColor": "#a2a9ae",
+    "color": "#461d7c",
+    "alternateColor": "#fdd023",
     "conference": "Southland Conference",
     "conferenceId": "25"
   },
